@@ -16,6 +16,12 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
+        <activity android:name=".SplashScreenActivity">
+        </activity>
+        <activity android:name=".AuthenticationScreen">
+        </activity>
+        <activity android:name=".AuthUsersInfoActivity">
+        </activity>
     </application>
 
 </manifest>
