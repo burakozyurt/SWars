@@ -14,6 +14,7 @@
     <color name="true_answer_background">#80E27E</color>
     <color name="false_answer_background">#F44336</color>
     <color name="diamond_background">#617491</color>
+    <color name="textcolor">#707070</color>
 
     
 </resources>
