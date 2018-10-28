@@ -20,6 +20,10 @@
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="score_equals">Score :</string>
+    <string name="ranking_value">Ranking :#</string>
+    <string name="announcement_title">This week\'s award</string>
+    <string name="announcement_description">The prize is waiting for the winner of the week!</string>
 
 
 </resources>

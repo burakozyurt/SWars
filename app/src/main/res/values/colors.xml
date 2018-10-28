@@ -10,7 +10,7 @@
     <color name="bottom_nav_bar_background">#F1F1F1</color>
     <color name="x2joker_background">#FF2E2E</color>
     <color name="background5050">#6CC552</color>
-    <color name="guessit_activity_background">#65C6F5</color>
+    <color name="guessit_activity_background">#e02fafed</color>
     <color name="true_answer_background">#80E27E</color>
     <color name="false_answer_background">#F44336</color>
     <color name="diamond_background">#617491</color>
