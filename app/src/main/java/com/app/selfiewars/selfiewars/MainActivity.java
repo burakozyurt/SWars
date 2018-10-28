@@ -30,8 +30,6 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         define();
         setFrameLayout();
-        Intent i = new Intent(this,GuessItActivity.class);
-        startActivity(i);
        // intentAlma();
 
     }

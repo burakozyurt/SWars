@@ -24,6 +24,7 @@
     <string name="ranking_value">Ranking :#</string>
     <string name="announcement_title">This week\'s award</string>
     <string name="announcement_description">The prize is waiting for the winner of the week!</string>
+    <string name="currency_type">$</string>
 
 
 </resources>

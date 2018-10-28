@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+                                    xmlns:app="http://schemas.android.com/apk/res-auto"
+                                    xmlns:tools="http://schemas.android.com/tools" android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content" app:cardCornerRadius="20dp"
+                                    app:cardBackgroundColor="@color/background" android:layout_margin="8dp">
+
+    <android.support.constraint.ConstraintLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+        <android.support.constraint.ConstraintLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/store_cardview_background" android:id="@+id/constraintLayout"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+            <ImageView
+                    android:layout_width="90dp"
+                    android:layout_height="90dp" app:srcCompat="@drawable/diamond20"
+                    android:id="@+id/store_diamond_imageview" app:layout_constraintStart_toStartOf="parent"
+                    android:layout_marginStart="8dp"
+                    app:layout_constraintTop_toTopOf="parent" app:layout_constraintEnd_toEndOf="parent"
+                    android:layout_marginEnd="8dp" app:layout_constraintHorizontal_bias="0.0"
+                    android:layout_marginTop="5dp"
+            />
+            <TextView
+                    android:text="0"
+                    android:textColor="@color/background"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" android:id="@+id/store_diamond_value_number"
+                    app:layout_constraintEnd_toEndOf="@+id/store_diamond_imageview"
+                    app:layout_constraintStart_toStartOf="@+id/store_diamond_imageview"
+                    android:layout_marginTop="8dp" app:layout_constraintTop_toBottomOf="@+id/store_diamond_imageview"
+                    app:layout_constraintBottom_toBottomOf="@+id/store_diamond_imageview"/>
+        </android.support.constraint.ConstraintLayout>
+        <TextView
+                android:text="1,99"
+                android:textColor="@color/textcolor"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/store_diamond_price"
+                app:layout_constraintTop_toBottomOf="@+id/constraintLayout"
+                app:layout_constraintStart_toStartOf="parent" app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"/>
+        <TextView
+                android:text="@string/currency_type"
+                android:textColor="@color/textcolor"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/store_diamond_currency_type"
+                app:layout_constraintTop_toTopOf="@+id/store_diamond_price"
+                app:layout_constraintBottom_toBottomOf="@+id/store_diamond_price"
+                app:layout_constraintVertical_bias="0.0"
+                app:layout_constraintEnd_toStartOf="@+id/store_diamond_price"/>
+    </android.support.constraint.ConstraintLayout>
+</android.support.v7.widget.CardView>
