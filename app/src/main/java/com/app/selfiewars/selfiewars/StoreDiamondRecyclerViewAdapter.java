@@ -2,12 +2,14 @@ package com.app.selfiewars.selfiewars;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
+import android.support.constraint.ConstraintLayout;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.List;
 
@@ -30,11 +32,17 @@ public class StoreDiamondRecyclerViewAdapter extends RecyclerView.Adapter<StoreD
     }
 
     @Override
-    public void onBindViewHolder(@NonNull MyVievHolder myVievHolder, int i) {
+    public void onBindViewHolder(@NonNull final MyVievHolder myVievHolder, int i) {
         myVievHolder.diamondValueNumber.setText(mData.get(i).getDiamondValueNumber());
         myVievHolder.diamondPrice.setText(mData.get(i).getDiamondPrice());
         myVievHolder.diamondImage.setImageResource(mData.get(i).getDiamondImage());
 
+        myVievHolder.constraintLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Toast.makeText(mcontext,"Fiyat :" + mcontext.getResources().getString(R.string.currency_type)+myVievHolder.diamondPrice.getText(),Toast.LENGTH_LONG).show();
+            }
+        });
 
 
     }
@@ -48,12 +56,14 @@ public class StoreDiamondRecyclerViewAdapter extends RecyclerView.Adapter<StoreD
         TextView diamondValueNumber;
         TextView diamondPrice;
         ImageView diamondImage;
+        ConstraintLayout constraintLayout;
 
     public MyVievHolder(@NonNull View itemView) {
         super(itemView);
         diamondValueNumber = itemView.findViewById(R.id.store_diamond_value_number);
-        diamondPrice = itemView.findViewById(R.id.store_diamond_price);
-        diamondImage = itemView.findViewById(R.id.store_diamond_imageview);
+        constraintLayout = itemView.findViewById(R.id.constraintLayout);
+        diamondPrice = itemView.findViewById(R.id.store_joker_price);
+        diamondImage = itemView.findViewById(R.id.store_joker_imageview);
     }
 }
 
