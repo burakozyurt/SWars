@@ -4,18 +4,40 @@ import android.content.Intent;
 
 public class UserProperties {
     String displayName;
+    String email;
     String userName;
     String photoUrl;
-    Integer Age;
+    String gender;
+    Integer age;
 
     public UserProperties() {
+
     }
 
-    public UserProperties(String displayName, String userName, String photoUrl, Integer age) {
+
+    public UserProperties(String displayName, String email, String userName, String photoUrl, Integer age) {
         this.displayName = displayName;
+        this.email = email;
         this.userName = userName;
         this.photoUrl = photoUrl;
-        Age = age;
+        this.gender = gender;
+        this.age = age;
+    }
+
+    public String getGender() {
+        return gender;
+    }
+
+    public void setGender(String gender) {
+        this.gender = gender;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     public String getDisplayName() {
@@ -43,10 +65,10 @@ public class UserProperties {
     }
 
     public Integer getAge() {
-        return Age;
+        return age;
     }
 
     public void setAge(Integer age) {
-        Age = age;
+        age = age;
     }
 }

@@ -25,6 +25,8 @@
     <string name="announcement_title">This week\'s award</string>
     <string name="announcement_description">The prize is waiting for the winner of the week!</string>
     <string name="currency_type">$</string>
+    <string name="default_web_lient_id">412883841103-oltcc80bcdoj4r0f3qknruh5elvvk1ed.apps.googleusercontent.com
+    </string>
 
 
 </resources>
