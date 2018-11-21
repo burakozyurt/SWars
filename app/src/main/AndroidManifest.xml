@@ -9,15 +9,15 @@
             android:label="@string/app_name"
             android:roundIcon="@mipmap/ic_launcher_round"
             android:supportsRtl="true"
-            android:theme="@style/Theme.AppCompat.NoActionBar"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar"
             tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name=".SplashScreenActivity">
-        </activity>
         <activity android:name=".AuthenticationScreen">
         </activity>
         <activity android:name=".AuthUsersInfoActivity">
         </activity>
         <activity android:name=".MainActivity">
+        </activity>
+        <activity android:name=".SplashScreenActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
 

@@ -3,6 +3,7 @@ package com.app.selfiewars.selfiewars;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.Fragment;
@@ -12,6 +13,9 @@ import android.view.MenuItem;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.*;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -23,16 +27,46 @@ public class MainActivity extends AppCompatActivity {
     RankFragment rankFragment;
     SpinFragment spinFragment;
     StoreFragment storeFragment;
-
+    private FirebaseAuth mAuth;
+    private FirebaseDatabase database;
+    private DatabaseReference myRefUser;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        define();
-        setFrameLayout();
-       // intentAlma();
+        mAuth = FirebaseAuth.getInstance();
+        database = FirebaseDatabase.getInstance();
+        myRefUser = database.getReference("Users");
+        if(mAuth.getCurrentUser()!= null){
+            myRefUser.child(mAuth.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    Boolean isReady = dataSnapshot.child(getResources().getString(R.string.account_State)).getValue(Boolean.class);
+                    if(isReady){
+                        define();
+                        setFrameLayout();
+                    }
+                    else {
+                        Intent i = new Intent(getApplicationContext(),AuthenticationScreen.class);
+                        startActivity(i);
+                        Toast.makeText(MainActivity.this, "isReadyFalse", Toast.LENGTH_SHORT).show();
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                }
+            });
+
+            // intentAlma();
+        }else {
+            Intent i = new Intent(getApplicationContext(),AuthenticationScreen.class);
+            startActivity(i);
+        }
 
     }
+
     public void setFrameLayout(){
         homeFragment = new HomeFragment();
         rankFragment = new RankFragment();
@@ -73,8 +107,15 @@ public class MainActivity extends AppCompatActivity {
         textView = findViewById(R.id.selfiewarsText);
     }
 
+    public void isAuth(){
+
+    }
     public void intentAlma(){
         Intent ıntent = new Intent(this,AuthenticationScreen.class);
         startActivity(ıntent);
+    }
+
+    @Override
+    public void onBackPressed() {
     }
 }

@@ -30,6 +30,7 @@
                     app:layout_constraintTop_toBottomOf="@+id/imageView15"/>
             <Button
                     android:text="Spin"
+                    android:textColor="@color/textcolor"
                     android:background="@drawable/spin_button_oval"
                     android:layout_width="100dp"
                     android:layout_height="45dp" android:id="@+id/button3"

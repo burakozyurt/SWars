@@ -6,30 +6,46 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.util.Log;
+import android.view.View;
+import android.widget.ImageView;
+import android.widget.Toast;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.*;
+import com.google.firebase.database.*;
 
 public class AuthenticationScreen extends Activity {
 
     private GoogleSignInClient mGoogleSignInClient;
     private FirebaseAuth mAuth;
-
+    private FirebaseDatabase database;
+    private DatabaseReference myRefAccountState;
     private static final String TAG = "GoogleActivity";
     private static final int RC_SIGN_IN = 9001;
-
+    private ImageView googleSignImageView;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_authentication_screen);
         mAuth = FirebaseAuth.getInstance();
+        database = FirebaseDatabase.getInstance();
+        myRefAccountState = database.getReference("Users");
+        googleSignImageView = findViewById(R.id.googlesign_imageview);
         googleSignInOptions();
-        signIn();
+        googleSignImageView.setOnClickListener(new View.OnClickListener() {
+               @Override
+               public void onClick(View view) {
+                   signIn();
+               }
+           });
+
 
 
     }
@@ -38,9 +54,11 @@ public class AuthenticationScreen extends Activity {
                 .requestIdToken(getString(R.string.default_web_lient_id))
                 .requestEmail()
                 .build();
-    }
+        mGoogleSignInClient = GoogleSignIn.getClient(this,gso);
+        }
 
     private void signIn() {
+
         Intent signInIntent = mGoogleSignInClient.getSignInIntent();
         startActivityForResult(signInIntent, RC_SIGN_IN);
     }
@@ -75,14 +93,48 @@ public class AuthenticationScreen extends Activity {
                         if (task.isSuccessful()) {
                             // Sign in success, update UI with the signed-in user's information
                             Log.d(TAG, "signInWithCredential:success");
-                            FirebaseUser user = mAuth.getCurrentUser();
-                            UserProperties userProperties = new UserProperties();
+                            final FirebaseUser user = mAuth.getCurrentUser();
 
-                            updateUI(user);
+                            myRefAccountState.addListenerForSingleValueEvent(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                    //Gmail hesabı ile giriş yapılmış fakat gerekli bilgilerin dolurulup doldurumladığını kontrol eder.
+                                    if(dataSnapshot.hasChild(user.getUid())){
+                                        Boolean isReady = dataSnapshot.child(user.getUid()).child(getResources().getString(R.string.account_State)).getValue(Boolean.class);
+                                        if(isReady){
+                                            Intent i = new Intent(getApplicationContext(),MainActivity.class);
+                                            startActivity(i);
+                                        }else {
+                                            Toast.makeText(getApplicationContext(),"Gmail ile giriş yapılmıştır. Lütfen gerekli bilgileri doldurunuz.",Toast.LENGTH_LONG).show();
+                                            Intent i = new Intent(getApplicationContext(),AuthUsersInfoActivity.class);
+                                            startActivity(i);
+                                        }
+                                    }else {
+                                        Boolean isReady = false;
+                                        //İlk kayıtlı kullanıcının başarılı işlemi sonucu
+                                        myRefAccountState.child(user.getUid()).child(getResources().getString(R.string.account_State)).setValue(isReady).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                            @Override
+                                            public void onSuccess(Void aVoid) {
+                                                Intent i = new Intent(getApplicationContext(),AuthUsersInfoActivity.class);
+                                                startActivity(i);
+                                            }
+                                        }).addOnFailureListener(new OnFailureListener() {
+                                            @Override
+                                            public void onFailure(@NonNull Exception e) {
+                                                Toast.makeText(getApplicationContext(),""+e.getMessage(),Toast.LENGTH_LONG).show();
+                                            }
+                                        });
+                                    }
+                                }
+
+                                @Override
+                                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                }
+                            });
                         } else {
                             // If sign in fails, display a message to the user.
                             Log.w(TAG, "signInWithCredential:failure", task.getException());
-                            updateUI(null);
                         }
 
                         // ...
@@ -90,8 +142,9 @@ public class AuthenticationScreen extends Activity {
                 });
 
     }
-
-    private void updateUI(FirebaseUser user) {
+    @Override
+    public void onBackPressed() {
 
     }
+
 }
