@@ -5,8 +5,8 @@
     <color name="colorAccent">#D81B60</color>
     <color name="background">#FFFFFF</color>
     <color name="announcement">#4F1AC9</color>
-    <color name="guess_it_button1">#00e676</color>
-    <color name="guess_it_button2">#76ff03</color>
+    <color name="guess_it_button1">#c33fcf</color>
+    <color name="guess_it_button2">#794eca</color>
     <color name="bottom_nav_bar_background">#F1F1F1</color>
     <color name="x2joker_background">#d50000</color>
     <color name="fiftyfifty_background">#00c853</color>
