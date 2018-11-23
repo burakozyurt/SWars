@@ -41,7 +41,7 @@ public class MainActivity extends AppCompatActivity {
             myRefUser.child(mAuth.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                    Boolean isReady = dataSnapshot.child(getResources().getString(R.string.account_State)).getValue(Boolean.class);
+                    Boolean isReady = dataSnapshot.child(getResources().getString(R.string.account_State)).child(getResources().getString(R.string.isReady)).getValue(Boolean.class);
                     if(isReady){
                         define();
                         setFrameLayout();

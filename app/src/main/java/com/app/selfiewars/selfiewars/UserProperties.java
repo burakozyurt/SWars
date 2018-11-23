@@ -3,12 +3,12 @@ package com.app.selfiewars.selfiewars;
 import android.content.Intent;
 
 public class UserProperties {
-    String displayName;
-    String email;
-    String userName;
-    String photoUrl;
-    String gender;
-    Integer age;
+    private String displayName;
+    private String email;
+    private String userName;
+    private String photoUrl;
+    private String gender;
+    private Integer age;
 
     public UserProperties() {
 

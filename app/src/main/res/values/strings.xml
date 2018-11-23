@@ -30,6 +30,9 @@
 
 
     <string name="account_State">accountstate</string>
+    <string name="isReady">isReady</string>
+    <string name="Age">Age</string>
+    <string name="properties">properties</string>
 
 
 </resources>

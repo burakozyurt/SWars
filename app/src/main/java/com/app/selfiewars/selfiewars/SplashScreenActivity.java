@@ -24,11 +24,14 @@ public class SplashScreenActivity extends Activity {
         mAuth = FirebaseAuth.getInstance();
         database = FirebaseDatabase.getInstance();
         myRefUser = database.getReference("Users");
+        setup();
+    }
+    public void setup(){
         if(mAuth.getCurrentUser()!= null) {
             myRefUser.child(mAuth.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                    Boolean isReady = dataSnapshot.child(getResources().getString(R.string.account_State)).getValue(Boolean.class);
+                    Boolean isReady = dataSnapshot.child(getResources().getString(R.string.account_State)).child(getResources().getString(R.string.isReady)).getValue(Boolean.class);
                     if (isReady) {
                         startThread(true);
                     } else {
@@ -65,4 +68,9 @@ public class SplashScreenActivity extends Activity {
         timerThread.start();
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        setup();
+    }
 }

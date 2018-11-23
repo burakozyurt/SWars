@@ -3,6 +3,7 @@ package com.app.selfiewars.selfiewars;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.util.Log;
@@ -100,7 +101,7 @@ public class AuthenticationScreen extends Activity {
                                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                                     //Gmail hesabı ile giriş yapılmış fakat gerekli bilgilerin dolurulup doldurumladığını kontrol eder.
                                     if(dataSnapshot.hasChild(user.getUid())){
-                                        Boolean isReady = dataSnapshot.child(user.getUid()).child(getResources().getString(R.string.account_State)).getValue(Boolean.class);
+                                        Boolean isReady = dataSnapshot.child(user.getUid()).child(getResources().getString(R.string.account_State)).child(getResources().getString(R.string.isReady)).getValue(Boolean.class);
                                         if(isReady){
                                             Intent i = new Intent(getApplicationContext(),MainActivity.class);
                                             startActivity(i);
@@ -112,7 +113,7 @@ public class AuthenticationScreen extends Activity {
                                     }else {
                                         Boolean isReady = false;
                                         //İlk kayıtlı kullanıcının başarılı işlemi sonucu
-                                        myRefAccountState.child(user.getUid()).child(getResources().getString(R.string.account_State)).setValue(isReady).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                        myRefAccountState.child(user.getUid()).child(getResources().getString(R.string.account_State)).child((getResources().getString(R.string.isReady))).setValue(isReady).addOnSuccessListener(new OnSuccessListener<Void>() {
                                             @Override
                                             public void onSuccess(Void aVoid) {
                                                 Intent i = new Intent(getApplicationContext(),AuthUsersInfoActivity.class);
