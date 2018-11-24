@@ -1,4 +1,40 @@
-<?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="app_name">SelfieWars</string>
+    <string name="user_name">Username</string>
+    <string name="date_of_birth">Date Of Birth</string>
+    <string name="gender">Gender</string>
+    <string name="continuee">Continue</string>
+    <string name="logging_in">Loggin In</string>
+    <string name="ranking">Ranking</string>
+    <string name="score">Score</string>
+    <string name="guess_it">Guess It</string>
+    <string name="home">Home</string>
+    <string name="rank">Rank</string>
+    <string name="spin">Spin</string>
+    <string name="store">Store</string>
+    <string name="settings">Settings</string>
+    <string name="pass">Pass</string>
+    <string name="sound">Sound</string>
+    <string name="vibration">Vibration</string>
+    <string name="announcement">Announcement</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="score_equals">Score :</string>
+    <string name="ranking_value">Ranking :#</string>
+    <string name="announcement_title">This week\'s award</string>
+    <string name="announcement_description">The prize is waiting for the winner of the week!</string>
+    <string name="currency_type">$</string>
+    <string name="default_web_lient_id">412883841103-oltcc80bcdoj4r0f3qknruh5elvvk1ed.apps.googleusercontent.com
+    </string>
+
+
+    <string name="account_State">accountstate</string>
+    <string name="isReady">isReady</string>
+    <string name="Age">Age</string>
     <string name="properties">properties</string>
+    <string name="diamondValue">diamondValue</string>
+    <string name="wildcards">wildcards</string>
+
+
 </resources>

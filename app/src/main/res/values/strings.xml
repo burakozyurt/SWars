@@ -33,6 +33,9 @@
     <string name="isReady">isReady</string>
     <string name="Age">Age</string>
     <string name="properties">properties</string>
+    <string name="token">token</string>
+    <string name="diamondValue">diamondValue</string>
+    <string name="wildcards">wildcards</string>
 
 
 </resources>

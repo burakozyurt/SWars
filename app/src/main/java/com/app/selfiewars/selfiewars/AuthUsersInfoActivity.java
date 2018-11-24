@@ -5,12 +5,12 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.support.annotation.NonNull;
 import android.view.View;
 import android.widget.*;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.*;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
@@ -21,6 +21,7 @@ public class AuthUsersInfoActivity extends Activity {
     private FirebaseAuth mAuth;
     private FirebaseDatabase database;
     private DatabaseReference myRefUser;
+    private DatabaseReference myRefAward;
     private FirebaseStorage firebaseStorage;
     private StorageReference mStorageRef;
     private UserProperties userProperties;
@@ -33,7 +34,6 @@ public class AuthUsersInfoActivity extends Activity {
     private TextView chooseprofileText;
     private String userName;
     private Integer age;
-    private String gender;
     private String photoUrl;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,7 +42,6 @@ public class AuthUsersInfoActivity extends Activity {
         profileImageView = findViewById(R.id.signin_info_profile_imageview);
         usernameText =findViewById(R.id.signin_info_username_editText);
         ageText = findViewById(R.id.signin_info_age_editText);
-        genderText = findViewById(R.id.signin_info_gender_editText);
         chooseprofileText = findViewById(R.id.signin_profile_desc_textView);
         mAuth = FirebaseAuth.getInstance();
         database = FirebaseDatabase.getInstance();
@@ -51,14 +50,9 @@ public class AuthUsersInfoActivity extends Activity {
         userProperties = new UserProperties();
         continueButton = findViewById(R.id.signin_info_continue_button);
         myRefUser = database.getReference("Users/" + mAuth.getUid());
+        myRefAward = database.getReference("FirstAward");
 
         continueButtonClick();
-
-        //Yapılacaklar
-        /*
-            1.Kullanıcı bilgileri alınacak eksiksiz bir şekilde tamamlanıp veri tabanına gönderilecek
-            2.MainActivity e geçerken token,wildcards ilk düğümü oluşturlacak ve accountstate düğümü true edilecek
-         */
     }
     public void continueButtonClick(){
         continueButton.setOnClickListener(new View.OnClickListener() {
@@ -68,7 +62,6 @@ public class AuthUsersInfoActivity extends Activity {
                 if(isFilled()){
                  userName = usernameText.getText().toString();
                  age = Integer.valueOf(ageText.getText().toString());
-                 gender = genderText.getText().toString();
                  mStorageRef.putFile(selectedImage).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                      @Override
                      public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
@@ -80,18 +73,41 @@ public class AuthUsersInfoActivity extends Activity {
                                 userProperties.setAge(age);
                                 userProperties.setDisplayName(mAuth.getCurrentUser().getDisplayName());
                                 userProperties.setEmail(mAuth.getCurrentUser().getEmail());
-                                userProperties.setGender(gender);
                                 userProperties.setPhotoUrl(photoUrl);
                                 userProperties.setUserName(userName);
                                 myRefUser.child(getString(R.string.properties)).setValue(userProperties).addOnSuccessListener(new OnSuccessListener<Void>() {
                                     @Override
                                     public void onSuccess(Void aVoid) {
                                         Toast.makeText(getApplicationContext(),"Hesap Oluşturuldu",Toast.LENGTH_LONG).show();
-                                        myRefUser.child(getResources().getString(R.string.account_State)).child(getResources().getString(R.string.isReady)).setValue(true).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                        myRefAward.addListenerForSingleValueEvent(new ValueEventListener() {
                                             @Override
-                                            public void onSuccess(Void aVoid) {
-                                                Intent i = new Intent(getApplicationContext(),MainActivity.class);
-                                                startActivity(i);
+                                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                                final FirstAward firstAward = dataSnapshot.getValue(FirstAward.class);
+                                                myRefUser.child(getResources().getString(R.string.token)).child(getResources().getString(R.string.diamondValue)).setValue(firstAward.getDiamondValue()).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                    @Override
+                                                    public void onSuccess(Void aVoid) {
+                                                        Wildcards wildcards = new Wildcards(firstAward.getDoubleDipValue(),
+                                                                firstAward.getFiftyFiftyValue(),firstAward.getHealthValue());
+                                                        myRefUser.child(getResources().getString(R.string.wildcards)).setValue(wildcards).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                            @Override
+                                                            public void onSuccess(Void aVoid) {
+                                                                myRefUser.child(getResources().getString(R.string.account_State)).child(getResources().getString(R.string.isReady)).setValue(true).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                                    @Override
+                                                                    public void onSuccess(Void aVoid) {
+                                                                        Intent i = new Intent(getApplicationContext(),MainActivity.class);
+                                                                        startActivity(i);
+                                                                    }
+                                                                });
+                                                            }
+                                                        });
+                                                    }
+                                                });
+
+                                            }
+
+                                            @Override
+                                            public void onCancelled(@NonNull DatabaseError databaseError) {
+
                                             }
                                         });
                                     }
@@ -115,7 +131,7 @@ public class AuthUsersInfoActivity extends Activity {
     }
     public boolean isFilled(){
         if(!usernameText.getText().toString().isEmpty() && usernameText.getText().toString().length() > 6 && !ageText.getText().toString().isEmpty()
-                && Integer.parseInt(ageText.getText().toString()) > 15 && !genderText.getText().toString().isEmpty() &&
+                && Integer.parseInt(ageText.getText().toString()) > 15 &&
                 !selectedImage.toString().isEmpty()){
             return true;
         }

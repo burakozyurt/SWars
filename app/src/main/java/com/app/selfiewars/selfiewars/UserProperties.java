@@ -5,7 +5,6 @@ public class UserProperties {
     private String email;
     private String userName;
     private String photoUrl;
-    private String gender;
     private Integer age;
 
     public UserProperties() {
@@ -13,22 +12,15 @@ public class UserProperties {
     }
 
 
-    public UserProperties(String displayName, String email, String userName, String photoUrl, String gender, Integer age) {
+    public UserProperties(String displayName, String email, String userName, String photoUrl, Integer age) {
         this.displayName = displayName;
         this.email = email;
         this.userName = userName;
         this.photoUrl = photoUrl;
-        this.gender = gender;
         this.age = age;
     }
 
-    public String getGender() {
-        return gender;
-    }
 
-    public void setGender(String gender) {
-        this.gender = gender;
-    }
 
     public String getEmail() {
         return email;

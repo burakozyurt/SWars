@@ -24,6 +24,9 @@
     <EditText android:layout_width="150dp"
               android:layout_height="50dp"
               android:textSize="20dp"
+              android:singleLine="true"
+              android:inputType="textPersonName"
+              android:minLines="6"
               android:layout_marginTop="50dp"
               android:hint="@string/user_name"
               android:layout_gravity="center"
@@ -36,16 +39,10 @@
             android:maxLength="2"
             android:id="@+id/signin_info_age_editText" android:layout_gravity="center" android:layout_marginTop="10dp"
             android:hint="@string/Age"/>
-    <EditText android:layout_width="150dp"
-              android:layout_height="50dp"
-              android:textSize="20dp"
-              android:layout_marginTop="10dp"
-              android:hint="@string/gender"
-              android:layout_gravity="center"
-              android:id="@+id/signin_info_gender_editText"/>
     <Button android:layout_width="100dp"
             android:layout_height="50dp"
             android:text="@string/continuee"
+            android:background="@drawable/guess_it_and_game_button_oval"
             android:layout_gravity="center" android:layout_marginTop="16dp"
             android:id="@+id/signin_info_continue_button"/>
 

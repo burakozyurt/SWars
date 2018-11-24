@@ -40,6 +40,8 @@ public class HomeFragment extends Fragment {
     private FirebaseAuth mAuth;
     private Picasso mPicasso;
     private Button guessitButton;
+    private Wildcards wildcards;
+    private Integer diamondToken;
 
 
     public HomeFragment() {
@@ -90,6 +92,30 @@ public class HomeFragment extends Fragment {
                     photoUrl = properties.getPhotoUrl();
                     mPicasso.load(photoUrl).resize(400,400).into(profileImageView);
                 }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+        myUserRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                Boolean isReady = dataSnapshot.child(getResources().getString(R.string.account_State)).child(getResources().getString(R.string.isReady)).getValue(Boolean.class);
+                if(isReady){
+                    if(dataSnapshot.hasChild(getResources().getString(R.string.token))){
+                        Toast.makeText(getContext(), ""+diamondToken, Toast.LENGTH_SHORT).show();
+                        diamondTextView.setText(""+dataSnapshot.child(getResources().getString(R.string.token)).child((getResources().getString(R.string.diamondValue))).getValue(Integer.class));}
+                    if(dataSnapshot.hasChild(getResources().getString(R.string.wildcards))) {
+                        wildcards = dataSnapshot.child(getResources().getString(R.string.wildcards)).getValue(Wildcards.class);
+                        doubleDipTextView.setText(""+wildcards.getDoubleDipValue());
+                        healthTextView.setText(""+wildcards.getHealthValue());
+                        fiftyFiftyTextView.setText(""+wildcards.getFiftyFiftyValue());
+                    }
+
+                }
+
             }
 
             @Override
