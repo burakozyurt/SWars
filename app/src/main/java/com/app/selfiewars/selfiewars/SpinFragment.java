@@ -57,7 +57,7 @@ public class SpinFragment extends Fragment {
         luckyItem1.text = "x1";
         luckyItem1.valueNumber = 1;
         luckyItem1.icon = R.drawable.health;
-        luckyItem1.color = 0xffFFE0B2;
+        luckyItem1.color = 0xffFFF3E0;
         luckyItem1.id = idHealth;
         data.add(luckyItem1);
 
@@ -99,7 +99,7 @@ public class SpinFragment extends Fragment {
         luckyItem6.id = idReSpin;
         luckyItem6.valueNumber = 2;
         luckyItem6.icon = R.drawable.spin;
-        luckyItem6.color = 0xffFFE0B2;
+        luckyItem6.color = 0xffFFCC80;
         data.add(luckyItem6);
         //////////////////
 

@@ -4,7 +4,7 @@
     <color name="colorPrimaryDark">#00574B</color>
     <color name="colorAccent">#D81B60</color>
     <color name="background">#FFFFFF</color>
-    <color name="announcement">#4F1AC9</color>
+    <color name="announcement">#03a9f4</color>
     <color name="guess_it_button1">#c33fcf</color>
     <color name="guess_it_button2">#794eca</color>
     <color name="bottom_nav_bar_background">#F1F1F1</color>
@@ -18,6 +18,6 @@
     <color name="textcolor">#ffffff</color>
     <color name="textcolorblack">#000000</color>
     <color name="bluecolor">#03a9f4</color>
-
+    #4F1AC9
     
 </resources>
