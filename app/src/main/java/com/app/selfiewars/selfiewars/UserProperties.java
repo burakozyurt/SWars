@@ -1,7 +1,5 @@
 package com.app.selfiewars.selfiewars;
 
-import android.content.Intent;
-
 public class UserProperties {
     private String displayName;
     private String email;
@@ -15,7 +13,7 @@ public class UserProperties {
     }
 
 
-    public UserProperties(String displayName, String email, String userName, String photoUrl, Integer age) {
+    public UserProperties(String displayName, String email, String userName, String photoUrl, String gender, Integer age) {
         this.displayName = displayName;
         this.email = email;
         this.userName = userName;
@@ -69,6 +67,6 @@ public class UserProperties {
     }
 
     public void setAge(Integer age) {
-        age = age;
+        this.age = age;
     }
 }

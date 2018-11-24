@@ -2,7 +2,6 @@ package com.app.selfiewars.selfiewars;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -17,9 +16,6 @@ import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.squareup.picasso.Picasso;
-import com.squareup.picasso.Transformation;
-
-import javax.xml.transform.Result;
 
 public class AuthUsersInfoActivity extends Activity {
     private FirebaseAuth mAuth;
@@ -71,7 +67,7 @@ public class AuthUsersInfoActivity extends Activity {
                 final UserProperties userProperties = new UserProperties();
                 if(isFilled()){
                  userName = usernameText.getText().toString();
-                 age = Integer.parseInt(ageText.getText().toString());
+                 age = Integer.valueOf(ageText.getText().toString());
                  gender = genderText.getText().toString();
                  mStorageRef.putFile(selectedImage).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                      @Override

@@ -33,12 +33,12 @@
                             android:textColor="@color/textcolorblack"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:id="@+id/rank_value"
+                            android:id="@+id/home_profile_rank_textView"
                             app:layout_constraintTop_toTopOf="@+id/textView6"
                             app:layout_constraintBottom_toBottomOf="@+id/textView6"
                             app:layout_constraintVertical_bias="0.0"
                             app:layout_constraintStart_toEndOf="@+id/textView6"
-                            app:layout_constraintEnd_toEndOf="@+id/circleImageView"/>
+                            app:layout_constraintEnd_toEndOf="@+id/home_profile_circleImageView"/>
                     <ImageView
                             android:src="@drawable/settings"
                             android:backgroundTintMode="add"
@@ -54,7 +54,8 @@
                             android:textColor="@color/textcolor"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:id="@+id/score_value" app:layout_constraintStart_toEndOf="@+id/textView2"
+                            android:id="@+id/home_profile_score_textView"
+                            app:layout_constraintStart_toEndOf="@+id/textView2"
                             app:layout_constraintTop_toTopOf="@+id/textView2"
                             app:layout_constraintBottom_toBottomOf="@+id/textView2"
                             app:layout_constraintVertical_bias="0.0" android:layout_marginStart="1dp"/>
@@ -65,18 +66,18 @@
                             app:layout_constraintTop_toBottomOf="@+id/textView4"
                             app:layout_constraintStart_toStartOf="@+id/textView4"
                             android:layout_marginStart="8dp"
-                            android:id="@+id/circleImageView"
+                            android:id="@+id/home_profile_circleImageView"
                             app:layout_constraintEnd_toEndOf="@+id/textView4"
-                            android:src="@drawable/markzuckerberg"/>
+                    />
                     <TextView
                             android:text="@string/ranking_value"
                             android:textColor="@color/textcolorblack"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:id="@+id/textView6" android:layout_marginTop="8dp"
-                            app:layout_constraintTop_toBottomOf="@+id/textView5"
-                            app:layout_constraintStart_toStartOf="@+id/circleImageView"
-                            app:layout_constraintEnd_toStartOf="@+id/rank_value"/>
+                            app:layout_constraintTop_toBottomOf="@+id/home_profile_username_textView"
+                            app:layout_constraintStart_toStartOf="@+id/home_profile_circleImageView"
+                            app:layout_constraintEnd_toStartOf="@+id/home_profile_rank_textView"/>
                     <TextView
                             android:text="@string/home"
                             android:layout_width="wrap_content"
@@ -89,16 +90,15 @@
                             android:layout_marginStart="8dp" app:layout_constraintStart_toStartOf="parent"
                             android:gravity="center" android:layout_marginTop="8dp"/>
                     <TextView
-                            android:text="MarkZuckerr"
                             android:textStyle="bold"
                             android:textColor="@color/textcolorblack"
                             android:layout_width="wrap_content"
                             android:layout_height="12dp"
                             android:textSize="11sp"
-                            android:id="@+id/textView5" android:layout_marginTop="8dp"
-                            app:layout_constraintTop_toBottomOf="@+id/circleImageView"
-                            app:layout_constraintEnd_toEndOf="@+id/circleImageView"
-                            app:layout_constraintStart_toStartOf="@+id/circleImageView"/>
+                            android:id="@+id/home_profile_username_textView" android:layout_marginTop="8dp"
+                            app:layout_constraintTop_toBottomOf="@+id/home_profile_circleImageView"
+                            app:layout_constraintEnd_toEndOf="@+id/home_profile_circleImageView"
+                            app:layout_constraintStart_toStartOf="@+id/home_profile_circleImageView"/>
                     <TextView
                             android:text="@string/score_equals"
                             android:textSize="16dp"
@@ -137,7 +137,7 @@
                                         android:textColor="@color/textcolorblack"
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
-                                        android:id="@+id/diamond_value3"
+                                        android:id="@+id/home_profile_fiftyfifty_textView"
                                         app:layout_constraintEnd_toStartOf="@+id/diamond_equal3"
                                         app:layout_constraintTop_toTopOf="@+id/diamond_equal3"
                                         app:layout_constraintBottom_toBottomOf="@+id/diamond_equal3"/>
@@ -154,9 +154,9 @@
                                         android:src="@drawable/joker1"
                                         android:layout_width="30dp"
                                         android:layout_height="25dp" android:id="@+id/imageView8"
-                                        app:layout_constraintEnd_toStartOf="@+id/diamond_value2"
-                                        app:layout_constraintTop_toTopOf="@+id/diamond_value2"
-                                        app:layout_constraintBottom_toBottomOf="@+id/diamond_value2"/>
+                                        app:layout_constraintEnd_toStartOf="@+id/home_profile_double_dip_textView"
+                                        app:layout_constraintTop_toTopOf="@+id/home_profile_double_dip_textView"
+                                        app:layout_constraintBottom_toBottomOf="@+id/home_profile_double_dip_textView"/>
                             </LinearLayout>
                             <LinearLayout
                                     android:orientation="horizontal"
@@ -173,7 +173,7 @@
                                         android:textColor="@color/textcolorblack"
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
-                                        android:id="@+id/diamond_value2"
+                                        android:id="@+id/home_profile_double_dip_textView"
                                         app:layout_constraintTop_toTopOf="@+id/diamond_equal"
                                         app:layout_constraintBottom_toBottomOf="@+id/diamond_equal"
                                         app:layout_constraintVertical_bias="1.0"
@@ -191,9 +191,9 @@
                                         android:src="@drawable/joker2"
                                         android:layout_width="30dp"
                                         android:layout_height="25dp" android:id="@+id/imageView7"
-                                        app:layout_constraintEnd_toStartOf="@+id/diamond_value"
-                                        app:layout_constraintBottom_toBottomOf="@+id/diamond_value"
-                                        app:layout_constraintTop_toTopOf="@+id/diamond_value"/>
+                                        app:layout_constraintEnd_toStartOf="@+id/home_profile_diamond_textView"
+                                        app:layout_constraintBottom_toBottomOf="@+id/home_profile_diamond_textView"
+                                        app:layout_constraintTop_toTopOf="@+id/home_profile_diamond_textView"/>
                             </LinearLayout>
                             <LinearLayout
                                     android:orientation="horizontal"
@@ -209,7 +209,7 @@
                                         android:textColor="@color/textcolorblack"
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
-                                        android:id="@+id/diamond_value"
+                                        android:id="@+id/home_profile_diamond_textView"
                                         app:layout_constraintEnd_toStartOf="@+id/diamond_equal"
                                         app:layout_constraintTop_toTopOf="@+id/diamond_equal"
                                         app:layout_constraintBottom_toBottomOf="@+id/diamond_equal"
@@ -246,7 +246,7 @@
                                         android:textColor="@color/textcolorblack"
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
-                                        android:id="@+id/health"
+                                        android:id="@+id/home_profile_health_textView"
                                         app:layout_constraintStart_toStartOf="parent"
                                         app:layout_constraintTop_toTopOf="parent"
                                         app:layout_constraintBottom_toBottomOf="parent"/>
@@ -256,9 +256,9 @@
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
                                         android:id="@+id/textView10"
-                                        app:layout_constraintStart_toEndOf="@+id/health"
-                                        app:layout_constraintTop_toTopOf="@+id/health"
-                                        app:layout_constraintBottom_toBottomOf="@+id/health"
+                                        app:layout_constraintStart_toEndOf="@+id/home_profile_health_textView"
+                                        app:layout_constraintTop_toTopOf="@+id/home_profile_health_textView"
+                                        app:layout_constraintBottom_toBottomOf="@+id/home_profile_health_textView"
                                         app:layout_constraintVertical_bias="0.0"/>
                                 <ImageView
                                         android:src="@drawable/health"
@@ -279,31 +279,34 @@
                             android:layout_marginStart="8dp" android:layout_marginTop="8dp"
                             app:layout_constraintTop_toTopOf="parent"/>
                     <TextView
-                            android:text="Mark Zuckerberg"
                             android:textColor="@color/textcolor"
                             android:textStyle="bold"
                             android:layout_width="0dp"
                             android:textSize="15sp"
-                            android:id="@+id/textView15"
+                            android:id="@+id/home_profile_display_name_textView"
                             app:layout_constraintStart_toStartOf="parent"
                             android:layout_height="wrap_content"
-                            app:layout_constraintTop_toTopOf="@+id/circleImageView"
-                            app:layout_constraintBottom_toBottomOf="@+id/circleImageView"
-                            app:layout_constraintEnd_toStartOf="@+id/circleImageView" android:textAlignment="center"
-                            android:layout_marginEnd="8dp" android:layout_marginStart="8dp"/>
+                            app:layout_constraintTop_toTopOf="@+id/home_profile_circleImageView"
+                            app:layout_constraintBottom_toBottomOf="@+id/home_profile_circleImageView"
+                            app:layout_constraintEnd_toStartOf="@+id/home_profile_circleImageView"
+                            android:textAlignment="center"
+                            android:layout_marginEnd="8dp" android:layout_marginStart="8dp" android:text="Burak"
+                            app:layout_constraintHorizontal_bias="1.0"/>
                     <TextView
-                            android:text="21"
                             android:textColor="@color/textcolor"
                             android:textStyle="bold"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:textSize="32sp"
-                            android:id="@+id/textView16"
+                            android:id="@+id/home_profile_age_textView"
                             android:layout_marginTop="8dp"
-                            app:layout_constraintTop_toTopOf="@+id/circleImageView" android:layout_marginBottom="8dp"
-                            app:layout_constraintBottom_toTopOf="@+id/textView5" android:layout_marginEnd="8dp"
+                            app:layout_constraintTop_toTopOf="@+id/home_profile_circleImageView"
+                            android:layout_marginBottom="8dp"
+                            app:layout_constraintBottom_toTopOf="@+id/home_profile_username_textView"
+                            android:layout_marginEnd="8dp"
                             app:layout_constraintEnd_toEndOf="parent"
-                            app:layout_constraintStart_toEndOf="@+id/circleImageView" android:layout_marginStart="8dp"/>
+                            app:layout_constraintStart_toEndOf="@+id/home_profile_circleImageView"
+                            android:layout_marginStart="8dp" android:text="32"/>
                 </android.support.constraint.ConstraintLayout>
             </LinearLayout>
             <LinearLayout
@@ -372,20 +375,19 @@
                     android:background="@drawable/guessit_button_oval"
                     android:layout_width="250dp"
                     android:layout_height="45dp"
-                    android:id="@+id/button" android:layout_marginBottom="64dp"
+                    android:id="@+id/home_profile_guessit_button" android:layout_marginBottom="64dp"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/linearLayout2" app:layout_constraintEnd_toEndOf="parent"
                     android:layout_marginEnd="8dp" app:layout_constraintStart_toStartOf="parent"
-                    android:layout_marginStart="8dp" app:layout_constraintVertical_bias="0.76"
-            />
+                    android:layout_marginStart="8dp" app:layout_constraintVertical_bias="0.76"/>
             <LinearLayout
                     android:layout_width="wrap_content"
                     android:orientation="vertical"
                     android:gravity="center"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
-                    app:layout_constraintTop_toBottomOf="@+id/button" app:layout_constraintEnd_toEndOf="@+id/button"
-                    android:layout_marginEnd="8dp" app:layout_constraintStart_toStartOf="@+id/button"
+                    app:layout_constraintTop_toBottomOf="@+id/home_profile_guessit_button" app:layout_constraintEnd_toEndOf="@+id/home_profile_guessit_button"
+                    android:layout_marginEnd="8dp" app:layout_constraintStart_toStartOf="@+id/home_profile_guessit_button"
                     android:layout_marginStart="8dp" app:layout_constraintBottom_toBottomOf="parent"
                     android:layout_marginBottom="8dp">
                 <TextView
@@ -398,7 +400,8 @@
                         android:layout_height="wrap_content"
                         app:layout_constraintStart_toEndOf="@+id/imageView" android:layout_marginStart="8dp"
                         app:layout_constraintBottom_toBottomOf="@+id/imageView" android:layout_marginBottom="0dp"
-                        app:layout_constraintTop_toTopOf="@+id/imageView" android:layout_marginLeft="0dp"/>
+                        app:layout_constraintTop_toTopOf="@+id/imageView" android:layout_marginLeft="0dp"
+                        android:layout_marginEnd="8dp"/>
 
 
                 <LinearLayout
@@ -412,9 +415,9 @@
                             android:layout_width="30dp"
                             android:layout_gravity="center"
                             android:layout_height="30dp"
-                            android:id="@+id/imageView" app:layout_constraintStart_toStartOf="@+id/button"
+                            android:id="@+id/imageView" app:layout_constraintStart_toStartOf="@+id/home_profile_guessit_button"
                             android:layout_marginStart="0dp" android:layout_marginTop="0dp"
-                            app:layout_constraintTop_toBottomOf="@+id/button"
+                            app:layout_constraintTop_toBottomOf="@+id/home_profile_guessit_button"
                             app:layout_constraintBottom_toBottomOf="parent"
                             android:layout_marginBottom="0dp"/>
                     <TextView

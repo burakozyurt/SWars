@@ -24,7 +24,7 @@ public class StoreFragment extends Fragment {
     public StoreFragment() {
         // Required empty public constructor
         storeDiamondList = new ArrayList<>();
-        storeDiamondList.add(new StoreDiamond("10","1,99",R.drawable.diamond10));
+        storeDiamondList.add(new StoreDiamond("10","2,49",R.drawable.diamond10));
         storeDiamondList.add(new StoreDiamond("20","4,49",R.drawable.diamond20));
         storeDiamondList.add(new StoreDiamond("50","10,99",R.drawable.diamond50));
         storeDiamondList.add(new StoreDiamond("100","20,99",R.drawable.diamond100));

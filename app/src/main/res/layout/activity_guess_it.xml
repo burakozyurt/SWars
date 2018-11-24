@@ -10,11 +10,11 @@
 
     <android.support.constraint.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent" android:visibility="gone">
+            android:layout_height="match_parent">
 
         <Button
                 android:text="20"
-                android:textColor="@color/textcolor"
+                android:textColor="@color/textcolorblack"
                 android:background="@drawable/circlebutton"
                 android:layout_width="80dp"
                 android:layout_height="75dp" android:id="@+id/button5"
@@ -49,7 +49,7 @@
                 app:layout_constraintTop_toTopOf="parent" android:layout_marginTop="8dp"/>
         <Button
                 android:text="20"
-                android:textColor="@color/textcolor"
+                android:textColor="@color/textcolorblack"
                 android:background="@drawable/circlebutton"
                 android:layout_width="80dp"
                 android:layout_height="75dp" android:id="@+id/button2"
@@ -57,7 +57,7 @@
                 app:layout_constraintTop_toTopOf="@+id/button5"/>
         <Button
                 android:text="20"
-                android:textColor="@color/textcolor"
+                android:textColor="@color/textcolorblack"
                 android:background="@drawable/circlebutton"
                 android:layout_width="80dp"
                 android:layout_height="75dp" android:id="@+id/button6"
@@ -75,7 +75,7 @@
                 app:layout_constraintStart_toEndOf="@+id/textView7"/>
         <Button
                 android:text="20"
-                android:textColor="@color/textcolor"
+                android:textColor="@color/textcolorblack"
                 android:background="@drawable/circlebutton"
                 android:layout_width="80dp"
                 android:layout_height="75dp" android:id="@+id/button7"
@@ -86,8 +86,9 @@
                 android:layout_width="40dp"
                 android:layout_height="40dp" app:srcCompat="@drawable/joker1"
                 android:id="@+id/imageView4"
-                tools:layout_editor_absoluteY="103dp" app:layout_constraintEnd_toEndOf="parent"
-                android:layout_marginEnd="32dp"/>
+                app:layout_constraintEnd_toEndOf="parent"
+                android:layout_marginEnd="32dp"
+                android:layout_marginTop="24dp" app:layout_constraintTop_toTopOf="@+id/imageView5"/>
         <TextView
                 android:text="0"
                 android:textSize="25dp"
@@ -164,7 +165,7 @@
     <android.support.constraint.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent" android:layout_alignParentStart="true"
-            android:layout_alignParentTop="true">
+            android:layout_alignParentTop="true" android:visibility="gone">
 
         <TextView
                 android:text="1500 Puan"
