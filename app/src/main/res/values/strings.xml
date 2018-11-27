@@ -37,7 +37,7 @@
     <string name="diamondValue">diamondValue</string>
     <string name="wildcards">wildcards</string>
     <string name="home_settings_title_follow">Follow</string>
-    <string name="home_settings_title_updatetouserinfo">UpdateToUserInfo</string>
+    <string name="home_settings_title_updatetouserinfo">Update To User Profile</string>
     <string name="home_settings_title_useragreement">User Agreement</string>
     <string name="home_settings_title_about">About</string>
     <string name="home_settings_title_logout">Logout</string>
