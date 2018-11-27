@@ -18,6 +18,7 @@
     <color name="textcolor">#ffffff</color>
     <color name="textcolorblack">#000000</color>
     <color name="bluecolor">#03a9f4</color>
+    <color name="transparent">#0003a9f4</color>
     #4F1AC9
     
 </resources>

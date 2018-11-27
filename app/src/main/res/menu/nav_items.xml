@@ -1,12 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <item android:title="@string/home" android:id="@+id/nav_home" android:icon="@drawable/home"
-          app:showAsAction="always|collapseActionView"/>
-    <item android:title="@string/rank" android:id="@+id/nav_rank" android:icon="@drawable/rank"
-          app:showAsAction="always|collapseActionView"/>
-    <item android:title="@string/spin" android:id="@+id/nav_spin" android:icon="@drawable/spin"
-          app:showAsAction="always|collapseActionView"/>
-    <item android:title="@string/store" android:id="@+id/nav_store" android:icon="@drawable/store"
-          app:showAsAction="always|collapseActionView"/>
+    <item android:title="@string/home"
+          android:id="@+id/nav_home"
+          android:icon="@drawable/home"/>
+
+    <item android:title="@string/rank"
+          android:id="@+id/nav_rank"
+          android:icon="@drawable/rank"/>
+
+    <item android:title="@string/spin"
+          android:id="@+id/nav_spin"
+          android:icon="@drawable/spin"/>
+    <item android:title="@string/store"
+          android:id="@+id/nav_store"
+          android:icon="@drawable/store"/>
 </menu>

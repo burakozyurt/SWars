@@ -22,6 +22,7 @@ public class AuthUsersInfoActivity extends Activity {
     private FirebaseDatabase database;
     private DatabaseReference myRefUser;
     private DatabaseReference myRefAward;
+    private DatabaseReference myRefRightOfGame;
     private FirebaseStorage firebaseStorage;
     private StorageReference mStorageRef;
     private UserProperties userProperties;
@@ -35,6 +36,7 @@ public class AuthUsersInfoActivity extends Activity {
     private String userName;
     private Integer age;
     private String photoUrl;
+    private final Integer firstRightOfGameValue = 10;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -51,6 +53,7 @@ public class AuthUsersInfoActivity extends Activity {
         continueButton = findViewById(R.id.signin_info_continue_button);
         myRefUser = database.getReference("Users/" + mAuth.getUid());
         myRefAward = database.getReference("FirstAward");
+        myRefRightOfGame = database.getReference("RightOfGame");
 
         continueButtonClick();
     }
@@ -91,13 +94,19 @@ public class AuthUsersInfoActivity extends Activity {
                                                         myRefUser.child(getResources().getString(R.string.wildcards)).setValue(wildcards).addOnSuccessListener(new OnSuccessListener<Void>() {
                                                             @Override
                                                             public void onSuccess(Void aVoid) {
-                                                                myRefUser.child(getResources().getString(R.string.account_State)).child(getResources().getString(R.string.isReady)).setValue(true).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                                myRefRightOfGame.child(mAuth.getUid()).setValue(firstRightOfGameValue).addOnSuccessListener(new OnSuccessListener<Void>() {
                                                                     @Override
                                                                     public void onSuccess(Void aVoid) {
-                                                                        Intent i = new Intent(getApplicationContext(),MainActivity.class);
-                                                                        startActivity(i);
+                                                                        myRefUser.child(getResources().getString(R.string.account_State)).child(getResources().getString(R.string.isReady)).setValue(true).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                                            @Override
+                                                                            public void onSuccess(Void aVoid) {
+                                                                                Intent i = new Intent(getApplicationContext(),MainActivity.class);
+                                                                                startActivity(i);
+                                                                            }
+                                                                        });
                                                                     }
                                                                 });
+
                                                             }
                                                         });
                                                     }

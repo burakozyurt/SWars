@@ -35,6 +35,7 @@
     <string name="properties">properties</string>
     <string name="diamondValue">diamondValue</string>
     <string name="wildcards">wildcards</string>
+    <string name="loadingMessage">Kullanıcı Bilgileri Yükleniyor...</string>
     <string name="home_settings_title_follow">Follow</string>
     <string name="home_settings_title_updatetouserinfo">UpdateToUserInfo</string>
     <string name="home_settings_title_useragreement">User Agreement</string>

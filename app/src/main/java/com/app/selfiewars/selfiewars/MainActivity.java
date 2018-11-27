@@ -7,8 +7,10 @@ import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.MenuItem;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -19,21 +21,25 @@ import com.google.firebase.database.*;
 
 public class MainActivity extends AppCompatActivity {
 
-    ImageView ımageView;
-    TextView textView;
-    BottomNavigationView bottomNavigationView;
-    FrameLayout frameLayout;
-    HomeFragment homeFragment;
-    RankFragment rankFragment;
-    SpinFragment spinFragment;
-    StoreFragment storeFragment;
+    private ImageView ımageView;
+    private TextView textView;
+    private BottomNavigationView bottomNavigationView;
+    private FrameLayout frameLayout;
+    private HomeFragment homeFragment;
+    private RankFragment rankFragment;
+    private SpinFragment spinFragment;
+    private StoreFragment storeFragment;
+    private FragmentManager fragmentManager;
+    private Fragment active;
     private FirebaseAuth mAuth;
     private FirebaseDatabase database;
     private DatabaseReference myRefUser;
+    public static UserProperties userProperties;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        fragmentManager = getSupportFragmentManager();
         mAuth = FirebaseAuth.getInstance();
         database = FirebaseDatabase.getInstance();
         myRefUser = database.getReference("Users");
@@ -45,6 +51,7 @@ public class MainActivity extends AppCompatActivity {
                     if(isReady){
                         define();
                         setFrameLayout();
+                        //getUserPropertiesDataFromFirebase();
                     }
                     else {
                         Intent i = new Intent(getApplicationContext(),AuthenticationScreen.class);
@@ -65,14 +72,18 @@ public class MainActivity extends AppCompatActivity {
             startActivity(i);
         }
 
-    }
 
-    public void setFrameLayout(){
+    }
+    private void setFrameLayout(){
         homeFragment = new HomeFragment();
         rankFragment = new RankFragment();
         spinFragment = new SpinFragment();
         storeFragment = new StoreFragment();
-        setFragment(homeFragment);
+        active = homeFragment;
+        fragmentManager.beginTransaction().add(R.id.main_frame,rankFragment,"rank").hide(rankFragment).commit();
+        fragmentManager.beginTransaction().add(R.id.main_frame,spinFragment,"spin").hide(spinFragment).commit();
+        fragmentManager.beginTransaction().add(R.id.main_frame,storeFragment,"store").hide(storeFragment).commit();
+        fragmentManager.beginTransaction().add(R.id.main_frame,homeFragment,"home").commit();
         bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
@@ -95,11 +106,35 @@ public class MainActivity extends AppCompatActivity {
         });
     }
     private void setFragment(Fragment fragment) {
-        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-        fragmentTransaction.replace(R.id.main_frame,fragment);
-        fragmentTransaction.commit();
-    }
+        /*if(active == spinFragment){
+            fragmentManager.beginTransaction().remove(spinFragment).show(fragment).commit();
+            active = fragment;
+        }else if(fragment == spinFragment){
+            fragmentManager.beginTransaction().hide(active).add(R.id.main_frame,spinFragment,"spin").commit();
+            active = fragment;
+        }else {
 
+        }*/
+        fragmentManager.beginTransaction().hide(active).show(fragment).commit();
+        active =fragment;
+        /*FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+        fragmentTransaction.replace(R.id.main_frame,fragment);
+        fragmentTransaction.commit();*/
+    }
+    public void getUserPropertiesDataFromFirebase(){
+        myRefUser.child(mAuth.getUid()).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                userProperties = dataSnapshot.child(getResources().getString(R.string.properties)).getValue(UserProperties.class);
+                Log.d("BugControl","Data Mainactivity e çekildi // Ad: "+userProperties.getDisplayName());
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+    }
     public void define() {
         bottomNavigationView = findViewById(R.id.bottom_nav_bar);
         frameLayout=findViewById(R.id.main_frame);

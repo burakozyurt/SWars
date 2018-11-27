@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.Toast;
 import rubikstudio.library.LuckyWheelView;
 import rubikstudio.library.model.LuckyItem;
 
@@ -20,6 +21,7 @@ import java.util.Random;
  */
 public class SpinFragment extends Fragment {
     LuckyWheelView luckyWheelView;
+    List<LuckyItem> data;
     Button spin;
     final int idDiamond = 0, idJoker1 = 1, idJoker2 = 2, idReSpin = 3, idHealth = 4,idGreenGame = 5;
     public SpinFragment() {
@@ -41,6 +43,12 @@ public class SpinFragment extends Fragment {
 
     public void setupLuckyWheel(){
         setSpinItem();
+        luckyWheelView.setLuckyRoundItemSelectedListener(new LuckyWheelView.LuckyRoundItemSelectedListener() {
+            @Override
+            public void LuckyRoundItemSelected(int index) {
+                Toast.makeText(getContext(), ""+data.get(index-1).text, Toast.LENGTH_SHORT).show();
+            }
+        });
     }
     public void spinClick(){
         spin.setOnClickListener(new View.OnClickListener() {
@@ -52,7 +60,7 @@ public class SpinFragment extends Fragment {
     }
 
     public void setSpinItem(){
-        List<LuckyItem> data = new ArrayList<>();
+        data = new ArrayList<>();
         LuckyItem luckyItem1 = new LuckyItem();
         luckyItem1.text = "x1";
         luckyItem1.valueNumber = 1;

@@ -1,6 +1,7 @@
 package com.app.selfiewars.selfiewars;
 
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -33,6 +34,7 @@ public class HomeFragment extends Fragment {
     private TextView doubleDipTextView;
     private TextView diamondTextView;
     private TextView usernameTextView;
+    private TextView rightOfGameTextView;
     private CircleImageView profileImageView;
     private String photoUrl;
     private FirebaseDatabase mdatabase;
@@ -42,13 +44,15 @@ public class HomeFragment extends Fragment {
     private Button guessitButton;
     private Wildcards wildcards;
     private Integer diamondToken;
+    private Integer rightOfGame;
+    private ProgressDialog mProgressDialog;
 
 
     public HomeFragment() {
         // Required empty public constructor
         mPicasso = Picasso.get();
         mPicasso.setIndicatorsEnabled(true);
-
+        rightOfGame = 0;
     }
 
 
@@ -62,10 +66,33 @@ public class HomeFragment extends Fragment {
         mdatabase = FirebaseDatabase.getInstance();
         myUserRef = mdatabase.getReference("Users/" + mAuth.getUid());
         define(rootview);
-        getUserData();
+        //getUserData();
         onClick_GuessIt();
+        mCheckInforInServer("Users/" + mAuth.getUid());
+        mGetInforInServer("RightOfGame/" + mAuth.getUid());
         return rootview;
     }
+
+    private void mGetInforInServer(String child) {
+        new Database().mReadDataRealTime(child, new OnGetDataListener() {
+            @Override
+            public void onStart() {
+
+            }
+
+            @Override
+            public void onSuccess(DataSnapshot data) {
+                rightOfGame = data.getValue(Integer.class);
+                rightOfGameTextView.setText(""+rightOfGame);
+            }
+
+            @Override
+            public void onFailed(DatabaseError databaseError) {
+
+            }
+        });
+    }
+
     private void define(View rootview){
         displayNameTextView = rootview.findViewById(R.id.home_profile_display_name_textView);
         ageTextView = rootview.findViewById(R.id.home_profile_age_textView);
@@ -78,9 +105,10 @@ public class HomeFragment extends Fragment {
         usernameTextView = rootview.findViewById(R.id.home_profile_username_textView);
         profileImageView = rootview.findViewById(R.id.home_profile_circleImageView);
         guessitButton = rootview.findViewById(R.id.home_profile_guessit_button);
+        rightOfGameTextView = rootview.findViewById(R.id.home_profile_rightOfGame_textView);
     }
     private void getUserData(){
-        myUserRef.addValueEventListener(new ValueEventListener() {
+        myUserRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 Boolean isReady = dataSnapshot.child(getResources().getString(R.string.account_State)).child(getResources().getString(R.string.isReady)).getValue(Boolean.class);
@@ -91,31 +119,16 @@ public class HomeFragment extends Fragment {
                     ageTextView.setText(String.valueOf(properties.getAge()));
                     photoUrl = properties.getPhotoUrl();
                     mPicasso.load(photoUrl).resize(400,400).into(profileImageView);
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
-        myUserRef.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                Boolean isReady = dataSnapshot.child(getResources().getString(R.string.account_State)).child(getResources().getString(R.string.isReady)).getValue(Boolean.class);
-                if(isReady){
                     if(dataSnapshot.hasChild(getResources().getString(R.string.token))){
-                        Toast.makeText(getContext(), ""+diamondToken, Toast.LENGTH_SHORT).show();
-                        diamondTextView.setText(""+dataSnapshot.child(getResources().getString(R.string.token)).child((getResources().getString(R.string.diamondValue))).getValue(Integer.class));}
+                        diamondToken =dataSnapshot.child(getResources().getString(R.string.token)).child((getResources().getString(R.string.diamondValue))).getValue(Integer.class);
+                        diamondTextView.setText(""+diamondToken);}
                     if(dataSnapshot.hasChild(getResources().getString(R.string.wildcards))) {
                         wildcards = dataSnapshot.child(getResources().getString(R.string.wildcards)).getValue(Wildcards.class);
                         doubleDipTextView.setText(""+wildcards.getDoubleDipValue());
                         healthTextView.setText(""+wildcards.getHealthValue());
                         fiftyFiftyTextView.setText(""+wildcards.getFiftyFiftyValue());
                     }
-
                 }
-
             }
 
             @Override
@@ -134,4 +147,53 @@ public class HomeFragment extends Fragment {
             }
         });
     }
+    private void mCheckInforInServer(String child) {
+        new Database().mReadDataRealTime(child, new OnGetDataListener() {
+            @Override
+            public void onStart() {
+                //DO SOME THING WHEN START GET DATA HERE
+                if (mProgressDialog == null) {
+                    mProgressDialog = new ProgressDialog(getContext());
+                    mProgressDialog.setMessage(getResources().getString(R.string.loadingMessage));
+                    mProgressDialog.setIndeterminate(true);
+                    mProgressDialog.setCanceledOnTouchOutside(false);
+                }
+
+                mProgressDialog.show();
+            }
+
+            @Override
+            public void onSuccess(DataSnapshot dataSnapshot) {
+                //DO SOME THING WHEN GET DATA SUCCESS HERE
+                Boolean isReady = dataSnapshot.child(getResources().getString(R.string.account_State)).child(getResources().getString(R.string.isReady)).getValue(Boolean.class);
+                if(isReady){
+                    UserProperties properties = dataSnapshot.child(getResources().getString(R.string.properties)).getValue(UserProperties.class);
+                    displayNameTextView.setText(properties.getDisplayName());
+                    usernameTextView.setText(properties.getUserName());
+                    ageTextView.setText(String.valueOf(properties.getAge()));
+                    photoUrl = properties.getPhotoUrl();
+                    mPicasso.load(photoUrl).resize(400,400).into(profileImageView);
+                    if(dataSnapshot.hasChild(getResources().getString(R.string.token))){
+                        diamondToken =dataSnapshot.child(getResources().getString(R.string.token)).child((getResources().getString(R.string.diamondValue))).getValue(Integer.class);
+                        diamondTextView.setText(""+diamondToken);}
+                    if(dataSnapshot.hasChild(getResources().getString(R.string.wildcards))) {
+                        wildcards = dataSnapshot.child(getResources().getString(R.string.wildcards)).getValue(Wildcards.class);
+                        doubleDipTextView.setText(""+wildcards.getDoubleDipValue());
+                        healthTextView.setText(""+wildcards.getHealthValue());
+                        fiftyFiftyTextView.setText(""+wildcards.getFiftyFiftyValue());
+                    }
+                    if (mProgressDialog != null && mProgressDialog.isShowing()) {
+                        mProgressDialog.dismiss();
+                    }
+                }
+            }
+
+            @Override
+            public void onFailed(DatabaseError databaseError) {
+                //DO SOME THING WHEN GET DATA FAILED HERE
+            }
+        });
+
+    }
+
 }
