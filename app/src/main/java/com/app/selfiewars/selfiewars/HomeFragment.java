@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -15,11 +16,14 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+import com.airbnb.lottie.LottieAnimationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.*;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 import de.hdodenhof.circleimageview.CircleImageView;
+
+import java.text.SimpleDateFormat;
 
 
 /**
@@ -37,9 +41,11 @@ public class HomeFragment extends Fragment {
     private TextView usernameTextView;
     private TextView rightOfGameTextView;
     private CircleImageView profileImageView;
+    private ImageView rightOfGameDiamondImageView;
     private String photoUrl;
     private FirebaseDatabase mdatabase;
     private DatabaseReference myUserRef;
+    private DatabaseReference myRigtOfGameRef;
     private FirebaseAuth mAuth;
     private Picasso mPicasso;
     private Button guessitButton;
@@ -49,6 +55,10 @@ public class HomeFragment extends Fragment {
     private ProgressDialog mProgressDialog;
     private ImageView settingsIcon;
 
+    private Long guessItMilisecond;
+    private Integer guessItAdsCount;
+    private LottieAnimationView lottieAds;
+    private static final SimpleDateFormat sdf  = new SimpleDateFormat("yyyy.MM.dd.HH.mm.ss");;
 
     public HomeFragment() {
         // Required empty public constructor
@@ -63,10 +73,10 @@ public class HomeFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View rootview = inflater.inflate(R.layout.fragment_home, container, false);
-
         mAuth = FirebaseAuth.getInstance();
         mdatabase = FirebaseDatabase.getInstance();
         myUserRef = mdatabase.getReference("Users/" + mAuth.getUid());
+        myRigtOfGameRef = mdatabase.getReference("RightOfGame/" + mAuth.getUid());
         define(rootview);
         //getUserData();
         onClick_GuessIt();
@@ -76,25 +86,7 @@ public class HomeFragment extends Fragment {
         return rootview;
     }
 
-    private void mGetInforInServer(String child) {
-        new Database().mReadDataRealTime(child, new OnGetDataListener() {
-            @Override
-            public void onStart() {
 
-            }
-
-            @Override
-            public void onSuccess(DataSnapshot data) {
-                rightOfGame = data.getValue(Integer.class);
-                rightOfGameTextView.setText(""+rightOfGame);
-            }
-
-            @Override
-            public void onFailed(DatabaseError databaseError) {
-
-            }
-        });
-    }
 
     private void define(View rootview){
         displayNameTextView = rootview.findViewById(R.id.home_profile_display_name_textView);
@@ -109,6 +101,8 @@ public class HomeFragment extends Fragment {
         profileImageView = rootview.findViewById(R.id.home_profile_circleImageView);
         guessitButton = rootview.findViewById(R.id.home_profile_guessit_button);
         rightOfGameTextView = rootview.findViewById(R.id.home_profile_rightOfGame_textView);
+        lottieAds = rootview.findViewById(R.id.lottieAds);
+        rightOfGameDiamondImageView = rootview.findViewById(R.id.rightOfGameDiamond);
         settingsIcon = rootview.findViewById(R.id.settingsIcon);
     }
     private void getUserData(){
@@ -145,9 +139,50 @@ public class HomeFragment extends Fragment {
         guessitButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent i = new Intent(getActivity(),GuessItActivity.class);
-                startActivity(i);
+                myRigtOfGameRef.runTransaction(new Transaction.Handler() {
+                    @NonNull
+                    @Override
+                    public Transaction.Result doTransaction(@NonNull MutableData mutableData) {
+                        Integer i = mutableData.getValue(Integer.class);
+                        if(i == 0){
+                            return null;
+                        }else {
+                            i--;
+                            mutableData.setValue(i);
+                            return Transaction.success(mutableData);
+                        }
 
+                    }
+
+                    @Override
+                    public void onComplete(@Nullable DatabaseError databaseError, boolean b, @Nullable DataSnapshot dataSnapshot) {
+                        if(b){
+                        Intent i = new Intent(getActivity(),GuessItActivity.class);
+                        startActivity(i);
+                        }else {
+                            if(rightOfGame == 0 && guessItAdsCount > 0){
+                                rightOfGameDiamondImageView.setVisibility(View.GONE);
+                                lottieAds.setVisibility(View.VISIBLE);
+
+                            }else if(rightOfGame == 0 && guessItAdsCount == 0){
+                                lottieAds.setVisibility(View.GONE);
+                                rightOfGameDiamondImageView.setVisibility(View.VISIBLE);
+
+                            }
+                        }
+
+                    }
+                });
+
+
+            }
+        });
+    }
+    private void onClickListener_LottieAds(){
+        lottieAds.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Toast.makeText(getContext(), "Reklam Yükleniyor", Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -186,6 +221,13 @@ public class HomeFragment extends Fragment {
                         healthTextView.setText(""+wildcards.getHealthValue());
                         fiftyFiftyTextView.setText(""+wildcards.getFiftyFiftyValue());
                     }
+                    if(dataSnapshot.hasChild(getResources().getString(R.string.timestamp))){{
+                        guessItAdsCount = dataSnapshot.child(getResources().getString(R.string.timestamp)).child("rightofads").getValue(Integer.class);
+                        guessItMilisecond = Long.valueOf(dataSnapshot.child(getResources().getString(R.string.timestamp)).child("timestamp").getValue(Integer.class));
+
+                    }
+
+                    }
                     if (mProgressDialog != null && mProgressDialog.isShowing()) {
                         mProgressDialog.dismiss();
                     }
@@ -209,5 +251,23 @@ public class HomeFragment extends Fragment {
         });
 
     }
+    private void mGetInforInServer(String child) {
+        new Database().mReadDataRealTime(child, new OnGetDataListener() {
+            @Override
+            public void onStart() {
 
+            }
+
+            @Override
+            public void onSuccess(DataSnapshot data) {
+                rightOfGame = data.getValue(Integer.class);
+                rightOfGameTextView.setText(""+rightOfGame);
+            }
+
+            @Override
+            public void onFailed(DatabaseError databaseError) {
+
+            }
+        });
+    }
 }

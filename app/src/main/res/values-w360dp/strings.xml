@@ -28,19 +28,22 @@
     <string name="default_web_lient_id">412883841103-oltcc80bcdoj4r0f3qknruh5elvvk1ed.apps.googleusercontent.com
     </string>
 
-
+    <!-- TODo: Çeviri yapılmayacak olan stringler  Firebase -->
     <string name="account_State">accountstate</string>
     <string name="isReady">isReady</string>
     <string name="Age">Age</string>
     <string name="properties">properties</string>
+    <string name="token">token</string>
     <string name="diamondValue">diamondValue</string>
     <string name="wildcards">wildcards</string>
+    <string name="timestamp">timestamp</string>
+
+    <string name="loadingMessage">Kullanıcı Bilgileri Yükleniyor...</string>
+
     <string name="home_settings_title_follow">Follow</string>
     <string name="home_settings_title_updatetouserinfo">Update To User Profile</string>
     <string name="home_settings_title_useragreement">User Agreement</string>
     <string name="home_settings_title_about">About</string>
     <string name="home_settings_title_logout">Logout</string>
-    <string name="loadingMessage">Kullanıcı Bilgileri Yükleniyor...</string>
-
 
 </resources>
