@@ -8,13 +8,14 @@
     <color name="guess_it_button1">#c33fcf</color>
     <color name="guess_it_button2">#794eca</color>
     <color name="bottom_nav_bar_background">#F1F1F1</color>
-    <color name="x2joker_background">#d50000</color>
-    <color name="fiftyfifty_background">#00c853</color>
+    <color name="diamond_background">#617491</color>
+    <color name="fiftyfifty_background">#617491</color>
+    <color name="x2joker_background">#617491</color>
     <color name="background5050">#6CC552</color>
     <color name="guessit_activity_background">#e02fafed</color>
     <color name="true_answer_background">#80E27E</color>
     <color name="false_answer_background">#F44336</color>
-    <color name="diamond_background">#617491</color>
+    <color name="bottomitembar">#617491</color>
     <color name="textcolor">#ffffff</color>
     <color name="textcolorblack">#000000</color>
     <color name="bluecolor">#03a9f4</color>

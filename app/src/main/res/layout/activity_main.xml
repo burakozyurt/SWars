@@ -12,7 +12,7 @@
             android:background="#ffffff"
             app:itemIconTint="@color/nav_item_colors"
             android:backgroundTint="@color/background"
-            app:itemTextColor="@color/diamond_background"
+            app:itemTextColor="@color/bottomitembar"
             android:id="@+id/bottom_nav_bar"
             app:itemBackground="@color/transparent"
             app:menu="@menu/nav_items"

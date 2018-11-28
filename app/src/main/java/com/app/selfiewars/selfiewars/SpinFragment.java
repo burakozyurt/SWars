@@ -1,6 +1,7 @@
 package com.app.selfiewars.selfiewars;
 
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -20,10 +21,11 @@ import java.util.Random;
  * A simple {@link Fragment} subclass.
  */
 public class SpinFragment extends Fragment {
-    LuckyWheelView luckyWheelView;
-    List<LuckyItem> data;
-    Button spin;
-    final int idDiamond = 0, idJoker1 = 1, idJoker2 = 2, idReSpin = 3, idHealth = 4,idGreenGame = 5;
+    private LuckyWheelView luckyWheelView;
+    private List<LuckyItem> data;
+    private Button spin;
+    private final int idDiamond = 0, idJoker1 = 1, idJoker2 = 2, idReSpin = 3, idHealth = 4,idGreenGame = 5;
+    private final String color1 ="#ffffff",color2="#e3f2fd",color3="#bbdefb";
     public SpinFragment() {
         // Required empty public constructor
     }
@@ -65,7 +67,7 @@ public class SpinFragment extends Fragment {
         luckyItem1.text = "x1";
         luckyItem1.valueNumber = 1;
         luckyItem1.icon = R.drawable.health;
-        luckyItem1.color = 0xffFFF3E0;
+        luckyItem1.color = Color.parseColor(color1);
         luckyItem1.id = idHealth;
         data.add(luckyItem1);
 
@@ -73,7 +75,7 @@ public class SpinFragment extends Fragment {
         luckyItem2.text = "x3";
         luckyItem2.valueNumber = 3;
         luckyItem2.icon = R.drawable.joker2;
-        luckyItem2.color = 0xffFFE0B2;
+        luckyItem2.color = Color.parseColor(color2);
         luckyItem2.id = idJoker2;
         data.add(luckyItem2);
 
@@ -81,7 +83,7 @@ public class SpinFragment extends Fragment {
         luckyItem3.text = "x1";
         luckyItem3.valueNumber = 1;
         luckyItem3.icon = R.drawable.joker1;
-        luckyItem3.color = 0xffFFF3E0;
+        luckyItem3.color = Color.parseColor(color3);
         luckyItem3.id = idJoker1;
         data.add(luckyItem3);
 
@@ -91,7 +93,7 @@ public class SpinFragment extends Fragment {
         luckyItem4.valueNumber = 5;
         luckyItem4.id = idDiamond;
         luckyItem4.icon = R.drawable.diamond;
-        luckyItem4.color = 0xffFFCC80;
+        luckyItem4.color = Color.parseColor(color1);
         data.add(luckyItem4);
 
         LuckyItem luckyItem5 = new LuckyItem();
@@ -99,7 +101,7 @@ public class SpinFragment extends Fragment {
         luckyItem5.valueNumber = 1;
         luckyItem5.id = idGreenGame;
         luckyItem5.icon = R.drawable.greengem;
-        luckyItem5.color = 0xffFFE0B2;
+        luckyItem5.color = Color.parseColor(color2);
         data.add(luckyItem5);
 
         LuckyItem luckyItem6 = new LuckyItem();
@@ -107,7 +109,7 @@ public class SpinFragment extends Fragment {
         luckyItem6.id = idReSpin;
         luckyItem6.valueNumber = 2;
         luckyItem6.icon = R.drawable.spin;
-        luckyItem6.color = 0xffFFCC80;
+        luckyItem6.color = Color.parseColor(color3);
         data.add(luckyItem6);
         //////////////////
 
@@ -117,7 +119,7 @@ public class SpinFragment extends Fragment {
         luckyItem7.valueNumber = 2;
         luckyItem7.id = idHealth;
         luckyItem7.icon = R.drawable.health;
-        luckyItem7.color = 0xffFFF3E0;
+        luckyItem7.color = Color.parseColor(color1);
         data.add(luckyItem7);
 
         LuckyItem luckyItem8 = new LuckyItem();
@@ -125,7 +127,7 @@ public class SpinFragment extends Fragment {
         luckyItem8.id = idJoker2;
         luckyItem8.valueNumber = 1;
         luckyItem8.icon = R.drawable.joker2;
-        luckyItem8.color = 0xffFFE0B2;
+        luckyItem8.color = Color.parseColor(color2);
         data.add(luckyItem8);
 
         LuckyItem luckyItem9 = new LuckyItem();
@@ -133,7 +135,7 @@ public class SpinFragment extends Fragment {
         luckyItem9.id = idJoker1;
         luckyItem9.valueNumber = 3;
         luckyItem9.icon = R.drawable.joker1;
-        luckyItem9.color = 0xffFFF3E0;
+        luckyItem9.color = Color.parseColor(color3);
         data.add(luckyItem9);
 
         LuckyItem luckyItem10 = new LuckyItem();
@@ -141,7 +143,7 @@ public class SpinFragment extends Fragment {
         luckyItem10.id = idDiamond;
         luckyItem10.valueNumber = 10;
         luckyItem10.icon = R.drawable.diamond;
-        luckyItem10.color = 0xffFFCC80;
+        luckyItem10.color = Color.parseColor(color1);
         data.add(luckyItem10);
 
         LuckyItem luckyItem11 = new LuckyItem();
@@ -149,7 +151,7 @@ public class SpinFragment extends Fragment {
         luckyItem11.id = idGreenGame;
         luckyItem11.valueNumber = 2;
         luckyItem11.icon = R.drawable.greengem;
-        luckyItem11.color = 0xffFFE0B2;
+        luckyItem11.color = Color.parseColor(color2);
         data.add(luckyItem11);
 
         LuckyItem luckyItem12 = new LuckyItem();
@@ -157,7 +159,7 @@ public class SpinFragment extends Fragment {
         luckyItem12.id = idReSpin;
         luckyItem12.valueNumber = 1;
         luckyItem12.icon = R.drawable.spin;
-        luckyItem12.color = 0xffFFCC80;
+        luckyItem12.color = Color.parseColor(color3);
         data.add(luckyItem12);
 
         luckyWheelView.setData(data);

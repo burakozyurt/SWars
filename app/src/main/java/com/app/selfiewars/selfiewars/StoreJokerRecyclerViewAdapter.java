@@ -33,10 +33,10 @@ public class StoreJokerRecyclerViewAdapter extends RecyclerView.Adapter<StoreJok
 
     @Override
     public void onBindViewHolder(@NonNull final StoreJokerRecyclerViewAdapter.MyVievHolder myVievHolder, final int i) {
-        if(mData.get(i).jokerid==0)
+      /*if(mData.get(i).jokerid==0)
             myVievHolder.constraintLayout.setBackgroundColor(mcontext.getResources().getColor(R.color.fiftyfifty_background));
         else if(mData.get(i).jokerid==1)
-            myVievHolder.constraintLayout.setBackgroundColor(mcontext.getResources().getColor(R.color.x2joker_background));
+            myVievHolder.constraintLayout.setBackgroundColor(mcontext.getResources().getColor(R.color.x2joker_background));*/
         myVievHolder.jokerValueNumber.setText(mData.get(i).getJokerValueNumber());
         myVievHolder.jokerPrice.setText(mData.get(i).getJokerPrice());
         myVievHolder.jokerImage.setImageResource(mData.get(i).getJokerImage());
