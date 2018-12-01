@@ -97,13 +97,24 @@ public class AuthUsersInfoActivity extends Activity {
                                                                 myRefRightOfGame.child(mAuth.getUid()).setValue(firstRightOfGameValue).addOnSuccessListener(new OnSuccessListener<Void>() {
                                                                     @Override
                                                                     public void onSuccess(Void aVoid) {
-                                                                        myRefUser.child(getResources().getString(R.string.account_State)).child(getResources().getString(R.string.isReady)).setValue(true).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                                        myRefUser.child("timestamp").child("guessItMilisecond").setValue(ServerValue.TIMESTAMP).addOnSuccessListener(new OnSuccessListener<Void>() {
                                                                             @Override
                                                                             public void onSuccess(Void aVoid) {
-                                                                                Intent i = new Intent(getApplicationContext(),MainActivity.class);
-                                                                                startActivity(i);
+                                                                            myRefUser.child("timestamp").child("guessItAdsCount").setValue(3).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                                                @Override
+                                                                                public void onSuccess(Void aVoid) {
+                                                                                    myRefUser.child(getResources().getString(R.string.account_State)).child(getResources().getString(R.string.isReady)).setValue(true).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                                                        @Override
+                                                                                        public void onSuccess(Void aVoid) {
+                                                                                            Intent i = new Intent(getApplicationContext(),MainActivity.class);
+                                                                                            startActivity(i);
+                                                                                        }
+                                                                                    });
+                                                                                }
+                                                                            });
                                                                             }
                                                                         });
+
                                                                     }
                                                                 });
 
