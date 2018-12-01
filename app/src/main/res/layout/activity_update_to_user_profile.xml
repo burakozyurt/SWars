@@ -1,0 +1,266 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:layout_width="match_parent"
+        android:background="@drawable/gradient_color"
+        android:layout_height="match_parent"
+        tools:context=".UpdateToUserProfile">
+
+    <android.support.constraint.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true">
+
+        <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Personal Information"
+                android:textSize="30dp"
+                android:textColor="@color/textcolorblack"
+                android:textAlignment="center" android:id="@+id/textView16"/>
+        <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="8dp" app:layout_constraintTop_toBottomOf="@+id/textView16"
+                android:id="@+id/linearLayout11"
+                app:layout_constraintEnd_toEndOf="parent" app:layout_constraintStart_toStartOf="parent">
+            <ImageView
+                    android:layout_width="30dp"
+                    android:layout_marginLeft="10dp"
+                    android:layout_height="30dp"
+                    android:background="@drawable/updateinfoicon"/>
+            <TextView
+                    android:layout_width="match_parent"
+                    android:layout_marginLeft="10dp"
+                    android:layout_height="wrap_content"
+                    android:text="Ad"
+                    android:textColor="@color/textcolorblack"
+                    android:textSize="20dp"/>
+        </LinearLayout>
+        <EditText
+                android:layout_width="match_parent"
+                android:paddingLeft="5dp"
+                android:layout_height="wrap_content"
+                android:inputType="textPersonName"
+                android:background="@drawable/edittextoval"
+                android:layout_marginTop="8dp"
+                app:layout_constraintTop_toBottomOf="@+id/linearLayout11" android:id="@+id/settingsActivityNameEditText"
+                app:layout_constraintStart_toStartOf="parent" android:layout_marginStart="16dp"
+                app:layout_constraintEnd_toEndOf="parent" android:layout_marginEnd="16dp"/>
+        <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="8dp" app:layout_constraintTop_toBottomOf="@+id/settingsActivityNameEditText"
+                android:id="@+id/linearLayout12" app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent">
+            <ImageView
+                    android:layout_width="30dp"
+                    android:layout_marginLeft="10dp"
+                    android:layout_height="30dp"
+                    android:background="@drawable/updateinfoicon"/>
+            <TextView
+                    android:layout_width="match_parent"
+                    android:layout_marginLeft="10dp"
+                    android:layout_height="wrap_content"
+                    android:text="Soyad"
+                    android:textColor="@color/textcolorblack"
+                    android:textSize="20dp"/>
+        </LinearLayout>
+        <EditText
+                android:layout_width="match_parent"
+                android:paddingLeft="5dp"
+                android:layout_height="wrap_content"
+                android:inputType="textPersonName"
+                android:background="@drawable/edittextoval"
+                android:id="@+id/settingsActivitySurnameEditText" android:layout_marginTop="8dp"
+                app:layout_constraintTop_toBottomOf="@+id/linearLayout12" app:layout_constraintStart_toStartOf="parent"
+                android:layout_marginStart="16dp" app:layout_constraintEnd_toEndOf="parent"
+                android:layout_marginEnd="16dp"/>
+        <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="8dp"
+                app:layout_constraintTop_toBottomOf="@+id/settingsActivitySurnameEditText"
+                android:id="@+id/linearLayout13" app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent">
+            <ImageView
+                    android:layout_width="30dp"
+                    android:layout_marginLeft="10dp"
+                    android:layout_height="30dp"
+                    android:background="@drawable/updateinfoicon"/>
+            <TextView
+                    android:layout_width="match_parent"
+                    android:layout_marginLeft="10dp"
+                    android:layout_height="wrap_content"
+                    android:text="Telefon"
+                    android:textColor="@color/textcolorblack"
+                    android:textSize="20dp"/>
+        </LinearLayout>
+        <com.github.pinball83.maskededittext.MaskedEditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="phone"
+                android:maxLines="11"
+                android:typeface="monospace"
+                app:mask="+90 (***) *** **-**"
+                android:paddingLeft="5dp"
+                app:notMaskedSymbol="*"
+                app:replacementChar="*"
+                app:deleteChar="*"
+                android:background="@drawable/edittextoval"
+                app:layout_constraintTop_toBottomOf="@+id/linearLayout13"
+                app:layout_constraintEnd_toEndOf="parent" android:layout_marginEnd="16dp"
+                app:layout_constraintStart_toStartOf="parent" android:layout_marginStart="16dp"
+                android:layout_marginTop="8dp" android:id="@+id/settingsActivityTelephoneNumberEditText">
+
+        </com.github.pinball83.maskededittext.MaskedEditText>
+        <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:id="@+id/linearLayout15"
+                android:layout_marginTop="8dp"
+                app:layout_constraintTop_toBottomOf="@+id/settingsActivityTelephoneNumberEditText"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent">
+            <ImageView
+                    android:layout_width="30dp"
+                    android:layout_marginLeft="10dp"
+                    android:layout_height="30dp"
+                    android:background="@drawable/updateinfoicon"/>
+            <TextView
+                    android:layout_width="match_parent"
+                    android:layout_marginLeft="10dp"
+                    android:layout_height="wrap_content"
+                    android:text="Cinsiyet"
+                    android:textColor="@color/textcolorblack"
+                    android:textSize="20dp"/>
+        </LinearLayout>
+        <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/edittextoval"
+                android:clickable="false"
+                android:focusable="false"
+                android:paddingLeft="5dp"
+                android:focusableInTouchMode="false"
+                android:cursorVisible="false"
+                app:layout_constraintEnd_toEndOf="parent" android:layout_marginEnd="16dp"
+                app:layout_constraintStart_toStartOf="parent" android:layout_marginStart="16dp"
+                app:layout_constraintHorizontal_bias="0.0"
+                android:id="@+id/settingsActivityGenderEditText" android:layout_marginTop="8dp"
+                app:layout_constraintTop_toBottomOf="@+id/linearLayout15">
+
+        </EditText>
+        <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                app:layout_constraintTop_toBottomOf="@+id/settingsActivityGenderEditText"
+                android:layout_marginTop="8dp" app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent" android:id="@+id/linearLayout16">
+            <ImageView
+                    android:layout_width="30dp"
+                    android:layout_marginLeft="10dp"
+                    android:layout_height="30dp"
+                    android:background="@drawable/updateinfoicon"/>
+            <TextView
+                    android:layout_width="match_parent"
+                    android:layout_marginLeft="10dp"
+                    android:layout_height="wrap_content"
+                    android:text="Doğum Tarihi"
+                    android:textColor="@color/textcolorblack"
+                    android:textSize="20dp"/>
+        </LinearLayout>
+
+        <EditText
+            android:layout_width="50dp"
+            android:inputType="number"
+            android:layout_height="wrap_content"
+            android:lines="1"
+            android:maxLength="2"
+            android:background="@drawable/edittextoval"
+            app:layout_constraintTop_toBottomOf="@+id/linearLayout16"
+            android:layout_marginTop="8dp"
+            android:id="@+id/settingsActivityDateOfBirthEditTextDay"
+            app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginStart="32dp">
+
+    </EditText>
+        <EditText
+                android:layout_width="50dp"
+                android:layout_height="wrap_content"
+                android:inputType="number"
+                android:lines="1"
+                android:maxLength="2"
+                android:background="@drawable/edittextoval"
+                android:id="@+id/settingsActivityDateOfBirthEditTextMonth"
+                app:layout_constraintStart_toEndOf="@+id/settingsActivityDateOfBirthEditTextDay"
+                android:layout_marginStart="8dp" android:layout_marginTop="8dp"
+                app:layout_constraintTop_toBottomOf="@+id/linearLayout16">
+        </EditText>
+        <EditText
+                android:layout_width="50dp"
+                android:inputType="number"
+                android:lines="1"
+                android:layout_height="wrap_content"
+                android:maxLength="4"
+                android:background="@drawable/edittextoval"
+                android:id="@+id/settingsActivityDateOfBirthEditTextYear"
+                android:layout_marginTop="8dp" app:layout_constraintTop_toBottomOf="@+id/linearLayout16"
+                app:layout_constraintStart_toEndOf="@+id/settingsActivityDateOfBirthEditTextMonth"
+                android:layout_marginStart="8dp"
+        >
+        </EditText>
+        <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:layout_marginTop="8dp"
+                app:layout_constraintTop_toBottomOf="@+id/settingsActivityDateOfBirthEditTextYear"
+                android:id="@+id/linearLayout10">
+            <ImageView
+                    android:layout_width="30dp"
+                    android:layout_marginLeft="10dp"
+                    android:layout_height="30dp"
+                    android:background="@drawable/updateinfoicon"/>
+            <TextView
+                    android:layout_width="match_parent"
+                    android:layout_marginLeft="10dp"
+                    android:layout_height="wrap_content"
+                    android:text="Adres"
+                    android:textColor="@color/textcolorblack"
+                    android:textSize="20dp"/>
+        </LinearLayout>
+        <EditText
+                android:layout_width="match_parent"
+                android:layout_height="85dp"
+                android:id="@+id/settingsActivityAdressEditText"
+                android:background="@drawable/edittextoval"
+                android:gravity="start"
+                app:layout_constraintEnd_toEndOf="parent" android:layout_marginEnd="16dp"
+                app:layout_constraintStart_toStartOf="parent" android:layout_marginStart="16dp"
+                app:layout_constraintHorizontal_bias="0.0" android:layout_marginTop="8dp"
+                app:layout_constraintTop_toBottomOf="@+id/linearLayout10"></EditText>
+        <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/settingsActivityUpdateButton"
+                android:text="Update"
+                android:background="@drawable/spin_button_oval"
+                android:layout_marginTop="8dp"
+                app:layout_constraintTop_toBottomOf="@+id/settingsActivityAdressEditText"
+                app:layout_constraintStart_toStartOf="parent" android:layout_marginStart="8dp"
+                app:layout_constraintEnd_toEndOf="parent" android:layout_marginEnd="8dp"/>
+
+    </android.support.constraint.ConstraintLayout>
+
+
+</RelativeLayout>

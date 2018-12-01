@@ -1,6 +1,7 @@
 package com.app.selfiewars.selfiewars;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -23,6 +24,8 @@ public class SettingsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_settings);
         settingsItemsCreated();
         backspaceIconClicked();
+        followClicked();
+        updateToUserProfileClicked();
     }
 
     public void settingsItemsCreated(){
@@ -42,5 +45,25 @@ public class SettingsActivity extends AppCompatActivity {
             }
         });
 
+    }
+    public void followClicked(){
+        follow.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(Intent.ACTION_VIEW);
+                intent.setData(Uri.parse("https://www.youtube.com/"));
+                startActivity(intent);
+            }
+        });
+    }
+    public void updateToUserProfileClicked(){
+        updatetouserprofile.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getApplicationContext(),UpdateToUserProfile.class);
+                startActivity(intent);
+                finish();
+            }
+        });
     }
 }
