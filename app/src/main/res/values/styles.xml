@@ -5,6 +5,10 @@
         <!-- Customize your theme here. -->
     </style>
 
+    <style name="UptoDown">
+        <item name="android:windowEnterAnimation">@anim/anim_slide_up</item>
+        <item name="android:windowExitAnimation">@anim/anim_slide_bottom</item>
+    </style>
     <style name="AppTheme.Fullscreen">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
