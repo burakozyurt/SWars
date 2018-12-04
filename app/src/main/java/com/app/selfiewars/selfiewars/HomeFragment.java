@@ -179,6 +179,7 @@ public class HomeFragment extends Fragment {
                                                     public void onSuccess(Void aVoid) {
                                                         Intent i = new Intent(getActivity(),GuessItActivity.class);
                                                         startActivity(i);
+                                                        getActivity().finish();
                                                     }
                                                 });
                                             }
@@ -194,6 +195,9 @@ public class HomeFragment extends Fragment {
                             }else {
                                 Intent i = new Intent(getActivity(),GuessItActivity.class);
                                 startActivity(i);
+                                getActivity().finish();
+
+
                             }
 
                         }else {
