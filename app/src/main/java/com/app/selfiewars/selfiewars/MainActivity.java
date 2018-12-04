@@ -83,25 +83,43 @@ public class MainActivity extends AppCompatActivity {
         spinFragment = new SpinFragment();
         storeFragment = new StoreFragment();
         active = homeFragment;
-        fragmentManager.beginTransaction().add(R.id.main_frame, rankFragment, "rank").hide(rankFragment).commit();
-        fragmentManager.beginTransaction().add(R.id.main_frame, spinFragment, "spin").hide(spinFragment).commit();
-        fragmentManager.beginTransaction().add(R.id.main_frame, storeFragment, "store").hide(storeFragment).commit();
-        fragmentManager.beginTransaction().add(R.id.main_frame, homeFragment, "home").commit();
+        fragmentManager.beginTransaction().add(R.id.main_frame, homeFragment,"home").addToBackStack(null).commit();
+        setFragment(homeFragment);
         bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
                 switch (menuItem.getItemId()) {
                     case R.id.nav_home:
-                        setFragment(homeFragment);
+                        if(fragmentManager.findFragmentByTag("home") == homeFragment){
+                            setFragment(homeFragment);
+                        }else {
+                            fragmentManager.beginTransaction().add(R.id.main_frame, homeFragment,"home").addToBackStack(null).commit();
+                            setFragment(homeFragment);
+                        }
                         return true;
                     case R.id.nav_rank:
-                        setFragment(rankFragment);
+                        if(fragmentManager.findFragmentByTag("rank") == rankFragment){
+                            setFragment(rankFragment);
+                        }else {
+                            fragmentManager.beginTransaction().add(R.id.main_frame, rankFragment,"rank").hide(rankFragment).addToBackStack(null).commit();
+                            setFragment(rankFragment);
+                        }
                         return true;
                     case R.id.nav_spin:
-                        setFragment(spinFragment);
+                        if(fragmentManager.findFragmentByTag("spin") == spinFragment){
+                            setFragment(spinFragment);
+                        }else {
+                            fragmentManager.beginTransaction().add(R.id.main_frame, spinFragment,"spin").hide(spinFragment).addToBackStack(null).commit();
+                            setFragment(spinFragment);
+                        }
                         return true;
                     case R.id.nav_store:
-                        setFragment(storeFragment);
+                        if(fragmentManager.findFragmentByTag("store") == storeFragment){
+                            setFragment(storeFragment);
+                        }else {
+                            fragmentManager.beginTransaction().add(R.id.main_frame, storeFragment,"store").hide(storeFragment).addToBackStack(null).commit();
+                            setFragment(storeFragment);
+                        }
                         return true;
                     default:
                         return true;
@@ -120,9 +138,11 @@ public class MainActivity extends AppCompatActivity {
         }else {
 
         }*/
+
         fragmentManager.beginTransaction().hide(active).show(fragment).commit();
         active = fragment;
-        /*FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+
+       /* FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
         fragmentTransaction.replace(R.id.main_frame,fragment);
         fragmentTransaction.commit();*/
     }
@@ -193,5 +213,29 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
+    @Override
+    protected void onPause() {
+        super.onPause();
+    }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        finish();
+        //Toast.makeText(this, "MainACtivity Destroyed", Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        finish();
+        //Toast.makeText(this, "MainACtivity Stoped", Toast.LENGTH_SHORT).show();
+
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        //Toast.makeText(this, "MainACtivity Başlatıldı", Toast.LENGTH_SHORT).show();
+    }
 }

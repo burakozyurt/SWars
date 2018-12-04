@@ -105,10 +105,13 @@ public class AuthenticationScreen extends Activity {
                                         if(isReady){
                                             Intent i = new Intent(getApplicationContext(),MainActivity.class);
                                             startActivity(i);
+                                            finish();
                                         }else {
                                             Toast.makeText(getApplicationContext(),"Gmail ile giriş yapılmıştır. Lütfen gerekli bilgileri doldurunuz.",Toast.LENGTH_LONG).show();
                                             Intent i = new Intent(getApplicationContext(),AuthUsersInfoActivity.class);
                                             startActivity(i);
+                                            finish();
+
                                         }
                                     }else {
                                         Boolean isReady = false;
@@ -118,6 +121,8 @@ public class AuthenticationScreen extends Activity {
                                             public void onSuccess(Void aVoid) {
                                                 Intent i = new Intent(getApplicationContext(),AuthUsersInfoActivity.class);
                                                 startActivity(i);
+                                                finish();
+
                                             }
                                         }).addOnFailureListener(new OnFailureListener() {
                                             @Override

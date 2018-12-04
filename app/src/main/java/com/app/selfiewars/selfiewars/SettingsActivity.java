@@ -42,6 +42,7 @@ public class SettingsActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Intent intent = new Intent(getApplicationContext(),MainActivity.class);
                 startActivity(intent);
+                finish();
             }
         });
 
@@ -65,5 +66,14 @@ public class SettingsActivity extends AppCompatActivity {
                 finish();
             }
         });
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        Intent intent = new Intent(getApplicationContext(),MainActivity.class);
+        startActivity(intent);
+        finish();
+
     }
 }

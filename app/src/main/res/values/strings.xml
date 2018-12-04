@@ -54,5 +54,6 @@
     <string name="minute">min</string>
     <string name="second">sec</string>
     <string name="Endtime">End Time :</string>
+    <string name="spinValue">spinValue</string>
 
 </resources>

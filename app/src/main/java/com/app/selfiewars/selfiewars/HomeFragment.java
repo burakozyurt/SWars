@@ -3,13 +3,11 @@ package com.app.selfiewars.selfiewars;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,16 +19,12 @@ import com.airbnb.lottie.LottieAnimationView;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.*;
-import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 import de.hdodenhof.circleimageview.CircleImageView;
 
-import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import static java.text.DateFormat.getDateTimeInstance;
@@ -172,14 +166,31 @@ public class HomeFragment extends Fragment {
                     @Override
                     public void onComplete(@Nullable DatabaseError databaseError, boolean b, @Nullable DataSnapshot dataSnapshot) {
                         if(b){
-                            if(nowTimestamp !=null && rightOfGame == 9){
-                                myUserRef.child(getResources().getString(R.string.timestamp)).child("guessItMilisecond").setValue(nowTimestamp + 86400000).addOnSuccessListener(new OnSuccessListener<Void>() {
+                            if(rightOfGame == 9){
+                                myUserRef.child(getResources().getString(R.string.nowtimestamp)).child(getResources().getString(R.string.timestamp)).setValue(ServerValue.TIMESTAMP).addOnSuccessListener(new OnSuccessListener<Void>() {
                                     @Override
                                     public void onSuccess(Void aVoid) {
-                                        Intent i = new Intent(getActivity(),GuessItActivity.class);
-                                        startActivity(i);
+                                        myUserRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                                            @Override
+                                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                                Long nowTimestamp = dataSnapshot.child(getResources().getString(R.string.nowtimestamp)).child(getResources().getString(R.string.timestamp)).getValue(Long.class);
+                                                myUserRef.child(getResources().getString(R.string.timestamp)).child("guessItMilisecond").setValue(nowTimestamp + 86400000).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                    @Override
+                                                    public void onSuccess(Void aVoid) {
+                                                        Intent i = new Intent(getActivity(),GuessItActivity.class);
+                                                        startActivity(i);
+                                                    }
+                                                });
+                                            }
+
+                                            @Override
+                                            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                            }
+                                        });
                                     }
                                 });
+
                             }else {
                                 Intent i = new Intent(getActivity(),GuessItActivity.class);
                                 startActivity(i);
@@ -230,28 +241,33 @@ public class HomeFragment extends Fragment {
             @Override
             public void onSuccess(DataSnapshot dataSnapshot) {
                 //DO SOME THING WHEN GET DATA SUCCESS HERE
-                Boolean isReady = dataSnapshot.child(getResources().getString(R.string.account_State)).child(getResources().getString(R.string.isReady)).getValue(Boolean.class);
-                if(isReady){
-                    UserProperties properties = dataSnapshot.child(getResources().getString(R.string.properties)).getValue(UserProperties.class);
-                    displayNameTextView.setText(properties.getDisplayName());
-                    usernameTextView.setText(properties.getUserName());
-                    ageTextView.setText(String.valueOf(properties.getAge()));
-                    photoUrl = properties.getPhotoUrl();
-                    mPicasso.load(photoUrl).resize(400,400).into(profileImageView);
-                    if(dataSnapshot.hasChild(getResources().getString(R.string.token))){
-                        diamondToken =dataSnapshot.child(getResources().getString(R.string.token)).child((getResources().getString(R.string.diamondValue))).getValue(Integer.class);
-                        diamondTextView.setText(""+diamondToken);}
-                    if(dataSnapshot.hasChild(getResources().getString(R.string.wildcards))) {
-                        wildcards = dataSnapshot.child(getResources().getString(R.string.wildcards)).getValue(Wildcards.class);
-                        doubleDipTextView.setText(""+wildcards.getDoubleDipValue());
-                        healthTextView.setText(""+wildcards.getHealthValue());
-                        fiftyFiftyTextView.setText(""+wildcards.getFiftyFiftyValue());
-                    }
+                try {
+                    Boolean isReady = dataSnapshot.child(getResources().getString(R.string.account_State)).child(getResources().getString(R.string.isReady)).getValue(Boolean.class);
+                    if(isReady){
+                        UserProperties properties = dataSnapshot.child(getResources().getString(R.string.properties)).getValue(UserProperties.class);
+                        displayNameTextView.setText(properties.getDisplayName());
+                        usernameTextView.setText(properties.getUserName());
+                        ageTextView.setText(String.valueOf(properties.getAge()));
+                        photoUrl = properties.getPhotoUrl();
+                        mPicasso.load(photoUrl).resize(400,400).into(profileImageView);
+                        if(dataSnapshot.hasChild(getResources().getString(R.string.token))){
+                            diamondToken =dataSnapshot.child(getResources().getString(R.string.token)).child((getResources().getString(R.string.diamondValue))).getValue(Integer.class);
+                            diamondTextView.setText(""+diamondToken);}
+                        if(dataSnapshot.hasChild(getResources().getString(R.string.wildcards))) {
+                            wildcards = dataSnapshot.child(getResources().getString(R.string.wildcards)).getValue(Wildcards.class);
+                            doubleDipTextView.setText(""+wildcards.getDoubleDipValue());
+                            healthTextView.setText(""+wildcards.getHealthValue());
+                            fiftyFiftyTextView.setText(""+wildcards.getFiftyFiftyValue());
+                        }
 
-                    if (mProgressDialog != null && mProgressDialog.isShowing()) {
-                        mProgressDialog.dismiss();
+                        if (mProgressDialog != null && mProgressDialog.isShowing()) {
+                            mProgressDialog.dismiss();
+                        }
                     }
+                }catch (Exception e){
+
                 }
+
             }
 
             @Override
@@ -302,37 +318,61 @@ public class HomeFragment extends Fragment {
     }
 
     private void startOrRefresCountTime(Long myDate){
-        if(countDownTimer !=null){
-            countDownTimer.cancel();
-        countDownTimer = new CountDownTimer((Math.abs(guessItMilisecond-myDate)),1000) {
-            @Override
-            public void onTick(long l) {
-                righOfGameEndTimeTextView.setText(getResources().getString(R.string.Endtime) + TimeUnit.MILLISECONDS.toHours(l) +getResources().getString(R.string.hours)
-                        + (TimeUnit.MILLISECONDS.toMinutes(l) - TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(l))) + getResources().getString(R.string.minute)
-                        +(TimeUnit.MILLISECONDS.toSeconds(l) - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(l)))+getResources().getString(R.string.second) );
+        try {
+
+            if(countDownTimer !=null){
+                countDownTimer.cancel();
+                countDownTimer = new CountDownTimer((Math.abs(guessItMilisecond-myDate)),1000) {
+                    @Override
+                    public void onTick(long l) {
+                        righOfGameEndTimeTextView.setText(getResources().getString(R.string.Endtime) + TimeUnit.MILLISECONDS.toHours(l) +getResources().getString(R.string.hours)
+                                + (TimeUnit.MILLISECONDS.toMinutes(l) - TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(l))) + getResources().getString(R.string.minute)
+                                +(TimeUnit.MILLISECONDS.toSeconds(l) - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(l)))+getResources().getString(R.string.second) );
+                    }
+
+                    @Override
+                    public void onFinish() {
+
+                    }
+                }.start();}
+            else {
+                countDownTimer = new CountDownTimer((Math.abs(guessItMilisecond-myDate)),1000) {
+                    @Override
+                    public void onTick(long l) {
+                        righOfGameEndTimeTextView.setText(getResources().getString(R.string.Endtime) + TimeUnit.MILLISECONDS.toHours(l) +getResources().getString(R.string.hours)
+                                + (TimeUnit.MILLISECONDS.toMinutes(l) - TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(l))) + getResources().getString(R.string.minute)
+                                +(TimeUnit.MILLISECONDS.toSeconds(l) - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(l)))+getResources().getString(R.string.second) );
+                    }
+
+                    @Override
+                    public void onFinish() {
+
+                    }
+                }.start();
             }
+        }catch (Exception e){
 
-            @Override
-            public void onFinish() {
-
-            }
-        }.start();}
-        else {
-            countDownTimer = new CountDownTimer((Math.abs(guessItMilisecond-myDate)),1000) {
-                @Override
-                public void onTick(long l) {
-                    righOfGameEndTimeTextView.setText(getResources().getString(R.string.Endtime) + TimeUnit.MILLISECONDS.toHours(l) +getResources().getString(R.string.hours)
-                            + (TimeUnit.MILLISECONDS.toMinutes(l) - TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(l))) + getResources().getString(R.string.minute)
-                            +(TimeUnit.MILLISECONDS.toSeconds(l) - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(l)))+getResources().getString(R.string.second) );
-                }
-
-                @Override
-                public void onFinish() {
-
-                }
-            }.start();
         }
     }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        if (countDownTimer !=null){
+            //Toast.makeText(getContext(),"Sayaç Bekletildi" , Toast.LENGTH_SHORT).show();
+            countDownTimer.cancel();
+        }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if(countDownTimer !=null){
+            getTimeStampControl();
+          //  Toast.makeText(getContext(),"Sayaç Devam Ediyor" , Toast.LENGTH_SHORT).show();
+        }
+    }
+
     private void getTimeStampControl(){
         myUserRef.child(getResources().getString(R.string.nowtimestamp)).child(getResources().getString(R.string.timestamp)).setValue(ServerValue.TIMESTAMP).addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override

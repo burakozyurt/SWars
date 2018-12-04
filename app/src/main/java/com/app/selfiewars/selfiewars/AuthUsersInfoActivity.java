@@ -103,13 +103,25 @@ public class AuthUsersInfoActivity extends Activity {
                                                                             myRefUser.child("timestamp").child("guessItAdsCount").setValue(3).addOnSuccessListener(new OnSuccessListener<Void>() {
                                                                                 @Override
                                                                                 public void onSuccess(Void aVoid) {
-                                                                                    myRefUser.child(getResources().getString(R.string.account_State)).child(getResources().getString(R.string.isReady)).setValue(true).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                                                    myRefUser.child("rightofspin").child("spinValue").setValue(1).addOnSuccessListener(new OnSuccessListener<Void>() {
                                                                                         @Override
                                                                                         public void onSuccess(Void aVoid) {
-                                                                                            Intent i = new Intent(getApplicationContext(),MainActivity.class);
-                                                                                            startActivity(i);
+                                                                                            myRefUser.child("rightofspin").child("timestamp").setValue(ServerValue.TIMESTAMP).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                                                                @Override
+                                                                                                public void onSuccess(Void aVoid) {
+                                                                                                    myRefUser.child(getResources().getString(R.string.account_State)).child(getResources().getString(R.string.isReady)).setValue(true).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                                                                        @Override
+                                                                                                        public void onSuccess(Void aVoid) {
+                                                                                                            Intent i = new Intent(getApplicationContext(),MainActivity.class);
+                                                                                                            startActivity(i);
+                                                                                                            finish();
+                                                                                                        }
+                                                                                                    });
+                                                                                                }
+                                                                                            });
                                                                                         }
                                                                                     });
+
                                                                                 }
                                                                             });
                                                                             }
