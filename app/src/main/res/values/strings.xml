@@ -55,5 +55,11 @@
     <string name="second">sec</string>
     <string name="Endtime">End Time :</string>
     <string name="spinValue">spinValue</string>
+    <string name="Choose_Gender">Choose Gender</string>
+    <string name="Gender_Male">Male</string>
+    <string name="Gender_Female">Female</string>
+    <string name="day_personal_information">day</string>
+    <string name="month_personal_information">month</string>
+    <string name="year_personal_information">year</string>
 
 </resources>
