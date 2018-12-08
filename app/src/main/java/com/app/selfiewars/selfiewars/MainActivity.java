@@ -7,6 +7,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.media.Image;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
@@ -215,6 +216,27 @@ public class MainActivity extends AppCompatActivity {
                 mydialog.dismiss();
             }
         });
+    }
+    static void showPopupProductInfo(Integer productImageView, String productTitle, Context context){
+        final Dialog mydialog = new Dialog(context);
+        mydialog.setContentView(R.layout.popup_product_info);
+        mydialog.getWindow().getAttributes().windowAnimations = R.style.UptoDown;
+        ImageView productimageView;
+        TextView productTitleView;
+
+        productimageView = mydialog.findViewById(R.id.popup_product_Info_Image);
+        productTitleView = mydialog.findViewById(R.id.popup_product_Info_TitleTextView);
+
+        if(productImageView != null)
+            productimageView.setImageResource(productImageView);
+
+        if(productTitle != null)
+            productTitleView.setText(productTitle);
+
+        mydialog.setCanceledOnTouchOutside(true);
+        mydialog.show();
+
+
     }
     @Override
     protected void onPause() {
