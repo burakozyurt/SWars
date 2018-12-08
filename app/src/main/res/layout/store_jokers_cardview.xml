@@ -12,7 +12,8 @@
         <android.support.constraint.ConstraintLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="@drawable/store_joker_fiftyfifty_cardview_background" android:id="@+id/constraintLayout"
+                android:background="@drawable/store_joker_fiftyfifty_cardview_background"
+                android:id="@+id/constraintLayout"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent">
@@ -54,5 +55,17 @@
                 app:layout_constraintTop_toTopOf="@+id/store_joker_price"
                 app:layout_constraintEnd_toStartOf="@+id/store_joker_price"
                 app:layout_constraintBottom_toBottomOf="@+id/store_joker_price"/>
+        <TextView
+                android:text="Buy"
+                android:textColor="@color/background5050"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/store_buyTextView" app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/constraintLayout"
+                app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintVertical_bias="1.0"
+                android:visibility="gone"/>
     </android.support.constraint.ConstraintLayout>
 </android.support.v7.widget.CardView>

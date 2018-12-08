@@ -196,15 +196,18 @@ public class MainActivity extends AppCompatActivity {
         descriptionView = mydialog.findViewById(R.id.popupInfo_descriptionTextView);
         btnOk = mydialog.findViewById(R.id.popupInfo_BtnOkey);
 
-        if (ImageViewDraw !=null)
+        if (ImageViewDraw !=null){
             ımageView.setImageResource(ImageViewDraw);
-
+            ımageView.setVisibility(View.VISIBLE);
+        }
+        else ımageView.setVisibility(View.GONE);
         if (Title !=null)
             titleView.setText(Title);
 
         if(Description !=null)
             descriptionView.setText(Description);
         mydialog.setCanceledOnTouchOutside(false);
+        mydialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         mydialog.show();
         btnOk.setOnClickListener(new View.OnClickListener() {
             @Override

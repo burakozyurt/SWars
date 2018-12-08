@@ -1,7 +1,11 @@
 package com.app.selfiewars.selfiewars;
 
 import android.app.Activity;
+import android.app.Dialog;
+import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -170,8 +174,8 @@ public class AuthUsersInfoActivity extends Activity {
         else return false;
     }
     public void handlerInsertData(View view) {
-        Intent pickerPhotoIntent =  new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-        startActivityForResult(pickerPhotoIntent,1);
+        showPopUpInfo(getResources().getString(R.string.sign_in_choose_image_alert_title),
+                getResources().getString(R.string.sign_in_choose_image_alert_desc));
     }
 
     @Override
@@ -188,5 +192,37 @@ public class AuthUsersInfoActivity extends Activity {
                     Picasso.get().load(selectedImage).transform(new ExifTransformation(this,selectedImage)).into(profileImageView);
                 }break;
         }
+    }
+
+    private void showPopUpInfo(String Title, String Description) {
+        final Dialog mydialog = new Dialog(AuthUsersInfoActivity.this);
+        mydialog.setContentView(R.layout.popup_info);
+        mydialog.getWindow().getAttributes().windowAnimations = R.style.UptoDown;
+        ImageView ımageView;
+        TextView titleView;
+        TextView descriptionView;
+        Button btnOk;
+
+        ımageView = mydialog.findViewById(R.id.popupInfo_Image);
+        titleView = mydialog.findViewById(R.id.popupInfo_TitleTextView);
+        descriptionView = mydialog.findViewById(R.id.popupInfo_descriptionTextView);
+        btnOk = mydialog.findViewById(R.id.popupInfo_BtnOkey);
+        ımageView.setVisibility(View.GONE);
+        if (Title !=null)
+            titleView.setText(Title);
+        if(Description !=null) {
+            descriptionView.setText(Description);
+        }
+        btnOk.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent pickerPhotoIntent =  new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                startActivityForResult(pickerPhotoIntent,1);
+                mydialog.dismiss();
+            }
+        });
+        mydialog.setCanceledOnTouchOutside(false);
+        mydialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        mydialog.show();
     }
 }

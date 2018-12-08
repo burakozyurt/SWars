@@ -90,7 +90,7 @@ public class UpdateToUserProfile extends AppCompatActivity {
                                     @Override
                                     public void onSuccess(Void aVoid) {
                                        // Toast.makeText(UpdateToUserProfile.this, "Başarıyla Güncellendi", Toast.LENGTH_SHORT).show();
-                                        MainActivity.showPopUpInfo(null, "Bilgiler Başarıyla Güncellendi.", null, UpdateToUserProfile.this);
+                                        MainActivity.showPopUpInfo(null, "Bilgiler Başarıyla Güncellendi.",null, UpdateToUserProfile.this);
                                     }
                                 });
                             } else {
@@ -114,7 +114,7 @@ public class UpdateToUserProfile extends AppCompatActivity {
                                                     @Override
                                                     public void onComplete(@Nullable DatabaseError databaseError, boolean b, @Nullable DataSnapshot dataSnapshot) {
                                                        // Toast.makeText(UpdateToUserProfile.this, "Başarıyla Güncellendi", Toast.LENGTH_SHORT).show();
-                                                        MainActivity.showPopUpInfo(R.drawable.diamond, "Bilgiler Başarıyla Güncellendi.", "Tebrikler " + diamondValue +" kazandınız!", UpdateToUserProfile.this);
+                                                        MainActivity.showPopUpInfo(null, "Bilgiler Başarıyla Güncellendi.", "Tebrikler " + diamondValue +" elmas kazandınız!", UpdateToUserProfile.this);
 
                                                     }
                                                 });

@@ -348,7 +348,7 @@ public class SpinFragment extends Fragment {
         data.add(luckyItem12);
 
         luckyWheelView.setData(data);
-        luckyWheelView.setRound(6);
+        luckyWheelView.setRound(7);
     }
 
     @Override

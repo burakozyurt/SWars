@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout android:layout_width="fill_parent" android:layout_height="wrap_content"
+  xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto">
+    <android.support.constraint.ConstraintLayout
+            android:id="@+id/ivAnnounceBackgroundConstrainLayout"
+            android:layout_width="fill_parent" android:layout_height="200dp"
+            android:background="@drawable/announcemen_shape"
+            android:layout_marginTop="10.0dip"
+            android:layout_marginStart="10.0dip" android:layout_marginEnd="10.0dip"
+            android:layout_marginBottom="10.0dip"/>
+    <ImageView android:id="@+id/ivAnnounceLogo" android:layout_width="90dp" android:layout_height="90dp"
+               android:layout_marginLeft="10dp" android:scaleType="fitCenter" android:cropToPadding="true"
+               android:layout_centerVertical="true" android:layout_marginStart="14dp"
+               android:layout_alignStart="@+id/ivAnnounceBackgroundConstrainLayout"/>
+    <ImageView android:id="@+id/ivAnnounceLogoInstagram" android:layout_width="80dp" android:layout_height="80dp"
+               android:layout_marginLeft="10dp" android:scaleType="fitCenter" android:cropToPadding="true"
+               android:layout_centerVertical="true" android:layout_marginStart="14dp"
+               android:layout_alignStart="@+id/ivAnnounceBackgroundConstrainLayout"/>
+    <com.airbnb.lottie.LottieAnimationView
+            android:id="@+id/ivAnnounceLogoLottieView"
+            android:layout_width="90dp"
+            android:layout_height="90dp"
+            android:layout_marginLeft="20dp"
+            android:layout_centerVertical="true"
+            app:lottie_fileName="dailyaward.json"
+            app:lottie_loop="true"
+            app:lottie_autoPlay="true"
+            android:visibility="gone"
+    />
+    <LinearLayout android:orientation="vertical" android:layout_width="fill_parent" android:layout_height="200dp"
+                  android:layout_marginRight="10.0dip" android:layout_toRightOf="@id/ivAnnounceLogo"
+                  android:layout_centerHorizontal="true" android:layout_centerVertical="true"
+                  android:gravity="center_horizontal"
+    >
+        <TextView android:textSize="18sp" android:textColor="@color/textcolor" android:id="@+id/tvAnnounceTitle"
+                  android:layout_width="wrap_content" android:layout_height="wrap_content"
+                  android:layout_marginTop="45dp" android:text="Bu Ayın Hediyeleri"
+                  />
+        <TextView android:textColor="@color/textcolor" android:id="@+id/tvAnnounceDesc"
+                  android:layout_width="wrap_content" android:layout_height="wrap_content"
+                  android:text="Ayın kazananlarını bekleyen \nödüller belli oldu."
+
+                  android:layout_marginLeft="10dp" android:layout_marginRight="10dp" android:layout_marginTop="5dp"/>
+    </LinearLayout>
+</RelativeLayout>

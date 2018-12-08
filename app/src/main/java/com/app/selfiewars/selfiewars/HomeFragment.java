@@ -5,28 +5,28 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.AlphaAnimation;
-import android.view.animation.Animation;
-import android.widget.Button;
-import android.widget.ImageView;
-import android.widget.TextView;
-import android.widget.Toast;
+import android.widget.*;
 import com.airbnb.lottie.LottieAnimationView;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.*;
 import com.squareup.picasso.Picasso;
 import de.hdodenhof.circleimageview.CircleImageView;
+import me.relex.circleindicator.CircleIndicator;
 
 import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.concurrent.TimeUnit;
 
 import static java.text.DateFormat.getDateTimeInstance;
@@ -53,6 +53,7 @@ public class HomeFragment extends Fragment {
     private FirebaseDatabase mdatabase;
     private DatabaseReference myUserRef;
     private DatabaseReference myRigtOfGameRef;
+    private DatabaseReference myAnnouncementRef;
     private FirebaseAuth mAuth;
     private Picasso mPicasso;
     private Button guessitButton;
@@ -67,7 +68,12 @@ public class HomeFragment extends Fragment {
     private Long nowTimestamp;
     private Integer guessItAdsCount;
     private LottieAnimationView lottieAds;
-    private static final SimpleDateFormat sdf  = new SimpleDateFormat("yyyy.MM.dd.HH.mm.ss");;
+    private AnnouncementViewPageAdapter announcementViewPageAdapter;
+    private ViewPager viewPager;
+    private CircleIndicator circleIndicator;
+    private Handler updateHandler;
+    private Timer timer;
+    private LinearLayout announcementLinearLayout;
 
     public HomeFragment() {
         // Required empty public constructor
@@ -86,8 +92,11 @@ public class HomeFragment extends Fragment {
         mdatabase = FirebaseDatabase.getInstance();
         myUserRef = mdatabase.getReference("Users/" + mAuth.getUid());
         myRigtOfGameRef = mdatabase.getReference("RightOfGame/" + mAuth.getUid());
+        myAnnouncementRef = mdatabase.getReference("Announcement");
+        updateHandler=new Handler();
         getTimeStampControl();
         define(rootview);
+        setViewPager();
         //getUserData();
         onClick_GuessIt();
         mCheckInforInServer("Users/" + mAuth.getUid());
@@ -95,9 +104,6 @@ public class HomeFragment extends Fragment {
         settingsIconClicked();
         return rootview;
     }
-
-
-
     private void define(View rootview){
         displayNameTextView = rootview.findViewById(R.id.home_profile_display_name_textView);
         ageTextView = rootview.findViewById(R.id.home_profile_age_textView);
@@ -115,7 +121,43 @@ public class HomeFragment extends Fragment {
         rightOfGameDiamondImageView = rootview.findViewById(R.id.rightOfGameDiamond);
         settingsIcon = rootview.findViewById(R.id.settingsIcon);
         righOfGameEndTimeTextView = rootview.findViewById(R.id.rightofgame_endtime_textView);
+        viewPager = rootview.findViewById(R.id.announcementViewPager);
+        circleIndicator = rootview.findViewById(R.id.announcement_indicator);
+        announcementLinearLayout = rootview.findViewById(R.id.linearLayoutAnnouncement);
         isStartedCountDownTimerRightOfGame =false;
+    }
+    private void setViewPager(){
+        announcementViewPageAdapter =  new AnnouncementViewPageAdapter(getContext());
+        announcementViewPageAdapter.registerDataSetObserver(circleIndicator.getDataSetObserver());
+        viewPager.setAdapter(announcementViewPageAdapter);
+        circleIndicator.setViewPager(viewPager);
+        timer = new Timer();
+        timer.schedule( new TimerTask() {
+            public void run() {
+                updateHandler.post(new Runnable() {
+                    public void run() {
+                        if(viewPager.getCurrentItem() == 0){
+                            viewPager.setCurrentItem(1);
+                        }else if(viewPager.getCurrentItem() == 1){
+                            viewPager.setCurrentItem(2);
+                        }else {
+                            viewPager.setCurrentItem(0);
+                        }
+                    }
+                });
+            }
+        }, 0, 10000);
+    }
+    private void setViewPageItemClicked(){
+        announcementLinearLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Toast.makeText(getContext(), "Instagrama yönlendir.", Toast.LENGTH_SHORT).show();
+                if(viewPager.getCurrentItem() == 2){
+                    Toast.makeText(getContext(), "Instagrama yönlendir.", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
     }
     private void getUserData(){
         myUserRef.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -265,10 +307,10 @@ public class HomeFragment extends Fragment {
                             healthTextView.setText(""+wildcards.getHealthValue());
                             fiftyFiftyTextView.setText(""+wildcards.getFiftyFiftyValue());
                         }
-
                         if (mProgressDialog != null && mProgressDialog.isShowing()) {
                             mProgressDialog.dismiss();
                         }
+
                     }
                 }catch (Exception e){
 
@@ -361,24 +403,6 @@ public class HomeFragment extends Fragment {
         }
     }
 
-    @Override
-    public void onPause() {
-        super.onPause();
-        if (countDownTimer !=null){
-            //Toast.makeText(getContext(),"Sayaç Bekletildi" , Toast.LENGTH_SHORT).show();
-            countDownTimer.cancel();
-        }
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        if(countDownTimer !=null){
-            getTimeStampControl();
-          //  Toast.makeText(getContext(),"Sayaç Devam Ediyor" , Toast.LENGTH_SHORT).show();
-        }
-    }
-
     private void getTimeStampControl(){
         myUserRef.child(getResources().getString(R.string.nowtimestamp)).child(getResources().getString(R.string.timestamp)).setValue(ServerValue.TIMESTAMP).addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
@@ -450,6 +474,27 @@ righofgame 10 yap
 10 ise
 ekranda gösterme*/
 
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        if (timer != null){
+            timer.cancel();
+        }
+        if (countDownTimer !=null){
+            //Toast.makeText(getContext(),"Sayaç Bekletildi" , Toast.LENGTH_SHORT).show();
+            countDownTimer.cancel();
+        }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if(countDownTimer !=null){
+            getTimeStampControl();
+            //  Toast.makeText(getContext(),"Sayaç Devam Ediyor" , Toast.LENGTH_SHORT).show();
+        }
     }
 
 

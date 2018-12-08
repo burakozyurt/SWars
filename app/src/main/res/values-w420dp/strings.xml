@@ -22,8 +22,12 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="score_equals">Score :</string>
     <string name="ranking_value">Ranking :#</string>
-    <string name="announcement_title">This week\'s award</string>
-    <string name="announcement_description">The prize is waiting for the winner of the week!</string>
+    <string name="announcement_title0">This week\'s award</string>
+    <string name="announcement_description0">The prize is waiting for the winner of the week!</string>
+    <string name="announcement_title1">Daily Award</string>
+    <string name="announcement_description1">Daily award waiting for you</string>
+    <string name="announcement_title2">Follow Us</string>
+    <string name="announcement_description2">Follow us and take the screenshot send us then win the 10 diamonds</string>
     <string name="currency_type">$</string>
     <string name="default_web_lient_id">412883841103-oltcc80bcdoj4r0f3qknruh5elvvk1ed.apps.googleusercontent.com
     </string>
@@ -38,7 +42,11 @@
     <string name="wildcards">wildcards</string>
     <string name="timestamp">timestamp</string>
     <string name="nowtimestamp">nowtimestamp</string>
-
+    <string name="infodetail">infodetail</string>
+    <string name="ApprovedUser">ApprovedUsers</string>
+    <string name="CorrectUsers">CorrectUsers</string>
+    <string name="photoUrl">photoUrl</string>
+    <string name="spinValue">spinValue</string>
     <string name="loadingMessage">Kullanıcı Bilgileri Yükleniyor...</string>
 
     <!-- TODo: Ayarlar kısmı başlık ismi -->
@@ -47,13 +55,23 @@
     <string name="home_settings_title_useragreement">User Agreement</string>
     <string name="home_settings_title_about">About</string>
     <string name="home_settings_title_logout">Logout</string>
-    <string name="infodetail">infodetail</string>
+
 
     <!-- TODo: EndTime TextViewde gösterilcek kalan zaman terimleri -->
     <string name="hours">hours</string>
     <string name="minute">min</string>
     <string name="second">sec</string>
     <string name="Endtime">End Time :</string>
-    <string name="spinValue">spinValue</string>
+    <string name="Choose_Gender">Choose Gender</string>
+    <string name="Gender_Male">Male</string>
+    <string name="Gender_Female">Female</string>
+    <string name="day_personal_information">day</string>
+    <string name="month_personal_information">month</string>
+    <string name="year_personal_information">year</string>
+
+    <!-- TODo: UserSignInPopUpAlert -->
+    <string name="sign_in_choose_image_alert_title">Notice</string>
+    <string name="sign_in_choose_image_alert_desc">Make sure to enter the information correctly. Unsuited photos are rejected and your account may be permanently blocked</string>
+
 
 </resources>
