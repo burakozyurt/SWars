@@ -22,6 +22,7 @@ import android.view.View;
 import android.widget.*;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.*;
+import com.squareup.picasso.Picasso;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -217,7 +218,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
-    static void showPopupProductInfo(Integer productImageView, String productTitle, Context context){
+    static void showPopupProductInfo(String  photoUrl, String productTitle, Context context){
         final Dialog mydialog = new Dialog(context);
         mydialog.setContentView(R.layout.popup_product_info);
         mydialog.getWindow().getAttributes().windowAnimations = R.style.UptoDown;
@@ -226,14 +227,12 @@ public class MainActivity extends AppCompatActivity {
 
         productimageView = mydialog.findViewById(R.id.popup_product_Info_Image);
         productTitleView = mydialog.findViewById(R.id.popup_product_Info_TitleTextView);
-
-        if(productImageView != null)
-            productimageView.setImageResource(productImageView);
-
+        if(photoUrl !=null)Picasso.get().load(photoUrl).resize(500, 500).into(productimageView);
         if(productTitle != null)
             productTitleView.setText(productTitle);
 
         mydialog.setCanceledOnTouchOutside(true);
+        mydialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         mydialog.show();
 
 

@@ -85,7 +85,7 @@ public class AnnouncementViewPageAdapter extends PagerAdapter {
             @Override
             public void onClick(View view) {
                if(position ==0){
-                   Toast.makeText(context, "0", Toast.LENGTH_SHORT).show();
+                   MainActivity.showPopupProductInfo(photoUrl,"Steel Series Efsanevi Mouse",context);
                }else if(position == 1){
                    Toast.makeText(context, "1", Toast.LENGTH_SHORT).show();
                }else {

@@ -67,7 +67,7 @@
 
                     </com.airbnb.lottie.LottieAnimationView>
                     <TextView
-                            android:text="@string/announcement_title"
+                            android:text="@string/announcement_title0"
                             android:layout_width="0dp"
                             android:textStyle="bold"
                             android:textSize="16dp"
