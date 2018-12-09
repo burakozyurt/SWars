@@ -45,6 +45,7 @@ dependencies {
     implementation project(':LuckyWheel')
     implementation "com.airbnb.android:lottie:2.5.5"
     implementation 'com.github.pinball83:masked-edittext:1.0.4'
+    implementation 'me.relex:circleindicator:1.2.2'
 
 }
 
