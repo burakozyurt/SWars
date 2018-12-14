@@ -72,6 +72,7 @@
     <!-- TODo: UserSignInPopUpAlert -->
     <string name="sign_in_choose_image_alert_title">Notice</string>
     <string name="sign_in_choose_image_alert_desc">Make sure to enter the information correctly. Unsuited photos are rejected and your account may be permanently blocked</string>
+    <string name="Scores">Scores</string>
 
 
 </resources>

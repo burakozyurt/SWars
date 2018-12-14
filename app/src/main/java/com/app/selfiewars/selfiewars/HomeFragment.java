@@ -297,7 +297,7 @@ public class HomeFragment extends Fragment {
                         usernameTextView.setText(properties.getUserName());
                         ageTextView.setText(String.valueOf(properties.getAge()));
                         photoUrl = properties.getPhotoUrl();
-                        mPicasso.load(photoUrl).resize(400,400).into(profileImageView);
+                        mPicasso.load(photoUrl).into(profileImageView);
                         if(dataSnapshot.hasChild(getResources().getString(R.string.token))){
                             diamondToken =dataSnapshot.child(getResources().getString(R.string.token)).child((getResources().getString(R.string.diamondValue))).getValue(Integer.class);
                             diamondTextView.setText(""+diamondToken);}
@@ -382,7 +382,8 @@ public class HomeFragment extends Fragment {
                     public void onFinish() {
 
                     }
-                }.start();}
+                }.start();
+            }
             else {
                 countDownTimer = new CountDownTimer((Math.abs(guessItMilisecond-myDate)),1000) {
                     @Override

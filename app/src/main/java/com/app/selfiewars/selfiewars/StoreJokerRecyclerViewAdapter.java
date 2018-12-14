@@ -32,15 +32,15 @@ public class StoreJokerRecyclerViewAdapter extends RecyclerView.Adapter<StoreJok
 
     @NonNull
     @Override
-    public StoreJokerRecyclerViewAdapter.MyVievHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
+    public MyVievHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
         View view;
         LayoutInflater mInflater= LayoutInflater.from(mcontext);
         view = mInflater.inflate(R.layout.store_jokers_cardview,viewGroup,false);
-        return new StoreJokerRecyclerViewAdapter.MyVievHolder(view);
+        return new MyVievHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull final StoreJokerRecyclerViewAdapter.MyVievHolder myVievHolder, final int i) {
+    public void onBindViewHolder(@NonNull final MyVievHolder myVievHolder, final int i) {
       /*if(mData.get(i).jokerid==0)
             myVievHolder.constraintLayout.setBackgroundColor(mcontext.getResources().getColor(R.color.fiftyfifty_background));
         else if(mData.get(i).jokerid==1)

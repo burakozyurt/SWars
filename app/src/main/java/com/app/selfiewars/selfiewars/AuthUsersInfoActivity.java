@@ -19,7 +19,10 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
+import com.theartofdev.edmodo.cropper.CropImage;
+import com.theartofdev.edmodo.cropper.CropImageView;
 
 public class AuthUsersInfoActivity extends Activity {
     private FirebaseAuth mAuth;
@@ -191,6 +194,14 @@ public class AuthUsersInfoActivity extends Activity {
                     selectedImage = data.getData();
                     Picasso.get().load(selectedImage).transform(new ExifTransformation(this,selectedImage)).into(profileImageView);
                 }break;
+            case CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE:
+                CropImage.ActivityResult result = CropImage.getActivityResult(data);
+                if (resultCode == RESULT_OK) {
+                    selectedImage = result.getUri();
+                    Picasso.get().load(selectedImage).networkPolicy(NetworkPolicy.NO_STORE,NetworkPolicy.NO_CACHE   ).into(profileImageView);
+                } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
+                    Toast.makeText(this, "Seçilmedi Resim", Toast.LENGTH_SHORT).show();
+                }
         }
     }
 
@@ -216,13 +227,23 @@ public class AuthUsersInfoActivity extends Activity {
         btnOk.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent pickerPhotoIntent =  new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                startActivityForResult(pickerPhotoIntent,1);
+                //Intent pickerPhotoIntent =  new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                //startActivityForResult(pickerPhotoIntent,1);
+                startCropImageActivity();
                 mydialog.dismiss();
             }
         });
         mydialog.setCanceledOnTouchOutside(false);
         mydialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         mydialog.show();
+    }
+
+    private void startCropImageActivity() {
+        CropImage.activity().setMinCropResultSize(1000,1000).setMaxCropResultSize(2500,2500)
+                .setBackgroundColor(R.drawable.gradient_color).setAspectRatio(3,4).setAutoZoomEnabled(false)
+                .start(this);
+    }
+    public void onSelectImageClick(View view) {
+        CropImage.startPickImageActivity(this);
     }
 }
