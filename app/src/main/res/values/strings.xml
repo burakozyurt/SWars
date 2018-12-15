@@ -18,7 +18,7 @@
     <string name="vibration">Vibration</string>
     <string name="announcement">Announcement</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
+    <!-- TODO: Remove or change this    placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="score_equals">Score :</string>
     <string name="ranking_value">Ranking :#</string>

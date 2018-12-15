@@ -30,6 +30,7 @@ public class AuthUsersInfoActivity extends Activity {
     private DatabaseReference myRefUser;
     private DatabaseReference myRefAward;
     private DatabaseReference myRefRightOfGame;
+    private DatabaseReference myRefUserName;
     private FirebaseStorage firebaseStorage;
     private StorageReference mStorageRef;
     private UserProperties userProperties;
@@ -61,6 +62,7 @@ public class AuthUsersInfoActivity extends Activity {
         myRefUser = database.getReference("Users/" + mAuth.getUid());
         myRefAward = database.getReference("FirstAward");
         myRefRightOfGame = database.getReference("RightOfGame");
+        myRefUserName = database.getReference("UserName");
 
         continueButtonClick();
     }
@@ -72,95 +74,116 @@ public class AuthUsersInfoActivity extends Activity {
                 if(isFilled()){
                  userName = usernameText.getText().toString();
                  age = Integer.valueOf(ageText.getText().toString());
-                 mStorageRef.putFile(selectedImage).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                 myRefUserName.child(userName).addListenerForSingleValueEvent(new ValueEventListener() {
                      @Override
-                     public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-
-                        mStorageRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-                            @Override
-                            public void onSuccess(Uri uri) {
-                                photoUrl = uri.toString();
-                                userProperties.setAge(age);
-                                userProperties.setDisplayName(mAuth.getCurrentUser().getDisplayName());
-                                userProperties.setEmail(mAuth.getCurrentUser().getEmail());
-                                userProperties.setPhotoUrl(photoUrl);
-                                userProperties.setUserName(userName);
-                                myRefUser.child(getString(R.string.properties)).setValue(userProperties).addOnSuccessListener(new OnSuccessListener<Void>() {
+                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                            if(!dataSnapshot.exists()){
+                                mStorageRef.putFile(selectedImage).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                                     @Override
-                                    public void onSuccess(Void aVoid) {
-                                        Toast.makeText(getApplicationContext(),"Hesap Oluşturuldu",Toast.LENGTH_LONG).show();
-                                        myRefAward.addListenerForSingleValueEvent(new ValueEventListener() {
+                                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+
+                                        mStorageRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                                             @Override
-                                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                                final FirstAward firstAward = dataSnapshot.getValue(FirstAward.class);
-                                                myRefUser.child(getResources().getString(R.string.token)).child(getResources().getString(R.string.diamondValue)).setValue(firstAward.getDiamondValue()).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                            public void onSuccess(Uri uri) {
+                                                photoUrl = uri.toString();
+                                                userProperties.setAge(age);
+                                                userProperties.setDisplayName(mAuth.getCurrentUser().getDisplayName());
+                                                userProperties.setEmail(mAuth.getCurrentUser().getEmail());
+                                                userProperties.setPhotoUrl(photoUrl);
+                                                userProperties.setUserName(userName);
+                                                myRefUser.child(getString(R.string.properties)).setValue(userProperties).addOnSuccessListener(new OnSuccessListener<Void>() {
                                                     @Override
                                                     public void onSuccess(Void aVoid) {
-                                                        Wildcards wildcards = new Wildcards(firstAward.getDoubleDipValue(),
-                                                                firstAward.getFiftyFiftyValue(),firstAward.getHealthValue());
-                                                        myRefUser.child(getResources().getString(R.string.wildcards)).setValue(wildcards).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                        Toast.makeText(getApplicationContext(),"Hesap Oluşturuldu",Toast.LENGTH_LONG).show();
+                                                        myRefAward.addListenerForSingleValueEvent(new ValueEventListener() {
                                                             @Override
-                                                            public void onSuccess(Void aVoid) {
-                                                                myRefRightOfGame.child(mAuth.getUid()).setValue(firstRightOfGameValue).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                                                final FirstAward firstAward = dataSnapshot.getValue(FirstAward.class);
+                                                                myRefUser.child(getResources().getString(R.string.token)).child(getResources().getString(R.string.diamondValue)).setValue(firstAward.getDiamondValue()).addOnSuccessListener(new OnSuccessListener<Void>() {
                                                                     @Override
                                                                     public void onSuccess(Void aVoid) {
-                                                                        myRefUser.child("timestamp").child("guessItMilisecond").setValue(ServerValue.TIMESTAMP).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                                        Wildcards wildcards = new Wildcards(firstAward.getDoubleDipValue(),
+                                                                                firstAward.getFiftyFiftyValue(),firstAward.getHealthValue());
+                                                                        myRefUser.child(getResources().getString(R.string.wildcards)).setValue(wildcards).addOnSuccessListener(new OnSuccessListener<Void>() {
                                                                             @Override
                                                                             public void onSuccess(Void aVoid) {
-                                                                            myRefUser.child("timestamp").child("guessItAdsCount").setValue(3).addOnSuccessListener(new OnSuccessListener<Void>() {
-                                                                                @Override
-                                                                                public void onSuccess(Void aVoid) {
-                                                                                    myRefUser.child("rightofspin").child("spinValue").setValue(1).addOnSuccessListener(new OnSuccessListener<Void>() {
-                                                                                        @Override
-                                                                                        public void onSuccess(Void aVoid) {
-                                                                                            myRefUser.child("rightofspin").child("timestamp").setValue(ServerValue.TIMESTAMP).addOnSuccessListener(new OnSuccessListener<Void>() {
-                                                                                                @Override
-                                                                                                public void onSuccess(Void aVoid) {
-                                                                                                    myRefUser.child(getResources().getString(R.string.account_State)).child(getResources().getString(R.string.isReady)).setValue(true).addOnSuccessListener(new OnSuccessListener<Void>() {
-                                                                                                        @Override
-                                                                                                        public void onSuccess(Void aVoid) {
-                                                                                                            Intent i = new Intent(getApplicationContext(),MainActivity.class);
-                                                                                                            startActivity(i);
-                                                                                                            finish();
-                                                                                                        }
-                                                                                                    });
-                                                                                                }
-                                                                                            });
-                                                                                        }
-                                                                                    });
+                                                                                myRefRightOfGame.child(mAuth.getUid()).setValue(firstRightOfGameValue).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                                                    @Override
+                                                                                    public void onSuccess(Void aVoid) {
+                                                                                        myRefUser.child("timestamp").child("guessItMilisecond").setValue(ServerValue.TIMESTAMP).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                                                            @Override
+                                                                                            public void onSuccess(Void aVoid) {
+                                                                                                myRefUser.child("timestamp").child("guessItAdsCount").setValue(3).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                                                                    @Override
+                                                                                                    public void onSuccess(Void aVoid) {
+                                                                                                        myRefUser.child("rightofspin").child("spinValue").setValue(1).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                                                                            @Override
+                                                                                                            public void onSuccess(Void aVoid) {
+                                                                                                                myRefUser.child("rightofspin").child("timestamp").setValue(ServerValue.TIMESTAMP).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                                                                                    @Override
+                                                                                                                    public void onSuccess(Void aVoid) {
+                                                                                                                        myRefUserName.child(userName).setValue(mAuth.getUid()).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                                                                                            @Override
+                                                                                                                            public void onSuccess(Void aVoid) {
+                                                                                                                                myRefUser.child(getResources().getString(R.string.account_State)).child(getResources().getString(R.string.isReady)).setValue(true).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                                                                                                    @Override
+                                                                                                                                    public void onSuccess(Void aVoid) {
+                                                                                                                                        Intent i = new Intent(getApplicationContext(),MainActivity.class);
+                                                                                                                                        startActivity(i);
+                                                                                                                                        finish();
+                                                                                                                                    }
+                                                                                                                                });
+                                                                                                                            }
+                                                                                                                        });
 
-                                                                                }
-                                                                            });
+                                                                                                                    }
+                                                                                                                });
+                                                                                                            }
+                                                                                                        });
+
+                                                                                                    }
+                                                                                                });
+                                                                                            }
+                                                                                        });
+
+                                                                                    }
+                                                                                });
+
                                                                             }
                                                                         });
-
                                                                     }
                                                                 });
+
+                                                            }
+
+                                                            @Override
+                                                            public void onCancelled(@NonNull DatabaseError databaseError) {
 
                                                             }
                                                         });
                                                     }
                                                 });
-
-                                            }
-
-                                            @Override
-                                            public void onCancelled(@NonNull DatabaseError databaseError) {
-
                                             }
                                         });
                                     }
+                                }).addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
+                                    @Override
+                                    public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
+                                        Double progress = (100.0 * taskSnapshot.getBytesTransferred()) / taskSnapshot.getTotalByteCount();
+                                        chooseprofileText.setText(progress.toString());
+                                    }
                                 });
+                            }else {
+                                showPopUpInfo("Kullanıcı adı kullanılmaktadır.","Girdiğiniz kullanıcı adı bir başkası tarafından kullanılmaktadır. Lütfen başka bir ad giriniz.");
                             }
-                        });
                      }
-                 }).addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
+
                      @Override
-                     public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
-                         Double progress = (100.0 * taskSnapshot.getBytesTransferred()) / taskSnapshot.getTotalByteCount();
-                         chooseprofileText.setText(progress.toString());
+                     public void onCancelled(@NonNull DatabaseError databaseError) {
+
                      }
                  });
+
                 }
             }
         });

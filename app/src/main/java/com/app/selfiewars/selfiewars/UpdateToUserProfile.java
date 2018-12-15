@@ -50,6 +50,14 @@ public class UpdateToUserProfile extends AppCompatActivity {
 
     }
 
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        Intent i = new Intent(getApplicationContext(),MainActivity.class);
+        startActivity(i);
+        finish();
+    }
+
     public void updatedDataCreate() {
         updated_name = findViewById(R.id.settingsActivityNameEditText);
         updated_surname = findViewById(R.id.settingsActivitySurnameEditText);

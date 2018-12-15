@@ -6,6 +6,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -49,7 +50,30 @@ public class Database {
         final List<UserProperties> userPropertiesList = new ArrayList<>();
         final List<String> userPropertiesUidList = new ArrayList<>();
         if(mAuth != null){
-            FirebaseDatabase.getInstance().getReference(ApprovedUsers).limitToLast(100).addListenerForSingleValueEvent(new ValueEventListener() {
+            FirebaseDatabase.getInstance().getReference("Dataset").addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    for (DataSnapshot ds:dataSnapshot.getChildren()){
+                        String diplayName = ds.child("displayName").getValue(String.class);
+                        String photoUrl = ds.child("photoUrl").getValue(String.class);
+                        Integer age = ds.child("age").getValue(Integer.class);
+
+                        UserProperties userProperties = new UserProperties(null,null,diplayName,photoUrl,age);
+                        userPropertiesList.add(userProperties);
+                        if(userPropertiesList.size() == dataSnapshot.getChildrenCount()){
+                            Collections.shuffle(userPropertiesList);
+                            listener.onSuccess(userPropertiesList);
+                        }
+                    }
+
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                }
+            });
+           /* FirebaseDatabase.getInstance().getReference(ApprovedUsers).limitToLast(100).addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull final DataSnapshot dataSnapshotApproved) {
                     FirebaseDatabase.getInstance().getReference(CorrectUsers).child(mAuth.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
@@ -142,7 +166,7 @@ public class Database {
                 public void onCancelled(@NonNull DatabaseError databaseError) {
                     listener.onFailed();
                 }
-            });
+            });*/
         }else listener.onFailed();
 
     }

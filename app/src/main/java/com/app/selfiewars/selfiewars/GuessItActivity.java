@@ -46,6 +46,10 @@ public class GuessItActivity extends AppCompatActivity {
     private TextView btn2TextView;
     private TextView btn3TextView;
     private TextView btn4TextView;
+    private TextView loseScore;
+    private TextView questionCounTextView;
+    private Button   continueButton;
+    private Button   homeButton;
     private Boolean  isOnScreenbnt1;
     private Boolean  isOnScreenbnt2;
     private Boolean  isOnScreenbnt3;
@@ -53,8 +57,6 @@ public class GuessItActivity extends AppCompatActivity {
     private ConstraintLayout loadinglayout;
     private ConstraintLayout guessitlayout;
     private ConstraintLayout loselayout;
-    private Button passButton;
-    private Boolean IsButtonAnimationIn;
     private FirebaseAuth mAuth;
     private FirebaseDatabase mDatabase;
     private DatabaseReference myUserRef;
@@ -127,11 +129,15 @@ public class GuessItActivity extends AppCompatActivity {
         btn2TextView = findViewById(R.id.guessit_btn2_TextView);
         btn3TextView = findViewById(R.id.guessit_btn3_TextView);
         btn4TextView = findViewById(R.id.guessit_btn4_TextView);
-        passButton = findViewById(R.id.guessit_pass_Button);
+        questionCounTextView = findViewById(R.id.guess_it_question_count_TextView);
+        homeButton = findViewById(R.id.guess_it_lose_home_Button);
+        loseScore = findViewById(R.id.guess_it_lose_score_textView);
+        continueButton = findViewById(R.id.guess_it_lose_continue_Button);
         loadingFeedBackTextView = findViewById(R.id.loading_feedback_TextView);
         loadinglayout = findViewById(R.id.guess_it_activity_loading_ConstrainLayout);
         guessitlayout = findViewById(R.id.guess_it_activity_guess_it_ConstrainLayout);
         loselayout = findViewById(R.id.guess_it_activity_lose_ConstrainLayout);
+
         btn1Lottie.setSpeed(3);
         btn2Lottie.setSpeed(3);
         btn3Lottie.setSpeed(3);
@@ -141,6 +147,17 @@ public class GuessItActivity extends AppCompatActivity {
         isOnScreenbnt3 = true;
         isOnScreenbnt4 = true;
         scoreValueTextView.setText(""+0);
+        joker1SetClickableAndVisible(false);
+        joker2SetClickableAndVisible(false);
+    }
+    private void gameManagement(){
+        if(isGameStart){
+            if(listUserProperties != null){
+                setUserImageAndUserName(listUserProperties.get(listUserPropertiesIndex));
+                if(listUserPropertiesIndex < allquestionsCount-1)
+                    loadNextImage(listUserPropertiesIndex + 1);
+            }
+        }
     }
     private void setButtonAnimationListener(){
         btn1Lottie.addAnimatorListener(new Animator.AnimatorListener() {
@@ -159,6 +176,7 @@ public class GuessItActivity extends AppCompatActivity {
                     btn1Lottie.reverseAnimationSpeed();
                     btn1Lottie.setClickable(false);
                     btn1TextView.setVisibility(View.INVISIBLE);
+                    isCalledJokerDoubleDip = false;
                 }
             }
 
@@ -189,6 +207,7 @@ public class GuessItActivity extends AppCompatActivity {
                     btn2Lottie.reverseAnimationSpeed();
                     btn2Lottie.setClickable(false);
                     btn2TextView.setVisibility(View.INVISIBLE);
+                    isCalledJokerDoubleDip = false;
 
                 }
 
@@ -210,7 +229,6 @@ public class GuessItActivity extends AppCompatActivity {
                 setButtonClickable(false);
                 btn3TextView.setVisibility(View.INVISIBLE);
                 btn3TextView.setBackgroundColor(Color.TRANSPARENT);
-
             }
 
             @Override
@@ -222,6 +240,8 @@ public class GuessItActivity extends AppCompatActivity {
                     btn3Lottie.reverseAnimationSpeed();
                     btn3Lottie.setClickable(false);
                     btn3TextView.setVisibility(View.INVISIBLE);
+                    isCalledJokerDoubleDip = false;
+
                 }
 
             }
@@ -252,6 +272,7 @@ public class GuessItActivity extends AppCompatActivity {
                     btn4Lottie.reverseAnimationSpeed();
                     btn4Lottie.setClickable(false);
                     btn4TextView.setVisibility(View.INVISIBLE);
+                    isCalledJokerDoubleDip = false;
 
                 }
             }
@@ -341,6 +362,13 @@ public class GuessItActivity extends AppCompatActivity {
         btn3Lottie.setClickable(clickable);
         btn4Lottie.setClickable(clickable);
     }
+    private void setButtonsText(List<Integer> ıntegerList){
+        optionsList = ıntegerList;
+        btn1TextView.setText(""+ıntegerList.get(0).toString());
+        btn2TextView.setText(""+ıntegerList.get(1).toString());
+        btn3TextView.setText(""+ıntegerList.get(2).toString());
+        btn4TextView.setText(""+ıntegerList.get(3).toString());
+    }
     private void setButtonAnimation(){
         if (!btn1Lottie.isAnimating()&& !btn2Lottie.isAnimating() && !btn3Lottie.isAnimating()&& !btn4Lottie.isAnimating()){
             btn1Lottie.reverseAnimationSpeed();
@@ -349,16 +377,6 @@ public class GuessItActivity extends AppCompatActivity {
             btn4Lottie.reverseAnimationSpeed();
             btn1Lottie.playAnimation();
            // Toast.makeText(this, ""+btn1Lottie.getDuration(), Toast.LENGTH_SHORT).show();
-        }
-    }
-    private void gameManagement(){
-        if(isGameStart){
-            if(listUserProperties != null){
-                setJokerReset();
-                setUserImageAndUserName(listUserProperties.get(listUserPropertiesIndex));
-                if(listUserPropertiesIndex < allquestionsCount-1)
-                loadNextImage(listUserPropertiesIndex + 1);
-            }
         }
     }
     private List<Integer> options(Integer answer){
@@ -443,28 +461,35 @@ public class GuessItActivity extends AppCompatActivity {
         }
             return null;
     }
-    private void setButtonsText(List<Integer> ıntegerList){
-        optionsList = ıntegerList;
-        btn1TextView.setText(""+ıntegerList.get(0).toString());
-        btn2TextView.setText(""+ıntegerList.get(1).toString());
-        btn3TextView.setText(""+ıntegerList.get(2).toString());
-        btn4TextView.setText(""+ıntegerList.get(3).toString());
-    }
     private void selectOptionAndWaitCorrectAnswer(final TextView btnTextView){
         Handler handler = new Handler();
         Runnable runnable = new Runnable() {
             @Override
             public void run() {
                 if(isAnswerCorrect(btnTextView.getText().toString())){
+                    Handler handler = new Handler();
+                    Runnable runnable = new Runnable() {
+                        @Override
+                        public void run() {
+                            setScore();
+                            countQuestion++;
+                            listUserPropertiesIndex++;
+                            gameManagement();
+                        }
+                    };
+                    handler.postDelayed(runnable,1000);
                     btnTextView.setBackgroundResource(R.drawable.guess_it_true_answer);
-                    setScore();
-                    countQuestion++;
-                    listUserPropertiesIndex++;
-                    gameManagement();
                 }else {
                     if(isCalledJokerDoubleDip){
+                        Handler handler = new Handler();
+                        Runnable runnable = new Runnable() {
+                            @Override
+                            public void run() {
+                                eliminateOneOption(btnTextView);
+                            }
+                        };
+                        handler.postDelayed(runnable,500);
                         btnTextView.setBackgroundResource(R.drawable.guess_it_false_answer);
-                        eliminateOneOption(btnTextView);
                     }else {
                         btnTextView.setBackgroundResource(R.drawable.guess_it_false_answer);
                         setScoreDataInFirebaseAndLoseLayoutOpen();
@@ -499,6 +524,8 @@ public class GuessItActivity extends AppCompatActivity {
                         public void onComplete(@Nullable DatabaseError databaseError, boolean b, @Nullable DataSnapshot dataSnapshot) {
                             guessitlayout.setVisibility(View.GONE);
                             loselayout.setVisibility(View.VISIBLE);
+                            loseScore.setText("" + score + " Puan");
+
 
                         }
                     });
@@ -508,6 +535,7 @@ public class GuessItActivity extends AppCompatActivity {
                         public void onSuccess(Void aVoid) {
                             guessitlayout.setVisibility(View.GONE);
                             loselayout.setVisibility(View.VISIBLE);
+                            loseScore.setText("" + score +" Puan");
                         }
                     });
                 }
@@ -529,6 +557,8 @@ public class GuessItActivity extends AppCompatActivity {
                             userNameTextView.setText(userProperties.getUserName());
                             userNameTextView.setVisibility(View.VISIBLE);
                             startCountDownTimer();
+                            setJokerReset();
+                            questionCounTextView.setText(""+countQuestion);
 
                         }
 
@@ -595,6 +625,7 @@ public class GuessItActivity extends AppCompatActivity {
             }
         });
     }
+
     private void setJokerClickListener(){
         joker1btn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -605,7 +636,7 @@ public class GuessItActivity extends AppCompatActivity {
                     @Override
                     public Transaction.Result doTransaction(@NonNull MutableData mutableData) {
                         Integer value = mutableData.getValue(Integer.class);
-                        value -=joker1DecValue;
+                        value -= joker1DecValue;
                         if(value<0){
                             return null;
                         }else {

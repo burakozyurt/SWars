@@ -54,6 +54,7 @@ public class HomeFragment extends Fragment {
     private DatabaseReference myUserRef;
     private DatabaseReference myRigtOfGameRef;
     private DatabaseReference myAnnouncementRef;
+    private DatabaseReference myScoreRef;
     private FirebaseAuth mAuth;
     private Picasso mPicasso;
     private Button guessitButton;
@@ -93,6 +94,7 @@ public class HomeFragment extends Fragment {
         myUserRef = mdatabase.getReference("Users/" + mAuth.getUid());
         myRigtOfGameRef = mdatabase.getReference("RightOfGame/" + mAuth.getUid());
         myAnnouncementRef = mdatabase.getReference("Announcement");
+        myScoreRef = mdatabase.getReference(getResources().getString(R.string.Scores));
         updateHandler=new Handler();
         getTimeStampControl();
         define(rootview);
@@ -298,6 +300,7 @@ public class HomeFragment extends Fragment {
                         ageTextView.setText(String.valueOf(properties.getAge()));
                         photoUrl = properties.getPhotoUrl();
                         mPicasso.load(photoUrl).into(profileImageView);
+                        getScore();
                         if(dataSnapshot.hasChild(getResources().getString(R.string.token))){
                             diamondToken =dataSnapshot.child(getResources().getString(R.string.token)).child((getResources().getString(R.string.diamondValue))).getValue(Integer.class);
                             diamondTextView.setText(""+diamondToken);}
@@ -324,6 +327,20 @@ public class HomeFragment extends Fragment {
             }
         });
 
+    }
+    private void getScore(){
+        myScoreRef.child(mAuth.getUid()).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists())
+                    scoreTextView.setText("" + dataSnapshot.getValue(Integer.class));
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
     }
     public void settingsIconClicked(){
         settingsIcon.setOnClickListener(new View.OnClickListener() {
