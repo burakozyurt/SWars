@@ -3,14 +3,14 @@ package com.app.selfiewars.selfiewars;
 import android.content.Intent;
 
 public class RankingInfoActivity {
-    int starImageView;
-    int userPhotoImageView;
-    String userName;
+   private int starImageView;
+   private String userPhotoImageView;
+   private String userName;
 
     public RankingInfoActivity() {
     }
 
-    public RankingInfoActivity(int starImageView, int userPhotoImageView, String userName) {
+    public RankingInfoActivity(int starImageView, String userPhotoImageView, String userName) {
         this.starImageView = starImageView;
         this.userPhotoImageView = userPhotoImageView;
         this.userName = userName;
@@ -24,11 +24,11 @@ public class RankingInfoActivity {
         this.starImageView = starImageView;
     }
 
-    public int getUserPhotoImageView() {
+    public String getUserPhotoImageView() {
         return userPhotoImageView;
     }
 
-    public void setUserPhotoImageView(int userPhotoImageView) {
+    public void setUserPhotoImageView(String userPhotoImageView) {
         this.userPhotoImageView = userPhotoImageView;
     }
 

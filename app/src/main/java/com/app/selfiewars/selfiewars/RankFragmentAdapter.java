@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,9 +35,11 @@ public class RankFragmentAdapter extends RecyclerView.Adapter<RankFragmentAdapte
     @Override
     public void onBindViewHolder(@NonNull ViewHolder viewHolder, int i) {
         viewHolder.usernameTextView.setText(mData.get(i).getUserName());
-        viewHolder.starImageView.setImageResource(mData.get(i).getStarImageView());
-        viewHolder.userPhotoImageView.setImageResource(mData.get(i).getUserPhotoImageView());
-
+        if(i==0)
+        viewHolder.starImageView.setImageResource(R.drawable.star);
+        else viewHolder.starImageView.setVisibility(View.INVISIBLE);
+        viewHolder.rankNumber.setText(""+(i+1));
+        Picasso.get().load(mData.get(i).getUserPhotoImageView()).into(viewHolder.userPhotoImageView);
     }
 
     @Override
@@ -46,16 +49,22 @@ public class RankFragmentAdapter extends RecyclerView.Adapter<RankFragmentAdapte
 
     class ViewHolder extends RecyclerView.ViewHolder {
         TextView usernameTextView;
+        TextView rankNumber;
         ImageView starImageView;
         ImageView userPhotoImageView;
         RelativeLayout relativeLayout;
+
+
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             usernameTextView = itemView.findViewById(R.id.usernameTextView);
             starImageView = itemView.findViewById(R.id.starImageView);
             userPhotoImageView = itemView.findViewById(R.id.userPhotoImageView);
+            rankNumber = itemView.findViewById(R.id.rank_starNumber);
             relativeLayout = itemView.findViewById(R.id.cardViewRelative);
+
+
 
         }
     }
