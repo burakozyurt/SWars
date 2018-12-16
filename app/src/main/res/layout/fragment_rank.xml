@@ -50,45 +50,31 @@
                 >
 
 
-                    <com.airbnb.lottie.LottieAnimationView
-                            android:id="@+id/clockAnimationView"
-                            android:layout_width="65dp"
-                            android:layout_height="65dp"
-                            app:lottie_fileName="clock.json"
-                            app:lottie_loop="true"
-                            app:lottie_autoPlay="true"
-                            android:layout_alignParentStart="true"
-                            android:layout_alignParentTop="true"
-                            app:layout_constraintTop_toTopOf="parent"
-                            android:layout_marginTop="8dp" app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintBottom_toBottomOf="parent"
-                            android:layout_marginBottom="8dp" app:layout_constraintEnd_toEndOf="parent"
-                            android:layout_marginEnd="150dp">
-
-                    </com.airbnb.lottie.LottieAnimationView>
                     <TextView
                             android:text="@string/announcement_title0"
                             android:layout_width="0dp"
                             android:textStyle="bold"
-                            android:textSize="16dp"
+                            android:textSize="18sp"
                             android:layout_height="wrap_content"
                             android:textColor="@color/background"
                             android:id="@+id/announcement_title"
                             app:layout_constraintTop_toTopOf="parent"
-                            app:layout_constraintEnd_toEndOf="parent" android:layout_marginEnd="32dp"
-                            android:textAlignment="center" app:layout_constraintStart_toEndOf="@+id/animation_view"
-                            android:layout_marginTop="16dp"/>
+                            android:textAlignment="center"
+                            android:layout_marginTop="16dp" app:layout_constraintStart_toStartOf="parent"
+                            android:layout_marginStart="8dp" app:layout_constraintEnd_toEndOf="parent"
+                            android:layout_marginEnd="8dp"/>
                     <TextView
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:textColor="@color/background"
+                            android:textSize="15sp"
                             android:textAlignment="center"
                             android:id="@+id/announcement_description"
-                            android:text="End To: 5d 9h" android:layout_marginTop="24dp"
+                            android:text="End To: 5d 9h"
                             app:layout_constraintTop_toBottomOf="@+id/announcement_title"
-                            app:layout_constraintEnd_toEndOf="parent" android:layout_marginEnd="32dp"
-                            app:layout_constraintStart_toEndOf="@+id/animation_view"
-                            app:layout_constraintBottom_toBottomOf="parent" android:layout_marginBottom="16dp"/>
+                            app:layout_constraintEnd_toEndOf="parent" android:layout_marginEnd="8dp"
+                            app:layout_constraintBottom_toBottomOf="parent" android:layout_marginBottom="16dp"
+                            app:layout_constraintStart_toStartOf="parent" android:layout_marginStart="8dp"/>
                 </android.support.constraint.ConstraintLayout>
 
             </LinearLayout>
