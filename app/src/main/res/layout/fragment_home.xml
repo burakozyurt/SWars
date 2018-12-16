@@ -110,7 +110,7 @@
                             app:layout_constraintTop_toTopOf="@+id/scoreAnimationView"
                             app:layout_constraintBottom_toBottomOf="@+id/scoreAnimationView"
                             app:layout_constraintStart_toEndOf="@+id/scoreAnimationView"
-                            android:layout_marginTop="8dp" android:layout_marginStart="0dp"/>
+                    />
                     <LinearLayout
                             android:orientation="vertical"
                             android:layout_width="match_parent"
@@ -278,8 +278,8 @@
                             app:lottie_fileName="score.json"
                             app:lottie_loop="true"
                             app:lottie_autoPlay="true" app:layout_constraintStart_toStartOf="parent"
-                            android:layout_marginStart="8dp" app:layout_constraintTop_toTopOf="parent"
-                            android:layout_marginTop="8dp">
+                            android:layout_marginStart="4dp" app:layout_constraintTop_toTopOf="parent"
+                            android:layout_marginTop="4dp">
                     </com.airbnb.lottie.LottieAnimationView>
 
                     <TextView
@@ -371,9 +371,9 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     android:layout_marginEnd="8dp" app:layout_constraintStart_toStartOf="parent"
                     android:layout_marginStart="8dp" app:layout_constraintHorizontal_bias="0.496"
-                    android:layout_marginTop="32dp"
+                    android:layout_marginTop="16dp"
                     app:layout_constraintTop_toBottomOf="@+id/linearLayoutAnnouncement"
-                    android:layout_marginBottom="16dp" app:layout_constraintBottom_toTopOf="@+id/linearLayout17"/>
+                    app:layout_constraintBottom_toTopOf="@+id/linearLayout17" android:layout_marginBottom="8dp"/>
             <LinearLayout
                     android:layout_width="wrap_content"
                     android:orientation="vertical"

@@ -300,14 +300,14 @@ public class SpinFragment extends Fragment{
         });
     }
     private void setRewardAds(){
-        MobileAds.initialize(getActivity(), "ca-app-pub-3940256099942544/5224354917");
+        MobileAds.initialize(getActivity(), "ca-app-pub-7004761147200711~5104636223");
         mRewardedVideoAd = MobileAds.getRewardedVideoAdInstance(getActivity());
-        mRewardedVideoAd.loadAd("ca-app-pub-3940256099942544/5224354917",
+        mRewardedVideoAd.loadAd("ca-app-pub-7004761147200711/8923998717",
                 new AdRequest.Builder().build());
         mRewardedVideoAd.setRewardedVideoAdListener(new RewardedVideoAdListener() {
             @Override
             public void onRewardedVideoAdLoaded() {
-
+                Toast.makeText(getContext(), "Reklam Yüklendi", Toast.LENGTH_SHORT).show();
             }
 
             @Override
