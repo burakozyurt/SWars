@@ -50,7 +50,6 @@ public class GuessItActivity extends AppCompatActivity {
     private TextView loseScore;
     private TextView questionCounTextView;
     private TextView healthValueTextView;
-    private Button   continueButton;
     private Button   homeButton;
     private ConstraintLayout loadinglayout;
     private ConstraintLayout guessitlayout;
@@ -137,7 +136,6 @@ public class GuessItActivity extends AppCompatActivity {
         questionCounTextView = findViewById(R.id.guess_it_question_count_TextView);
         homeButton = findViewById(R.id.guess_it_lose_home_Button);
         loseScore = findViewById(R.id.guess_it_lose_score_textView);
-        continueButton = findViewById(R.id.guess_it_lose_continue_Button);
         loadingFeedBackTextView = findViewById(R.id.loading_feedback_TextView);
         loadinglayout = findViewById(R.id.guess_it_activity_loading_ConstrainLayout);
         guessitlayout = findViewById(R.id.guess_it_activity_guess_it_ConstrainLayout);
@@ -980,5 +978,20 @@ public class GuessItActivity extends AppCompatActivity {
 
             }
     }
-//.networkPolicy(NetworkPolicy.NO_STORE).networkPolicy(NetworkPolicy.NO_STORE).memoryPolicy(MemoryPolicy.NO_STORE,MemoryPolicy.NO_CACHE)
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        finish();
+    }
+
+   /* @Override
+    protected void onResume() {
+        super.onResume();
+        Intent i = new Intent(getApplicationContext(),MainActivity.class);
+        startActivity(i);
+        finish();
+    }*/
+
+    //.networkPolicy(NetworkPolicy.NO_STORE).networkPolicy(NetworkPolicy.NO_STORE).memoryPolicy(MemoryPolicy.NO_STORE,MemoryPolicy.NO_CACHE)
 }
