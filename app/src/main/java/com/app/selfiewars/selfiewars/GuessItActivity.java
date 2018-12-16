@@ -41,6 +41,7 @@ public class GuessItActivity extends AppCompatActivity {
     private LottieAnimationView btn2Lottie;
     private LottieAnimationView btn3Lottie;
     private LottieAnimationView btn4Lottie;
+    private LottieAnimationView healthAnimView;
     private LottieAnimationView lottieAnimationView;
     private TextView btn1TextView;
     private TextView btn2TextView;
@@ -48,12 +49,9 @@ public class GuessItActivity extends AppCompatActivity {
     private TextView btn4TextView;
     private TextView loseScore;
     private TextView questionCounTextView;
+    private TextView healthValueTextView;
     private Button   continueButton;
     private Button   homeButton;
-    private Boolean  isOnScreenbnt1;
-    private Boolean  isOnScreenbnt2;
-    private Boolean  isOnScreenbnt3;
-    private Boolean  isOnScreenbnt4;
     private ConstraintLayout loadinglayout;
     private ConstraintLayout guessitlayout;
     private ConstraintLayout loselayout;
@@ -77,10 +75,15 @@ public class GuessItActivity extends AppCompatActivity {
     private Integer secondfiftyFityOption;
     private boolean isCalledJokerFiftyFifty = false;
     private boolean isCalledJokerDoubleDip = false;
+    private boolean isCalledJokerHealth = false;
     private Integer joker1DecValue = 1;
     private Integer joker1UsingCount = 0;
+    private Integer healthUsingCount = 0;
     private Integer joker2UsingCount = 0;
     private Integer joker2DecValue = 1;
+    private Integer healthDecValue = 1;
+    private Handler healthHandler;
+    private Runnable healthRunnable;
 
     @Override
     public void onBackPressed() {
@@ -125,6 +128,7 @@ public class GuessItActivity extends AppCompatActivity {
         btn2Lottie = findViewById(R.id.guessit_btn2_lottieAnimationView);
         btn3Lottie = findViewById(R.id.guessit_btn3_lottieAnimationView);
         btn4Lottie = findViewById(R.id.guessit_btn4_lottieAnimationView);
+        healthAnimView = findViewById(R.id.guess_it_health_lottieAnimView);
         btn1TextView = findViewById(R.id.guessit_btn1_TextView);
         btn2TextView = findViewById(R.id.guessit_btn2_TextView);
         btn3TextView = findViewById(R.id.guessit_btn3_TextView);
@@ -137,15 +141,11 @@ public class GuessItActivity extends AppCompatActivity {
         loadinglayout = findViewById(R.id.guess_it_activity_loading_ConstrainLayout);
         guessitlayout = findViewById(R.id.guess_it_activity_guess_it_ConstrainLayout);
         loselayout = findViewById(R.id.guess_it_activity_lose_ConstrainLayout);
-
+        healthValueTextView = findViewById(R.id.guess_it_health_TextView);
         btn1Lottie.setSpeed(3);
         btn2Lottie.setSpeed(3);
         btn3Lottie.setSpeed(3);
         btn4Lottie.setSpeed(3);
-        isOnScreenbnt1 = true;
-        isOnScreenbnt2 = true;
-        isOnScreenbnt3 = true;
-        isOnScreenbnt4 = true;
         scoreValueTextView.setText(""+0);
         joker1SetClickableAndVisible(false);
         joker2SetClickableAndVisible(false);
@@ -158,135 +158,6 @@ public class GuessItActivity extends AppCompatActivity {
                     loadNextImage(listUserPropertiesIndex + 1);
             }
         }
-    }
-    private void setButtonAnimationListener(){
-        btn1Lottie.addAnimatorListener(new Animator.AnimatorListener() {
-            @Override
-            public void onAnimationStart(Animator animator) {
-                setButtonClickable(false);
-                btn1TextView.setVisibility(View.INVISIBLE);
-                btn1TextView.setBackgroundResource(R.drawable.guess_it_transparent_answer);
-            }
-
-            @Override
-            public void onAnimationEnd(Animator animator) {
-                setButtonClickable(true);
-                btn1TextView.setVisibility(View.VISIBLE);
-                if(isCalledJokerFiftyFifty || isCalledJokerDoubleDip){
-                    btn1Lottie.reverseAnimationSpeed();
-                    btn1Lottie.setClickable(false);
-                    btn1TextView.setVisibility(View.INVISIBLE);
-                    isCalledJokerDoubleDip = false;
-                }
-            }
-
-            @Override
-            public void onAnimationCancel(Animator animator) {
-                //Toast.makeText(GuessItActivity.this, "İptal", Toast.LENGTH_SHORT).show();
-
-            }
-
-            @Override
-            public void onAnimationRepeat(Animator animator) {
-
-            }
-        });
-        btn2Lottie.addAnimatorListener(new Animator.AnimatorListener() {
-            @Override
-            public void onAnimationStart(Animator animator) {
-                setButtonClickable(false);
-                btn2TextView.setVisibility(View.INVISIBLE);
-                btn2TextView.setBackgroundColor(Color.TRANSPARENT);
-            }
-
-            @Override
-            public void onAnimationEnd(Animator animator) {
-                setButtonClickable(true);
-                btn2TextView.setVisibility(View.VISIBLE);
-                if(isCalledJokerFiftyFifty || isCalledJokerDoubleDip){
-                    btn2Lottie.reverseAnimationSpeed();
-                    btn2Lottie.setClickable(false);
-                    btn2TextView.setVisibility(View.INVISIBLE);
-                    isCalledJokerDoubleDip = false;
-
-                }
-
-            }
-
-            @Override
-            public void onAnimationCancel(Animator animator) {
-
-            }
-
-            @Override
-            public void onAnimationRepeat(Animator animator) {
-
-            }
-        });
-        btn3Lottie.addAnimatorListener(new Animator.AnimatorListener() {
-            @Override
-            public void onAnimationStart(Animator animator) {
-                setButtonClickable(false);
-                btn3TextView.setVisibility(View.INVISIBLE);
-                btn3TextView.setBackgroundColor(Color.TRANSPARENT);
-            }
-
-            @Override
-            public void onAnimationEnd(Animator animator) {
-               // isOnScreenbnt3 = !isOnScreenbnt3;
-                setButtonClickable(true);
-                btn3TextView.setVisibility(View.VISIBLE);
-                if(isCalledJokerFiftyFifty || isCalledJokerDoubleDip){
-                    btn3Lottie.reverseAnimationSpeed();
-                    btn3Lottie.setClickable(false);
-                    btn3TextView.setVisibility(View.INVISIBLE);
-                    isCalledJokerDoubleDip = false;
-
-                }
-
-            }
-
-            @Override
-            public void onAnimationCancel(Animator animator) {
-
-            }
-
-            @Override
-            public void onAnimationRepeat(Animator animator) {
-
-            }
-        });
-        btn4Lottie.addAnimatorListener(new Animator.AnimatorListener() {
-            @Override
-            public void onAnimationStart(Animator animator) {
-                setButtonClickable(false);
-                btn4TextView.setVisibility(View.INVISIBLE);
-                btn4TextView.setBackgroundColor(Color.TRANSPARENT);
-            }
-
-            @Override
-            public void onAnimationEnd(Animator animator) {
-                setButtonClickable(true);
-                btn4TextView.setVisibility(View.VISIBLE);
-                if(isCalledJokerFiftyFifty || isCalledJokerDoubleDip){
-                    btn4Lottie.reverseAnimationSpeed();
-                    btn4Lottie.setClickable(false);
-                    btn4TextView.setVisibility(View.INVISIBLE);
-                    isCalledJokerDoubleDip = false;
-
-                }
-            }
-
-            @Override
-            public void onAnimationCancel(Animator animator) {
-
-            }
-
-            @Override
-            public void onAnimationRepeat(Animator animator) {
-
-            }
-        });
     }
     private void setButtonOnClickListener(){
         btn1Lottie.setOnClickListener(new View.OnClickListener() {
@@ -462,7 +333,7 @@ public class GuessItActivity extends AppCompatActivity {
             return null;
     }
     private void selectOptionAndWaitCorrectAnswer(final TextView btnTextView){
-        Handler handler = new Handler();
+        final Handler handler = new Handler();
         Runnable runnable = new Runnable() {
             @Override
             public void run() {
@@ -492,7 +363,16 @@ public class GuessItActivity extends AppCompatActivity {
                         btnTextView.setBackgroundResource(R.drawable.guess_it_false_answer);
                     }else {
                         btnTextView.setBackgroundResource(R.drawable.guess_it_false_answer);
-                        setScoreDataInFirebaseAndLoseLayoutOpen();
+                        healthSetClickableAndVisible(true);
+                        healthHandler = new Handler();
+                        healthRunnable = new Runnable() {
+                            @Override
+                            public void run() {
+                                healthSetClickableAndVisible(false);
+                                setScoreDataInFirebaseAndLoseLayoutOpen();
+                            }
+                        };
+                        healthHandler.postDelayed(healthRunnable,4000);
                     }
                 }
             }
@@ -500,6 +380,144 @@ public class GuessItActivity extends AppCompatActivity {
         handler.postDelayed(runnable,1000);
         btnTextView.setBackgroundResource(R.drawable.guess_it_selected_answer);
 
+    }
+    private void setButtonAnimationListener(){
+        btn1Lottie.addAnimatorListener(new Animator.AnimatorListener() {
+            @Override
+            public void onAnimationStart(Animator animator) {
+                setButtonClickable(false);
+                btn1TextView.setVisibility(View.INVISIBLE);
+                btn1TextView.setBackgroundResource(R.drawable.guess_it_transparent_answer);
+            }
+
+            @Override
+            public void onAnimationEnd(Animator animator) {
+                setButtonClickable(true);
+                btn1TextView.setVisibility(View.VISIBLE);
+                if(isCalledJokerFiftyFifty || isCalledJokerDoubleDip){
+                    btn1Lottie.reverseAnimationSpeed();
+                    btn1Lottie.setClickable(false);
+                    btn1TextView.setVisibility(View.INVISIBLE);
+                    isCalledJokerDoubleDip = false;
+                    joker2btn.setClickable(true);
+                    joker1btn.setClickable(true);
+                }
+            }
+
+            @Override
+            public void onAnimationCancel(Animator animator) {
+                //Toast.makeText(GuessItActivity.this, "İptal", Toast.LENGTH_SHORT).show();
+
+            }
+
+            @Override
+            public void onAnimationRepeat(Animator animator) {
+
+            }
+        });
+        btn2Lottie.addAnimatorListener(new Animator.AnimatorListener() {
+            @Override
+            public void onAnimationStart(Animator animator) {
+                setButtonClickable(false);
+                btn2TextView.setVisibility(View.INVISIBLE);
+                btn2TextView.setBackgroundColor(Color.TRANSPARENT);
+            }
+
+            @Override
+            public void onAnimationEnd(Animator animator) {
+                setButtonClickable(true);
+                btn2TextView.setVisibility(View.VISIBLE);
+                if(isCalledJokerFiftyFifty || isCalledJokerDoubleDip){
+                    btn2Lottie.reverseAnimationSpeed();
+                    btn2Lottie.setClickable(false);
+                    btn2TextView.setVisibility(View.INVISIBLE);
+                    isCalledJokerDoubleDip = false;
+                    joker2btn.setClickable(true);
+                    joker1btn.setClickable(true);
+
+                }
+
+            }
+
+            @Override
+            public void onAnimationCancel(Animator animator) {
+
+            }
+
+            @Override
+            public void onAnimationRepeat(Animator animator) {
+
+            }
+        });
+        btn3Lottie.addAnimatorListener(new Animator.AnimatorListener() {
+            @Override
+            public void onAnimationStart(Animator animator) {
+                setButtonClickable(false);
+                btn3TextView.setVisibility(View.INVISIBLE);
+                btn3TextView.setBackgroundColor(Color.TRANSPARENT);
+            }
+
+            @Override
+            public void onAnimationEnd(Animator animator) {
+                // isOnScreenbnt3 = !isOnScreenbnt3;
+                setButtonClickable(true);
+                btn3TextView.setVisibility(View.VISIBLE);
+                if(isCalledJokerFiftyFifty || isCalledJokerDoubleDip){
+                    btn3Lottie.reverseAnimationSpeed();
+                    btn3Lottie.setClickable(false);
+                    btn3TextView.setVisibility(View.INVISIBLE);
+                    isCalledJokerDoubleDip = false;
+                    joker2btn.setClickable(true);
+                    joker1btn.setClickable(true);
+
+
+                }
+
+            }
+
+            @Override
+            public void onAnimationCancel(Animator animator) {
+
+            }
+
+            @Override
+            public void onAnimationRepeat(Animator animator) {
+
+            }
+        });
+        btn4Lottie.addAnimatorListener(new Animator.AnimatorListener() {
+            @Override
+            public void onAnimationStart(Animator animator) {
+                setButtonClickable(false);
+                btn4TextView.setVisibility(View.INVISIBLE);
+                btn4TextView.setBackgroundColor(Color.TRANSPARENT);
+            }
+
+            @Override
+            public void onAnimationEnd(Animator animator) {
+                setButtonClickable(true);
+                btn4TextView.setVisibility(View.VISIBLE);
+                if(isCalledJokerFiftyFifty || isCalledJokerDoubleDip){
+                    btn4Lottie.reverseAnimationSpeed();
+                    btn4Lottie.setClickable(false);
+                    btn4TextView.setVisibility(View.INVISIBLE);
+                    isCalledJokerDoubleDip = false;
+                    joker2btn.setClickable(true);
+                    joker1btn.setClickable(true);
+
+                }
+            }
+
+            @Override
+            public void onAnimationCancel(Animator animator) {
+
+            }
+
+            @Override
+            public void onAnimationRepeat(Animator animator) {
+
+            }
+        });
     }
     private void setScoreDataInFirebaseAndLoseLayoutOpen(){
         myScoreRef.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -569,15 +587,32 @@ public class GuessItActivity extends AppCompatActivity {
                     });
     }
     private void setJokerReset(){
+        healthDecValue = (int) Math.pow(2,healthUsingCount);
         joker1DecValue = (int) Math.pow(2,joker1UsingCount);
         joker2DecValue = (int) Math.pow(2,joker2UsingCount);
         isCalledJokerFiftyFifty = false;
         isCalledJokerDoubleDip = false;
         joker1SetClickableAndVisible(true);
         joker2SetClickableAndVisible(true);
-        joker1ValueTextView.setText(""+joker1DecValue);
-        joker2ValueTextView.setText(""+joker2DecValue);
+        healthSetClickableAndVisible(false);
+        joker1ValueTextView.setText("" + joker1DecValue);
+        joker2ValueTextView.setText("" + joker2DecValue);
+        healthValueTextView.setText("" + healthDecValue);
 
+    }
+    private void healthSetClickableAndVisible(Boolean visibility){
+        if(visibility){
+            healthValueTextView.setVisibility(View.VISIBLE);
+            healthValueTextView.setClickable(true);
+            healthAnimView.setClickable(true);
+            healthAnimView.setVisibility(View.VISIBLE);
+            healthAnimView.playAnimation();
+        }else {
+            healthValueTextView.setVisibility(View.GONE);
+            healthValueTextView.setClickable(false);
+            healthAnimView.setVisibility(View.GONE);
+            healthAnimView.setClickable(false);
+        }
     }
     private List<Integer> getShuffleThreeOptions(List<Integer> alloptions){
         Collections.shuffle(alloptions);
@@ -631,6 +666,7 @@ public class GuessItActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 joker1SetClickableAndVisible(false);
+                joker2btn.setClickable(false);
                 myUserRef.child("wildcards").child("fiftyFiftyValue").runTransaction(new Transaction.Handler() {
                     @NonNull
                     @Override
@@ -653,6 +689,7 @@ public class GuessItActivity extends AppCompatActivity {
                             eliminateTwoOption();
                         }else {
                             MainActivity.showPopUpInfo(null,"Yeterli jokeriniz bulunmamaktadır.",null,GuessItActivity.this);
+                            joker2btn.setClickable(true);
                         }
                     }
                 });
@@ -663,6 +700,7 @@ public class GuessItActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 joker2SetClickableAndVisible(false);
+                joker1btn.setClickable(false);
                 myUserRef.child("wildcards").child("doubleDipValue").runTransaction(new Transaction.Handler() {
                     @NonNull
                     @Override
@@ -682,6 +720,42 @@ public class GuessItActivity extends AppCompatActivity {
                         if(b){
                             isCalledJokerDoubleDip = true;
                             joker2UsingCount++;
+                        }else {
+                            MainActivity.showPopUpInfo(null,"Yeterli jokeriniz bulunmamaktadır.",null,GuessItActivity.this);
+                            joker1btn.setClickable(true);
+
+                        }
+                    }
+                });
+            }
+        });
+        healthAnimView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                healthSetClickableAndVisible(false);
+                myUserRef.child("wildcards").child("healthValue").runTransaction(new Transaction.Handler() {
+                    @NonNull
+                    @Override
+                    public Transaction.Result doTransaction(@NonNull MutableData mutableData) {
+                        Integer value = mutableData.getValue(Integer.class);
+                        value -= healthDecValue;
+                        if(value<0){
+                            return null;
+                        }else {
+                            mutableData.setValue(value);
+                            return Transaction.success(mutableData);
+                        }
+                    }
+
+                    @Override
+                    public void onComplete(@Nullable DatabaseError databaseError, boolean b, @Nullable DataSnapshot dataSnapshot) {
+                        if(b){
+                            healthHandler.removeCallbacks(healthRunnable);
+                            healthSetClickableAndVisible(false);
+                            healthUsingCount++;
+                            countQuestion++;
+                            listUserPropertiesIndex++;
+                            gameManagement();
                         }else {
                             MainActivity.showPopUpInfo(null,"Yeterli jokeriniz bulunmamaktadır.",null,GuessItActivity.this);
                         }

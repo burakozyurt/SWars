@@ -1,11 +1,13 @@
 package com.app.selfiewars.selfiewars;
 
 
+import android.content.Context;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,6 +16,11 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.airbnb.lottie.LottieAnimationView;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.MobileAds;
+import com.google.android.gms.ads.reward.RewardItem;
+import com.google.android.gms.ads.reward.RewardedVideoAd;
+import com.google.android.gms.ads.reward.RewardedVideoAdListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.*;
@@ -29,7 +36,7 @@ import java.util.concurrent.TimeUnit;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class SpinFragment extends Fragment {
+public class SpinFragment extends Fragment{
     private FirebaseDatabase mydatabase;
     private DatabaseReference myRefUser;
     private DatabaseReference myRefRightOfGame;
@@ -45,9 +52,10 @@ public class SpinFragment extends Fragment {
     private TextView righofSpinText;
     private TextView endtimeText;
     private CountDownTimer countDownTimer;
+    private ConstraintLayout adsConstraintLayout;
     private final int idDiamond = 0, idJoker1 = 1, idJoker2 = 2, idReSpin = 3, idHealth = 4, idGreenGem = 5;
     private final String color1 = "#ffffff", color2 = "#e3f2fd", color3 = "#bbdefb";
-
+    private RewardedVideoAd mRewardedVideoAd;
     public SpinFragment() {
         // Required empty public constructor
     }
@@ -58,25 +66,27 @@ public class SpinFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_spin, container, false);
-        luckyWheelView = view.findViewById(R.id.luckyWheel);
-        spin = view.findViewById(R.id.button3);
-        righofSpinText = view.findViewById(R.id.home_profile_rightOfGame_textView);
-        spinAdsAnimView = view.findViewById(R.id.lottieAdsSpin);
-        endtimeText = view.findViewById(R.id.endtimSpinTextView);
-        define();
+        define(view);
+        setClickAdsListener();
         getTimeStampControlOfSpin();
         spinClick();
         setupLuckyWheel();
+        setRewardAds();
         return view;
     }
 
-    private void define() {
+    private void define(View view) {
         isrunnigluckywheel = false;
         mAuth = FirebaseAuth.getInstance();
         mydatabase = FirebaseDatabase.getInstance();
         myRefUser = mydatabase.getReference("Users/" + mAuth.getUid());
-        myRefRightOfGame = mydatabase.getReference("RightOfGame/"+mAuth.getUid());
-
+        myRefRightOfGame = mydatabase.getReference("RightOfGame/"+mAuth.getUid());luckyWheelView = view.findViewById(R.id.luckyWheel);
+        spin = view.findViewById(R.id.button3);
+        righofSpinText = view.findViewById(R.id.home_profile_rightOfGame_textView);
+        spinAdsAnimView = view.findViewById(R.id.lottieAdsSpin);
+        endtimeText = view.findViewById(R.id.endtimSpinTextView);
+        adsConstraintLayout =view.findViewById(R.id.spin_adsConstraintLayout);
+        adsConstraintLayout.setVisibility(View.GONE);
     }
 
     private void getTimeStampControlOfSpin() {
@@ -88,6 +98,7 @@ public class SpinFragment extends Fragment {
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                         if (dataSnapshot.child(getResources().getString(R.string.nowtimestamp)).hasChild(getResources().getString(R.string.timestamp))) {
                             Integer controlrighofSpin = dataSnapshot.child("rightofspin").child(getResources().getString(R.string.spinValue)).getValue(Integer.class);
+                            Integer controlspinAdsCount = dataSnapshot.child("rightofspin").child(getResources().getString(R.string.spicAdsCount)).getValue(Integer.class);
                             rightofSpin = controlrighofSpin;
                             righofSpinText.setText("" + controlrighofSpin);
                             rightofspinMilis = dataSnapshot.child("rightofspin").child(getResources().getString(R.string.timestamp)).getValue(Long.class);
@@ -96,15 +107,19 @@ public class SpinFragment extends Fragment {
                                 if (controlrighofSpin == 0) {
                                     startOrRefresCountTime(nowTimestamp);
                                     endtimeText.setVisibility(View.VISIBLE);
-                                    spinAdsAnimView.setVisibility(View.VISIBLE);
+                                    if(controlspinAdsCount == 1)
+                                    adsConstraintLayout.setVisibility(View.VISIBLE);
+                                    else
+                                        adsConstraintLayout.setVisibility(View.INVISIBLE);
+
                                 } else {
                                     endtimeText.setVisibility(View.INVISIBLE);
-                                    spinAdsAnimView.setVisibility(View.INVISIBLE);
+                                    adsConstraintLayout.setVisibility(View.INVISIBLE);
                                 }
                             } else {
                                 if (controlrighofSpin == 0) {
                                     endtimeText.setVisibility(View.INVISIBLE);
-                                    spinAdsAnimView.setVisibility(View.INVISIBLE);
+                                    adsConstraintLayout.setVisibility(View.INVISIBLE);
                                     myRefUser.child("rightofspin").child(getResources().getString(R.string.spinValue)).setValue(1).addOnSuccessListener(new OnSuccessListener<Void>() {
                                         @Override
                                         public void onSuccess(Void aVoid) {
@@ -113,7 +128,7 @@ public class SpinFragment extends Fragment {
                                     });
                                 } else {
                                     endtimeText.setVisibility(View.INVISIBLE);
-                                    spinAdsAnimView.setVisibility(View.INVISIBLE);
+                                    adsConstraintLayout.setVisibility(View.INVISIBLE);
                                     righofSpinText.setText("" + controlrighofSpin);
                                 }
                             }
@@ -169,7 +184,7 @@ public class SpinFragment extends Fragment {
         }
     }
 
-    public void setupLuckyWheel() {
+    private void setupLuckyWheel() {
         setSpinItem();
         luckyWheelView.setLuckyRoundItemSelectedListener(new LuckyWheelView.LuckyRoundItemSelectedListener() {
             @Override
@@ -187,7 +202,7 @@ public class SpinFragment extends Fragment {
         });
     }
 
-    public void spinClick() {
+    private void spinClick() {
         spin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -221,16 +236,27 @@ public class SpinFragment extends Fragment {
                                             myRefUser.addListenerForSingleValueEvent(new ValueEventListener() {
                                                 @Override
                                                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                                    getTimeStampControlOfSpin();
                                                     Long nowTimeStamp = dataSnapshot.child("nowtimestamp").child(getResources().getString(R.string.timestamp)).getValue(Long.class);
+                                                    rightofspinMilis = dataSnapshot.child("rightofspin").child(getResources().getString(R.string.timestamp)).getValue(Long.class);
+                                                    if(nowTimeStamp > rightofspinMilis){
                                                     myRefUser.child("rightofspin").child(getResources().getString(R.string.timestamp)).setValue(nowTimeStamp + 86400000).addOnSuccessListener(new OnSuccessListener<Void>() {
                                                         @Override
                                                         public void onSuccess(Void aVoid) {
+                                                            myRefUser.child("rightofspin").child("spinAdsCount").setValue(1).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                                @Override
+                                                                public void onSuccess(Void aVoid) {
+                                                                    getTimeStampControlOfSpin();
+                                                                    luckyWheelView.startLuckyWheelWithTargetIndex(new Random().nextInt(12));
+                                                                }
+                                                            });
                                                             //Toast.makeText(getContext(), "Tıklandı", Toast.LENGTH_SHORT).show();
-                                                            luckyWheelView.startLuckyWheelWithTargetIndex(new Random().nextInt(12));
 
                                                         }
                                                     });
+                                                    }else{
+                                                        getTimeStampControlOfSpin();
+                                                        luckyWheelView.startLuckyWheelWithTargetIndex(new Random().nextInt(12));
+                                                    }
                                                 }
 
                                                 @Override
@@ -256,7 +282,89 @@ public class SpinFragment extends Fragment {
 
     }
 
-    public void increaseTheReturnValue(Integer index) {
+    private void setClickAdsListener(){
+        spinAdsAnimView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(!isrunnigluckywheel){
+                    myRefUser.child("rightofspin").child(getResources().getString(R.string.spicAdsCount)).setValue(0).addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void aVoid) {
+                            if(mRewardedVideoAd.isLoaded()){
+                                mRewardedVideoAd.show();
+                            }
+                        }
+                    });
+                }
+            }
+        });
+    }
+    private void setRewardAds(){
+        MobileAds.initialize(getActivity(), "ca-app-pub-3940256099942544/5224354917");
+        mRewardedVideoAd = MobileAds.getRewardedVideoAdInstance(getActivity());
+        mRewardedVideoAd.loadAd("ca-app-pub-3940256099942544/5224354917",
+                new AdRequest.Builder().build());
+        mRewardedVideoAd.setRewardedVideoAdListener(new RewardedVideoAdListener() {
+            @Override
+            public void onRewardedVideoAdLoaded() {
+
+            }
+
+            @Override
+            public void onRewardedVideoAdOpened() {
+
+            }
+
+            @Override
+            public void onRewardedVideoStarted() {
+
+            }
+
+            @Override
+            public void onRewardedVideoAdClosed() {
+                getTimeStampControlOfSpin();
+            }
+
+            @Override
+            public void onRewarded(RewardItem rewardItem) {
+                    myRefUser.child("rightofspin").child("spinValue").runTransaction(new Transaction.Handler() {
+                        @NonNull
+                        @Override
+                        public Transaction.Result doTransaction(@NonNull MutableData mutableData) {
+                            Integer spinValue = mutableData.getValue(Integer.class);
+                            spinValue++;
+                            mutableData.setValue(spinValue);
+                            return Transaction.success(mutableData);
+                        }
+
+                        @Override
+                        public void onComplete(@Nullable DatabaseError databaseError, boolean b, @Nullable DataSnapshot dataSnapshot) {
+                            if (b){
+                                getTimeStampControlOfSpin();
+                                MainActivity.showPopUpInfo(null,"Tebrikler tekrar çevirebilirsiniz.",null,getContext());
+                            }
+                        }
+                    });
+            }
+
+            @Override
+            public void onRewardedVideoAdLeftApplication() {
+
+            }
+
+            @Override
+            public void onRewardedVideoAdFailedToLoad(int i) {
+
+            }
+
+            @Override
+            public void onRewardedVideoCompleted() {
+
+            }
+        });
+    }
+
+    private void increaseTheReturnValue(Integer index) {
         final Integer value = data.get(index).valueNumber;
         Integer itemId = data.get(index).id;
         if (itemId == idDiamond) {
@@ -377,7 +485,7 @@ public class SpinFragment extends Fragment {
         }
     }
 
-    public void setSpinItem() {
+    private void setSpinItem() {
         data = new ArrayList<>();
         LuckyItem luckyItem1 = new LuckyItem();
         luckyItem1.text = "x1";
@@ -482,9 +590,23 @@ public class SpinFragment extends Fragment {
         luckyWheelView.setRound(7);
     }
 
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        mRewardedVideoAd.resume(getActivity());
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        mRewardedVideoAd.destroy(getActivity());
+    }
+
     @Override
     public void onPause() {
         super.onPause();
+        mRewardedVideoAd.pause(getActivity());
         if (countDownTimer != null) {
             //Toast.makeText(getContext(),"Sayaç Bekletildi" , Toast.LENGTH_SHORT).show();
             countDownTimer.cancel();

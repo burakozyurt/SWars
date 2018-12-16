@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -39,7 +40,7 @@ public class RankFragmentAdapter extends RecyclerView.Adapter<RankFragmentAdapte
         viewHolder.starImageView.setImageResource(R.drawable.star);
         else viewHolder.starImageView.setVisibility(View.INVISIBLE);
         viewHolder.rankNumber.setText(""+(i+1));
-        Picasso.get().load(mData.get(i).getUserPhotoImageView()).into(viewHolder.userPhotoImageView);
+        Picasso.get().load(mData.get(i).getUserPhotoImageView()).networkPolicy(NetworkPolicy.NO_STORE).into(viewHolder.userPhotoImageView);
     }
 
     @Override

@@ -19,6 +19,9 @@
             android:supportsRtl="true"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar"
             tools:ignore="GoogleAppIndexingWarning">
+        <meta-data
+                android:name="com.google.android.gms.ads.17.1.1"
+                android:value="ca-app-pub-3940256099942544/5224354917"/>
         <activity android:name=".AuthenticationScreen">
         </activity>
         <activity android:name=".AuthUsersInfoActivity">
@@ -41,6 +44,8 @@
         <activity android:name=".UpdateToUserProfile">
         </activity>
         <activity android:name="com.theartofdev.edmodo.cropper.CropImageActivity" android:theme="@style/Theme.AppCompat.Light"/>
+
+
     </application>
 
 </manifest>
