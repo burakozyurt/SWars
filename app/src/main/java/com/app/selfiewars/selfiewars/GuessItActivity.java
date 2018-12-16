@@ -84,6 +84,7 @@ public class GuessItActivity extends AppCompatActivity {
     private Integer healthDecValue = 1;
     private Handler healthHandler;
     private Runnable healthRunnable;
+    private boolean isNextUserList = false;
 
     @Override
     public void onBackPressed() {
@@ -154,8 +155,11 @@ public class GuessItActivity extends AppCompatActivity {
         if(isGameStart){
             if(listUserProperties != null){
                 setUserImageAndUserName(listUserProperties.get(listUserPropertiesIndex));
-                if(listUserPropertiesIndex < allquestionsCount-1)
+                if(listUserPropertiesIndex < allquestionsCount-1){
                     loadNextImage(listUserPropertiesIndex + 1);
+                }else {
+                    getSecondUserListFromDatabase();
+                }
             }
         }
     }
@@ -647,11 +651,7 @@ public class GuessItActivity extends AppCompatActivity {
             public void onSuccess(final List<UserProperties> userPropertiesList) {
                 listUserProperties = userPropertiesList;
                 allquestionsCount = listUserProperties.size();
-                loadNextImage(0);
-                loadinglayout.setVisibility(View.GONE);
-                guessitlayout.setVisibility(View.VISIBLE);
-                isGameStart = true;
-                gameManagement();
+                loadFirstUserImage(0);
             }
 
             @Override
@@ -659,6 +659,32 @@ public class GuessItActivity extends AppCompatActivity {
 
             }
         });
+    }
+    public void getSecondUserListFromDatabase(){
+        new Database().mReadDataAndGetUserListForGuessIt(mAuth, getResources().getString(R.string.ApprovedUser), getResources().getString(R.string.CorrectUsers), new OnGetUserlistDataListener() {
+            @Override
+            public void onStart() {
+                isNextUserList = false;
+            }
+
+            @Override
+            public void onProgress(String string) {
+                loadingFeedBackTextView.append(" "+string);
+            }
+
+            @Override
+            public void onSuccess(final List<UserProperties> userPropertiesList) {
+                listUserProperties.addAll(userPropertiesList);
+                allquestionsCount = listUserProperties.size();
+                isNextUserList = true;
+            }
+
+            @Override
+            public void onFailed() {
+
+            }
+        });
+
     }
 
     private void setJokerClickListener(){
@@ -873,6 +899,22 @@ public class GuessItActivity extends AppCompatActivity {
         btn2Lottie.setVisibility(View.VISIBLE);
         btn3Lottie.setVisibility(View.VISIBLE);
         btn4Lottie.setVisibility(View.VISIBLE);
+    }
+    private void loadFirstUserImage(final Integer index){
+        Picasso.get().load(listUserProperties.get(index).getPhotoUrl()).noFade().networkPolicy(NetworkPolicy.NO_STORE).into(loadTempImageView, new Callback() {
+            @Override
+            public void onSuccess() {
+                loadinglayout.setVisibility(View.GONE);
+                guessitlayout.setVisibility(View.VISIBLE);
+                isGameStart = true;
+                gameManagement();
+            }
+
+            @Override
+            public void onError(Exception e) {
+                isNextUserList = false;
+            }
+        });
     }
     private void loadNextImage(final Integer index){
         Picasso.get().load(listUserProperties.get(index).getPhotoUrl()).noFade().networkPolicy(NetworkPolicy.NO_STORE).into(loadTempImageView, new Callback() {
