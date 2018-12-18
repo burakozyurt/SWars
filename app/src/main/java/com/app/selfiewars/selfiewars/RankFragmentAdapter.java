@@ -40,7 +40,7 @@ public class RankFragmentAdapter extends RecyclerView.Adapter<RankFragmentAdapte
         viewHolder.starImageView.setImageResource(R.drawable.star);
         else viewHolder.starImageView.setVisibility(View.INVISIBLE);
         viewHolder.rankNumber.setText(""+(i+1));
-        Picasso.get().load(mData.get(i).getUserPhotoImageView()).networkPolicy(NetworkPolicy.NO_STORE).into(viewHolder.userPhotoImageView);
+        Picasso.get().load(mData.get(i).getUserPhotoImageView()).into(viewHolder.userPhotoImageView);
     }
 
     @Override

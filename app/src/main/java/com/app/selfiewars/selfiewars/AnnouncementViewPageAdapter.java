@@ -19,6 +19,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.*;
 import com.squareup.picasso.Picasso;
 
+import java.sql.Time;
 import java.util.concurrent.TimeUnit;
 
 
@@ -27,6 +28,7 @@ public class AnnouncementViewPageAdapter extends PagerAdapter {
     private LayoutInflater layoutInflater;
     private Integer image = R.drawable.instagram;
     private String photoUrl;
+    private boolean isClick = false;
 
     public AnnouncementViewPageAdapter(Context context) {
         this.context = context;
@@ -90,18 +92,25 @@ public class AnnouncementViewPageAdapter extends PagerAdapter {
         view.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (position == 0) {
+                if(!isClick){
+                    isClick = true;
+                    if (position == 0) {
                     MainActivity.showPopupProductInfo(photoUrl, "Steel Series Efsanevi Mouse", context);
+                    isClick = false;
                 } else if (position == 1) {
                     Toast.makeText(context, "1", Toast.LENGTH_SHORT).show();
-                    rightOfDailyAwardIncreaseValue(announcementTitle);
+                        rightOfDailyAwardIncreaseValue(announcementTitle);
                 } else {
                     Toast.makeText(context, "2", Toast.LENGTH_SHORT).show();
                     Intent intent = new Intent(Intent.ACTION_VIEW);
                     intent.setData(Uri.parse("https://www.youtube.com/"));
                     context.startActivity(intent);
+                    isClick = false;
+                    }
+
                 }
             }
+
         });
         ViewPager viewPager = (ViewPager) container;
         viewPager.addView(view, 0);
@@ -176,8 +185,10 @@ public class AnnouncementViewPageAdapter extends PagerAdapter {
                             if(dataSnapshot.hasChild("rightofdailyaward")){ // Kullanıcı daha önceden ödül almışmı almamışmı (Yeni kullanıcı mı değil mi kontrolü)
                                 rightofdailyawardMilis = dataSnapshot.child("rightofdailyaward").child("dailyAwardValue").getValue(Long.class);
                                 if (nowTimestamp < rightofdailyawardMilis) {// ödülün süresi dolmuşmu dolmaş mı (24 saat geçim mi geçmemiş mi kontrolü)
-                                    MainActivity.showPopUpInfo(null,"Günlük ödül verilmiştir",null,context);
+                                    MainActivity.showPopUpInfo(null,"Günlük ödül henüz yenilenmedi","Günlük ödülünüz "+
+                                            TimeUnit.MILLISECONDS.toHours(rightofdailyawardMilis-nowTimestamp)+" saat sonra yenilenecektir.",context);
                                     title.setText("Günlük Ödüller");
+                                    isClick = false;
                                 } else { // 24 saat geçmiş demektir ve kullanıcıya ödül verilir.
                                     final Integer diamondValue = dataSnapshot.child("token").child("diamondValue").getValue(Integer.class) + 1;
                                     Integer fiftyFiftyValue = dataSnapshot.child("wildcards").child("fiftyFiftyValue").getValue(Integer.class);
@@ -195,6 +206,7 @@ public class AnnouncementViewPageAdapter extends PagerAdapter {
                                                         public void onSuccess(Void aVoid) {
                                                             title.setText("Günlük Ödüller");
                                                             MainActivity.showPopUpInfo(null,"Günlük ödüller başarılya alındı",null,context);
+                                                            isClick = false;
                                                         }
                                                     }) ;
                                                 }
@@ -220,6 +232,7 @@ public class AnnouncementViewPageAdapter extends PagerAdapter {
                                                     public void onSuccess(Void aVoid) {
                                                         title.setText("Günlük Ödüller");
                                                         MainActivity.showPopUpInfo(null,"Günlük ödüller başarılya alındı",null,context);
+                                                        isClick = false;
                                                     }
                                                 }) ;
                                             }

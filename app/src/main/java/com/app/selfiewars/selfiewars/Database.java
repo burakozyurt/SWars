@@ -47,9 +47,10 @@ public class Database {
     }
     public void mReadDataAndGetUserListForGuessIt(final FirebaseAuth mAuth, final String ApprovedUsers, final String CorrectUsers, final OnGetUserlistDataListener listener){
         listener.onStart();
-        final List<UserProperties> userPropertiesList = new ArrayList<>();
+        final List<GuessItUserData> guessItUserDataList = new ArrayList<>();
         final List<String> userPropertiesUidList = new ArrayList<>();
         if(mAuth != null){
+            listener.onProgress("Veriler çekiliyor.");
             FirebaseDatabase.getInstance().getReference("AppType").child("isBeta").addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -58,15 +59,15 @@ public class Database {
                                 @Override
                                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                                     for (DataSnapshot ds:dataSnapshot.getChildren()){
-                                        String diplayName = ds.child("displayName").getValue(String.class);
+                                        String username = ds.child("displayName").getValue(String.class);
                                         String photoUrl = ds.child("photoUrl").getValue(String.class);
                                         Integer age = ds.child("age").getValue(Integer.class);
-
-                                        UserProperties userProperties = new UserProperties(null,null,diplayName,photoUrl,age);
-                                        userPropertiesList.add(userProperties);
-                                        if(userPropertiesList.size() == dataSnapshot.getChildrenCount()){
-                                            Collections.shuffle(userPropertiesList);
-                                            listener.onSuccess(userPropertiesList);
+                                        String uid = ds.getKey();
+                                        GuessItUserData guessItUserData = new GuessItUserData(uid,age,photoUrl,username);
+                                        guessItUserDataList.add(guessItUserData);
+                                        if(guessItUserDataList.size() == dataSnapshot.getChildrenCount()){
+                                            Collections.shuffle(guessItUserDataList);
+                                            listener.onSuccess(guessItUserDataList,true);
                                         }
                                     }
 
@@ -79,7 +80,7 @@ public class Database {
                             });
                         }else
                         {
-                            FirebaseDatabase.getInstance().getReference(ApprovedUsers).limitToLast(100).addListenerForSingleValueEvent(new ValueEventListener() {
+                            FirebaseDatabase.getInstance().getReference(ApprovedUsers).limitToLast(50).addListenerForSingleValueEvent(new ValueEventListener() {
                                 @Override
                                 public void onDataChange(@NonNull final DataSnapshot dataSnapshotApproved) {
                                     FirebaseDatabase.getInstance().getReference(CorrectUsers).child(mAuth.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
@@ -88,74 +89,87 @@ public class Database {
                                             if(dataSnapshotCorrect.getChildrenCount() < 2){
                                                 if(dataSnapshotApproved.getChildrenCount() > 3){
                                                     for (DataSnapshot ds:dataSnapshotApproved.getChildren()){
-                                                        if(userPropertiesUidList.size() < 3 && !ds.getKey().equals(mAuth.getUid())){
-                                                            userPropertiesUidList.add(ds.getKey());
-                                                            //listener.onProgress("Approved retrieve Kullanıcı : " + ds.getKey());
-
+                                                        if(guessItUserDataList.size() < 3 && !ds.getKey().equals(mAuth.getUid())){
+                                                            guessItUserDataList.add(ds.getValue(GuessItUserData.class));
                                                         }else if(ds.getKey().equals(mAuth.getUid())){
-                                                            //listener.onProgress("Approved retrieve kendimi buldum size:" + userPropertiesUidList.size());
                                                             continue;
                                                         }
-                                                        if(userPropertiesUidList.size() == 3){
-                                                            listener.onProgress("Approved retrieve bitirdim size:" + userPropertiesUidList.size());
-                                                            FirebaseDatabase.getInstance().getReference("Users").addListenerForSingleValueEvent(new ValueEventListener() {
-                                                                @Override
-                                                                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                                                    for (String uid:userPropertiesUidList){
-                                                                        UserProperties userProperties = dataSnapshot.child(uid).child("properties").getValue(UserProperties.class);
-                                                                        //userProperties.setPhotoUrl(uid);
-                                                                        userPropertiesList.add(userProperties);
-                                                                        if (userPropertiesList.size()==userPropertiesUidList.size()){
-                                                                            Collections.shuffle(userPropertiesList);
-                                                                            listener.onSuccess(userPropertiesList);
-                                                                            break;
-                                                                        }
-                                                                    }
-
-                                                                }
-
-                                                                @Override
-                                                                public void onCancelled(@NonNull DatabaseError databaseError) {
-                                                                    listener.onFailed();
-
-                                                                }
-                                                            });
+                                                        if(guessItUserDataList.size() == 3){
+                                                            listener.onProgress("Yarışma ayarları yapılandırılıyor.");
+                                                            listener.onProgress("Yarışma Hazır...");
+                                                            listener.onSuccess(guessItUserDataList,false);
                                                             break;
                                                         }
                                                     }
                                                 }
                                             }else {
                                                 if(dataSnapshotApproved.getChildrenCount() > 3){
-                                                    listener.onProgress("çocuk sayısı 3 ten büyük");
-
+                                                    listener.onProgress("Uygunsuz kullanıcılar ayıklandı.");
                                                     for (DataSnapshot ds:dataSnapshotApproved.getChildren()){
-                                                        if(!dataSnapshotCorrect.child(mAuth.getUid()).hasChild(ds.getKey())){
-                                                            if(userPropertiesUidList.size() <= 3 &&!ds.getKey().equals(mAuth.getUid())){
-                                                                userPropertiesUidList.add(ds.getKey());
+                                                        if(!dataSnapshotCorrect.hasChild(ds.getKey())){
+                                                            if(guessItUserDataList.size() <= 3 &&!ds.getKey().equals(mAuth.getUid())){
+                                                                guessItUserDataList.add(ds.getValue(GuessItUserData.class));
                                                             }else {
-                                                                listener.onProgress("Approved retrieve");
-                                                                FirebaseDatabase.getInstance().getReference("Users").addListenerForSingleValueEvent(new ValueEventListener() {
+                                                                continue;
+                                                            }
+                                                        }
+                                                    }
+                                                    if(guessItUserDataList.size() == 0){
+                                                        FirebaseDatabase.getInstance().getReference(ApprovedUsers).limitToLast(100).addListenerForSingleValueEvent(new ValueEventListener() {
+                                                            @Override
+                                                            public void onDataChange(@NonNull final DataSnapshot dataSnapshotApproved) {
+                                                                FirebaseDatabase.getInstance().getReference(CorrectUsers).child(mAuth.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
                                                                     @Override
-                                                                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                                                        for (String uid:userPropertiesUidList){
-                                                                            UserProperties userProperties =dataSnapshot.child(uid).child("properties").getValue(UserProperties.class);
-                                                                            //userProperties.setPhotoUrl(uid);                                                            userPropertiesList.add(userProperties);
-                                                                            if (userPropertiesList.size()==userPropertiesUidList.size()){
-                                                                                listener.onSuccess(userPropertiesList);
-                                                                                break;
+                                                                    public void onDataChange(@NonNull DataSnapshot dataSnapshotCorrect) {
+                                                                        if(dataSnapshotCorrect.getChildrenCount() < 2){
+                                                                            if(dataSnapshotApproved.getChildrenCount() > 3){
+                                                                                for (DataSnapshot ds:dataSnapshotApproved.getChildren()){
+                                                                                    if(guessItUserDataList.size() < 3 && !ds.getKey().equals(mAuth.getUid())){
+                                                                                        guessItUserDataList.add(ds.getValue(GuessItUserData.class));
+                                                                                    }else if(ds.getKey().equals(mAuth.getUid())){
+                                                                                        continue;
+                                                                                    }
+                                                                                    if(guessItUserDataList.size() == 3){
+                                                                                        listener.onProgress("Yarışma ayarları yapılandırılıyor.");
+                                                                                        listener.onProgress("Yarışma Hazır...");
+                                                                                        listener.onSuccess(guessItUserDataList,false);
+                                                                                        break;
+                                                                                    }
+                                                                                }
+                                                                            }
+                                                                        }else {
+                                                                            if(dataSnapshotApproved.getChildrenCount() > 3){
+                                                                                listener.onProgress("Uygunsuz kullanıcılar ayıklandı.");
+                                                                                for (DataSnapshot ds:dataSnapshotApproved.getChildren()){
+                                                                                    if(!dataSnapshotCorrect.hasChild(ds.getKey())){
+                                                                                        if(guessItUserDataList.size() <= 3 &&!ds.getKey().equals(mAuth.getUid())){
+                                                                                            guessItUserDataList.add(ds.getValue(GuessItUserData.class));
+                                                                                        }else {
+                                                                                            continue;
+                                                                                        }
+                                                                                    }
+                                                                                }
+                                                                                if (guessItUserDataList.size() !=0)
+                                                                                listener.onSuccess(guessItUserDataList,false);
+                                                                                else listener.onFailed();
                                                                             }
                                                                         }
-
                                                                     }
+
                                                                     @Override
                                                                     public void onCancelled(@NonNull DatabaseError databaseError) {
                                                                         listener.onFailed();
-
                                                                     }
                                                                 });
-                                                                break;
                                                             }
-                                                        }
+
+                                                            @Override
+                                                            public void onCancelled(@NonNull DatabaseError databaseError) {
+                                                                listener.onFailed();
+                                                            }
+                                                        });
+                                                    }else {
+                                                        listener.onSuccess(guessItUserDataList,false);
                                                     }
                                                 }
                                             }

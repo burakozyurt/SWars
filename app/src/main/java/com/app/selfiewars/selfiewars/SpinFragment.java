@@ -66,6 +66,7 @@ public class SpinFragment extends Fragment{
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_spin, container, false);
+        MobileAds.initialize(getActivity(), "ca-app-pub-7004761147200711~5104636223");
         define(view);
         setClickAdsListener();
         getTimeStampControlOfSpin();
@@ -89,6 +90,70 @@ public class SpinFragment extends Fragment{
         adsConstraintLayout.setVisibility(View.GONE);
     }
 
+    private void setRewardAds(){
+        mRewardedVideoAd = MobileAds.getRewardedVideoAdInstance(getActivity());
+        mRewardedVideoAd.loadAd("ca-app-pub-7004761147200711/8923998717",
+                new AdRequest.Builder().build());
+        mRewardedVideoAd.setRewardedVideoAdListener(new RewardedVideoAdListener() {
+            @Override
+            public void onRewardedVideoAdLoaded() {
+                Toast.makeText(getContext(), "Reklam Yüklendi", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onRewardedVideoAdOpened() {
+
+            }
+
+            @Override
+            public void onRewardedVideoStarted() {
+
+            }
+
+            @Override
+            public void onRewardedVideoAdClosed() {
+                getTimeStampControlOfSpin();
+            }
+
+            @Override
+            public void onRewarded(RewardItem rewardItem) {
+                myRefUser.child("rightofspin").child("spinValue").runTransaction(new Transaction.Handler() {
+                    @NonNull
+                    @Override
+                    public Transaction.Result doTransaction(@NonNull MutableData mutableData) {
+                        Integer spinValue = mutableData.getValue(Integer.class);
+                        spinValue++;
+                        mutableData.setValue(spinValue);
+                        return Transaction.success(mutableData);
+                    }
+
+                    @Override
+                    public void onComplete(@Nullable DatabaseError databaseError, boolean b, @Nullable DataSnapshot dataSnapshot) {
+                        if (b){
+                            getTimeStampControlOfSpin();
+                            MainActivity.showPopUpInfo(null,"Tebrikler tekrar çevirebilirsiniz.",null,getContext());
+                        }
+                    }
+                });
+            }
+
+            @Override
+            public void onRewardedVideoAdLeftApplication() {
+
+            }
+
+            @Override
+            public void onRewardedVideoAdFailedToLoad(int i) {
+
+            }
+
+            @Override
+            public void onRewardedVideoCompleted() {
+
+            }
+        });
+    }
+
     private void getTimeStampControlOfSpin() {
         myRefUser.child("nowtimestamp").child("timestamp").setValue(ServerValue.TIMESTAMP).addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
@@ -110,16 +175,16 @@ public class SpinFragment extends Fragment{
                                     if(controlspinAdsCount == 1)
                                     adsConstraintLayout.setVisibility(View.VISIBLE);
                                     else
-                                        adsConstraintLayout.setVisibility(View.INVISIBLE);
+                                        adsConstraintLayout.setVisibility(View.GONE);
 
                                 } else {
-                                    endtimeText.setVisibility(View.INVISIBLE);
-                                    adsConstraintLayout.setVisibility(View.INVISIBLE);
+                                    endtimeText.setVisibility(View.GONE);
+                                    adsConstraintLayout.setVisibility(View.GONE);
                                 }
                             } else {
                                 if (controlrighofSpin == 0) {
-                                    endtimeText.setVisibility(View.INVISIBLE);
-                                    adsConstraintLayout.setVisibility(View.INVISIBLE);
+                                    endtimeText.setVisibility(View.GONE);
+                                    adsConstraintLayout.setVisibility(View.GONE);
                                     myRefUser.child("rightofspin").child(getResources().getString(R.string.spinValue)).setValue(1).addOnSuccessListener(new OnSuccessListener<Void>() {
                                         @Override
                                         public void onSuccess(Void aVoid) {
@@ -127,8 +192,8 @@ public class SpinFragment extends Fragment{
                                         }
                                     });
                                 } else {
-                                    endtimeText.setVisibility(View.INVISIBLE);
-                                    adsConstraintLayout.setVisibility(View.INVISIBLE);
+                                    endtimeText.setVisibility(View.GONE);
+                                    adsConstraintLayout.setVisibility(View.GONE);
                                     righofSpinText.setText("" + controlrighofSpin);
                                 }
                             }
@@ -281,7 +346,6 @@ public class SpinFragment extends Fragment{
         });
 
     }
-
     private void setClickAdsListener(){
         spinAdsAnimView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -296,70 +360,6 @@ public class SpinFragment extends Fragment{
                         }
                     });
                 }
-            }
-        });
-    }
-    private void setRewardAds(){
-        MobileAds.initialize(getActivity(), "ca-app-pub-7004761147200711~5104636223");
-        mRewardedVideoAd = MobileAds.getRewardedVideoAdInstance(getActivity());
-        mRewardedVideoAd.loadAd("ca-app-pub-7004761147200711/8923998717",
-                new AdRequest.Builder().build());
-        mRewardedVideoAd.setRewardedVideoAdListener(new RewardedVideoAdListener() {
-            @Override
-            public void onRewardedVideoAdLoaded() {
-                Toast.makeText(getContext(), "Reklam Yüklendi", Toast.LENGTH_SHORT).show();
-            }
-
-            @Override
-            public void onRewardedVideoAdOpened() {
-
-            }
-
-            @Override
-            public void onRewardedVideoStarted() {
-
-            }
-
-            @Override
-            public void onRewardedVideoAdClosed() {
-                getTimeStampControlOfSpin();
-            }
-
-            @Override
-            public void onRewarded(RewardItem rewardItem) {
-                    myRefUser.child("rightofspin").child("spinValue").runTransaction(new Transaction.Handler() {
-                        @NonNull
-                        @Override
-                        public Transaction.Result doTransaction(@NonNull MutableData mutableData) {
-                            Integer spinValue = mutableData.getValue(Integer.class);
-                            spinValue++;
-                            mutableData.setValue(spinValue);
-                            return Transaction.success(mutableData);
-                        }
-
-                        @Override
-                        public void onComplete(@Nullable DatabaseError databaseError, boolean b, @Nullable DataSnapshot dataSnapshot) {
-                            if (b){
-                                getTimeStampControlOfSpin();
-                                MainActivity.showPopUpInfo(null,"Tebrikler tekrar çevirebilirsiniz.",null,getContext());
-                            }
-                        }
-                    });
-            }
-
-            @Override
-            public void onRewardedVideoAdLeftApplication() {
-
-            }
-
-            @Override
-            public void onRewardedVideoAdFailedToLoad(int i) {
-
-            }
-
-            @Override
-            public void onRewardedVideoCompleted() {
-
             }
         });
     }
@@ -483,6 +483,7 @@ public class SpinFragment extends Fragment{
                 }
             });
         }
+        getTimeStampControlOfSpin();
     }
 
     private void setSpinItem() {

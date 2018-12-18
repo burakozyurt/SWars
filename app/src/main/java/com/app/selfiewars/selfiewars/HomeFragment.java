@@ -10,8 +10,9 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.*;
@@ -24,9 +25,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 import me.relex.circleindicator.CircleIndicator;
 
 import java.text.DateFormat;
-import java.util.Date;
-import java.util.Timer;
-import java.util.TimerTask;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 import static java.text.DateFormat.getDateTimeInstance;
@@ -75,6 +74,7 @@ public class HomeFragment extends Fragment {
     private Handler updateHandler;
     private Timer timer;
     private LinearLayout announcementLinearLayout;
+    private boolean isClickGuessitButton = false;
 
     public HomeFragment() {
         // Required empty public constructor
@@ -148,8 +148,9 @@ public class HomeFragment extends Fragment {
                     }
                 });
             }
-        }, 0, 10000);
+        }, 5000, 5000);
     }
+
     private void setViewPageItemClicked(){
         announcementLinearLayout.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -195,71 +196,109 @@ public class HomeFragment extends Fragment {
         guessitButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                myRigtOfGameRef.runTransaction(new Transaction.Handler() {
-                    @NonNull
-                    @Override
-                    public Transaction.Result doTransaction(@NonNull MutableData mutableData) {
-                        Integer i = mutableData.getValue(Integer.class);
-                        if(i == 0){
-                            return null;
-                        }else {
-                            i--;
-                            mutableData.setValue(i);
-                            return Transaction.success(mutableData);
-                        }
-                    }
-
-                    @Override
-                    public void onComplete(@Nullable DatabaseError databaseError, boolean b, @Nullable DataSnapshot dataSnapshot) {
-                        if(b){
-                            if(rightOfGame == 9){
-                                myUserRef.child(getResources().getString(R.string.nowtimestamp)).child(getResources().getString(R.string.timestamp)).setValue(ServerValue.TIMESTAMP).addOnSuccessListener(new OnSuccessListener<Void>() {
-                                    @Override
-                                    public void onSuccess(Void aVoid) {
-                                        myUserRef.addListenerForSingleValueEvent(new ValueEventListener() {
-                                            @Override
-                                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                                Long nowTimestamp = dataSnapshot.child(getResources().getString(R.string.nowtimestamp)).child(getResources().getString(R.string.timestamp)).getValue(Long.class);
-                                                myUserRef.child(getResources().getString(R.string.timestamp)).child("guessItMilisecond").setValue(nowTimestamp + 86400000).addOnSuccessListener(new OnSuccessListener<Void>() {
+                if(!isClickGuessitButton){
+                    isClickGuessitButton = true;
+                    myUserRef.child("nowtimestamp").child(getResources().getString(R.string.timestamp)).setValue(ServerValue.TIMESTAMP).addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void aVoid) {
+                            myUserRef.child("nowtimestamp").child(getResources().getString(R.string.timestamp)).addListenerForSingleValueEvent(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                    nowTimestamp = dataSnapshot.getValue(Long.class);
+                                    FirebaseDatabase.getInstance().getReference("EndTime").child("timestamp").addListenerForSingleValueEvent(new ValueEventListener() {
+                                        @Override
+                                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                            if(dataSnapshot.getValue(Long.class) > nowTimestamp ){
+                                                myRigtOfGameRef.runTransaction(new Transaction.Handler() {
+                                                    @NonNull
                                                     @Override
-                                                    public void onSuccess(Void aVoid) {
-                                                        Intent i = new Intent(getActivity(),GuessItActivity.class);
-                                                        startActivity(i);
-                                                        getActivity().finish();
+                                                    public Transaction.Result doTransaction(@NonNull MutableData mutableData) {
+                                                        Integer i = mutableData.getValue(Integer.class);
+                                                        if(i == 0){
+                                                            return null;
+                                                        }else {
+                                                            i--;
+                                                            mutableData.setValue(i);
+                                                            return Transaction.success(mutableData);
+                                                        }
+                                                    }
+
+                                                    @Override
+                                                    public void onComplete(@Nullable DatabaseError databaseError, boolean b, @Nullable DataSnapshot dataSnapshot) {
+                                                        if(b){
+                                                            if(rightOfGame == 9){
+                                                                myUserRef.child(getResources().getString(R.string.nowtimestamp)).child(getResources().getString(R.string.timestamp)).setValue(ServerValue.TIMESTAMP).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                                    @Override
+                                                                    public void onSuccess(Void aVoid) {
+                                                                        myUserRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                                                                            @Override
+                                                                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                                                                Long nowTimestamp = dataSnapshot.child(getResources().getString(R.string.nowtimestamp)).child(getResources().getString(R.string.timestamp)).getValue(Long.class);
+                                                                                myUserRef.child(getResources().getString(R.string.timestamp)).child("guessItMilisecond").setValue(nowTimestamp + 86400000).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                                                    @Override
+                                                                                    public void onSuccess(Void aVoid) {
+                                                                                        Intent i = new Intent(getActivity(),GuessItActivity.class);
+                                                                                        startActivity(i);
+                                                                                        isClickGuessitButton = false;
+                                                                                        getActivity().finish();
+                                                                                    }
+                                                                                });
+                                                                            }
+
+                                                                            @Override
+                                                                            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                                                            }
+                                                                        });
+                                                                    }
+                                                                });
+
+                                                            }else {
+                                                                Intent i = new Intent(getActivity(),GuessItActivity.class);
+                                                                startActivity(i);
+                                                                getActivity().finish();
+
+
+                                                            }
+
+                                                        }else {
+                                                            if(rightOfGame == 0 && guessItAdsCount > 0){
+                                                                rightOfGameDiamondImageView.setVisibility(View.GONE);
+                                                                lottieAds.setVisibility(View.VISIBLE);
+
+                                                            }else if(rightOfGame == 0 && guessItAdsCount == 0){
+                                                                lottieAds.setVisibility(View.GONE);
+                                                                rightOfGameDiamondImageView.setVisibility(View.VISIBLE);
+
+                                                            }
+                                                        }
+
                                                     }
                                                 });
+                                            }else {
+                                                MainActivity.showPopUpInfo(null,"Hafta yenilenmemiştir!!",
+                                                        "Sistem bu haftanın yapılandırmasını tamamladıktan sonra yeni hafta başlayacaktır. Başladığında bildirim gönderilecektir. \n \n ~Selfie Wars Tavsiyesi~ \n Yeni hafta için joker hazırlığı yapmak sıralamada avantaj sağlayacaktır."
+                                                        , getActivity());
+                                                isClickGuessitButton = false;
                                             }
+                                        }
 
-                                            @Override
-                                            public void onCancelled(@NonNull DatabaseError databaseError) {
+                                        @Override
+                                        public void onCancelled(@NonNull DatabaseError databaseError) {
 
-                                            }
-                                        });
-                                    }
-                                });
+                                        }
+                                    });
 
-                            }else {
-                                Intent i = new Intent(getActivity(),GuessItActivity.class);
-                                startActivity(i);
-                                getActivity().finish();
+                                }
 
+                                @Override
+                                public void onCancelled(@NonNull DatabaseError databaseError) {
 
-                            }
-
-                        }else {
-                            if(rightOfGame == 0 && guessItAdsCount > 0){
-                                rightOfGameDiamondImageView.setVisibility(View.GONE);
-                                lottieAds.setVisibility(View.VISIBLE);
-
-                            }else if(rightOfGame == 0 && guessItAdsCount == 0){
-                                lottieAds.setVisibility(View.GONE);
-                                rightOfGameDiamondImageView.setVisibility(View.VISIBLE);
-
-                            }
+                                }
+                            });
                         }
-
-                    }
-                });
+                    });
+                }
 
 
             }
@@ -368,6 +407,27 @@ public class HomeFragment extends Fragment {
 
             @Override
             public void onFailed(DatabaseError databaseError) {
+
+            }
+        });
+        myScoreRef.orderByValue().addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                long i = 0;
+                for(DataSnapshot ds: dataSnapshot.getChildren()) {
+                    String uid;
+                    uid = ds.getKey();
+                    if(uid.equals(mAuth.getUid())){
+                        i = Math.abs(dataSnapshot.getChildrenCount() - i);
+                        rankTextView.setText(""+i);
+                        break;
+                    }
+                    i++;
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
 
             }
         });

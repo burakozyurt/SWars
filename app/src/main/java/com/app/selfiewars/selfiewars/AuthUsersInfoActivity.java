@@ -31,6 +31,7 @@ public class AuthUsersInfoActivity extends Activity {
     private DatabaseReference myRefAward;
     private DatabaseReference myRefRightOfGame;
     private DatabaseReference myRefUserName;
+    private DatabaseReference myRefRequest;
     private FirebaseStorage firebaseStorage;
     private StorageReference mStorageRef;
     private UserProperties userProperties;
@@ -63,7 +64,7 @@ public class AuthUsersInfoActivity extends Activity {
         myRefAward = database.getReference("FirstAward");
         myRefRightOfGame = database.getReference("RightOfGame");
         myRefUserName = database.getReference("UserName");
-
+        myRefRequest = database.getReference("Requests");
         continueButtonClick();
     }
     public void continueButtonClick(){
@@ -71,6 +72,9 @@ public class AuthUsersInfoActivity extends Activity {
             @Override
             public void onClick(View view) {
                 final UserProperties userProperties = new UserProperties();
+
+                userName = usernameText.getText().toString();
+                age = Integer.valueOf(ageText.getText().toString());
                 if(isFilled()){
                  userName = usernameText.getText().toString();
                  age = Integer.valueOf(ageText.getText().toString());
@@ -125,14 +129,20 @@ public class AuthUsersInfoActivity extends Activity {
                                                                                                                         myRefUserName.child(userName).setValue(mAuth.getUid()).addOnSuccessListener(new OnSuccessListener<Void>() {
                                                                                                                             @Override
                                                                                                                             public void onSuccess(Void aVoid) {
-                                                                                                                                myRefUser.child(getResources().getString(R.string.account_State)).child(getResources().getString(R.string.isReady)).setValue(true).addOnSuccessListener(new OnSuccessListener<Void>() {
-                                                                                                                                    @Override
-                                                                                                                                    public void onSuccess(Void aVoid) {
-                                                                                                                                        Intent i = new Intent(getApplicationContext(),MainActivity.class);
-                                                                                                                                        startActivity(i);
-                                                                                                                                        finish();
-                                                                                                                                    }
-                                                                                                                                });
+                                                                                                                                myRefRequest.child(mAuth.getUid()).setValue(ServerValue.TIMESTAMP).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                                                                                                @Override
+                                                                                                                                public void onSuccess(Void aVoid) {
+                                                                                                                                    myRefUser.child(getResources().getString(R.string.account_State)).child(getResources().getString(R.string.isReady)).setValue(true).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                                                                                                        @Override
+                                                                                                                                        public void onSuccess(Void aVoid) {
+                                                                                                                                            Intent i = new Intent(getApplicationContext(),MainActivity.class);
+                                                                                                                                            startActivity(i);
+                                                                                                                                            finish();
+                                                                                                                                        }
+                                                                                                                                    });
+                                                                                                                                }
+                                                                                                                            });
+
                                                                                                                             }
                                                                                                                         });
 
@@ -188,15 +198,12 @@ public class AuthUsersInfoActivity extends Activity {
             }
         });
     }
-    public void uploadToFirebase(){
-
-    }
     public boolean isFilled(){
         if(!usernameText.getText().toString().isEmpty() && usernameText.getText().toString().length() > 6 && !ageText.getText().toString().isEmpty()
                 && Integer.parseInt(ageText.getText().toString()) > 15 &&
                 !selectedImage.toString().isEmpty()){
             return true;
-        }
+            }
         else return false;
     }
     public void handlerInsertData(View view) {

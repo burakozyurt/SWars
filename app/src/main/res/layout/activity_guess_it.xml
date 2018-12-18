@@ -103,7 +103,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/guessit_user_profile_username_TextView"
                 android:layout_marginTop="32dp"
                 app:layout_constraintEnd_toStartOf="@+id/guessit_btn2_lottieAnimationView"
-                android:layout_marginEnd="16dp"/>
+                android:layout_marginEnd="16dp" android:onClick="btn1LottieClick"/>
         <TextView
                 android:text=":"
                 android:textSize="25dp"
@@ -276,13 +276,14 @@
                   app:layout_constraintTop_toBottomOf="@+id/guess_it_health_lottieAnimView"
                   app:layout_constraintEnd_toEndOf="@+id/guess_it_health_lottieAnimView"
                   app:layout_constraintStart_toStartOf="@+id/guess_it_health_lottieAnimView"
-                  android:id="@+id/guess_it_health_TextView" android:visibility="gone"/>
+                  android:id="@+id/guess_it_health_TextView" android:visibility="gone"
+                  app:layout_constraintBottom_toBottomOf="parent" android:layout_marginBottom="16dp"/>
     </android.support.constraint.ConstraintLayout>
     <android.support.constraint.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent" android:layout_alignParentStart="true"
             android:layout_alignParentTop="true"
-            android:id="@+id/guess_it_activity_loading_ConstrainLayout" android:visibility="visible">
+            android:id="@+id/guess_it_activity_loading_ConstrainLayout" android:visibility="gone">
         <com.airbnb.lottie.LottieAnimationView
                 android:layout_width="250dp"
                 app:lottie_fileName="guessitload.json"
@@ -295,13 +296,16 @@
                 app:layout_constraintBottom_toBottomOf="parent" android:visibility="visible"
                 android:id="@+id/lottieAnimationView" android:layout_marginBottom="32dp"/>
         <TextView
-                android:text="TextView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/loading_feedback_TextView" android:layout_marginTop="32dp"
-                app:layout_constraintTop_toBottomOf="@+id/lottieAnimationView"
-                app:layout_constraintEnd_toEndOf="@+id/lottieAnimationView"
-                app:layout_constraintStart_toStartOf="@+id/lottieAnimationView"/>
+                android:text=""
+                android:textSize="12sp"
+                android:textStyle="bold"
+                android:textColor="@color/textcolor"
+                android:background="@color/loseadsbanner"
+                android:layout_width="0dp"
+                android:layout_height="40dp"
+                android:id="@+id/loading_feedback_TextView"
+                app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent" android:textAlignment="center" android:gravity="center"/>
     </android.support.constraint.ConstraintLayout>
     <ImageView
             android:layout_width="200dp"
@@ -311,8 +315,8 @@
     <android.support.constraint.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent" android:layout_alignParentStart="true"
-            android:layout_alignParentTop="true" android:visibility="visible"
-            android:id="@+id/guess_it_activity_lose_ConstrainLayout">
+            android:layout_alignParentTop="true"
+            android:id="@+id/guess_it_activity_lose_ConstrainLayout" android:visibility="visible">
 
         <TextView
                 android:text="1500 Puan"
@@ -397,7 +401,7 @@
                     android:textAlignment="center"
                     android:layout_height="45dp"
                     android:textColor="@color/textcolorblack"
-                    android:id="@+id/textView20"
+                    android:id="@+id/guess_it_lose_right_of_game_textView"
                     android:gravity="center"
                     android:layout_marginTop="56dp"
                     app:layout_constraintTop_toBottomOf="@+id/linearLayout8"
@@ -415,8 +419,8 @@
                     android:textStyle="bold"
                     android:background="@color/textcolor"
                     android:id="@+id/guess_it_lose_play_again_TextView"
-                    app:layout_constraintTop_toTopOf="@+id/textView20"
-                    app:layout_constraintBottom_toBottomOf="@+id/textView20" app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/guess_it_lose_right_of_game_textView"
+                    app:layout_constraintBottom_toBottomOf="@+id/guess_it_lose_right_of_game_textView" app:layout_constraintEnd_toEndOf="parent"
                     android:gravity="center"
             />
         </android.support.constraint.ConstraintLayout>
