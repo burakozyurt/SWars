@@ -86,15 +86,15 @@ public class Database {
                                     FirebaseDatabase.getInstance().getReference(CorrectUsers).child(mAuth.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
                                         @Override
                                         public void onDataChange(@NonNull DataSnapshot dataSnapshotCorrect) {
-                                            if(dataSnapshotCorrect.getChildrenCount() < 2){
-                                                if(dataSnapshotApproved.getChildrenCount() > 3){
+                                            if(!dataSnapshotCorrect.exists()){
+                                                if(dataSnapshotApproved.exists()){
                                                     for (DataSnapshot ds:dataSnapshotApproved.getChildren()){
-                                                        if(guessItUserDataList.size() < 3 && !ds.getKey().equals(mAuth.getUid())){
+                                                        if(guessItUserDataList.size() <= 2 && !ds.getKey().equals(mAuth.getUid())){
                                                             guessItUserDataList.add(ds.getValue(GuessItUserData.class));
                                                         }else if(ds.getKey().equals(mAuth.getUid())){
                                                             continue;
                                                         }
-                                                        if(guessItUserDataList.size() == 3){
+                                                        if(guessItUserDataList.size() == 2){
                                                             listener.onProgress("Yarışma ayarları yapılandırılıyor.");
                                                             listener.onProgress("Yarışma Hazır...");
                                                             listener.onSuccess(guessItUserDataList,false);
@@ -103,10 +103,10 @@ public class Database {
                                                     }
                                                 }
                                             }else {
-                                                if(dataSnapshotApproved.getChildrenCount() > 3){
+                                                if(dataSnapshotApproved.exists()){
                                                     listener.onProgress("Uygunsuz kullanıcılar ayıklandı.");
                                                     for (DataSnapshot ds:dataSnapshotApproved.getChildren()){
-                                                        if(!dataSnapshotCorrect.hasChild(ds.getKey())){
+                                                        if(dataSnapshotCorrect.exists() && !dataSnapshotCorrect.hasChild(ds.getKey())){
                                                             if(guessItUserDataList.size() <= 3 &&!ds.getKey().equals(mAuth.getUid())){
                                                                 guessItUserDataList.add(ds.getValue(GuessItUserData.class));
                                                             }else {
@@ -121,15 +121,15 @@ public class Database {
                                                                 FirebaseDatabase.getInstance().getReference(CorrectUsers).child(mAuth.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
                                                                     @Override
                                                                     public void onDataChange(@NonNull DataSnapshot dataSnapshotCorrect) {
-                                                                        if(dataSnapshotCorrect.getChildrenCount() < 2){
-                                                                            if(dataSnapshotApproved.getChildrenCount() > 3){
+                                                                        if(!dataSnapshotCorrect.exists()){
+                                                                            if(dataSnapshotApproved.exists()){
                                                                                 for (DataSnapshot ds:dataSnapshotApproved.getChildren()){
                                                                                     if(guessItUserDataList.size() < 3 && !ds.getKey().equals(mAuth.getUid())){
                                                                                         guessItUserDataList.add(ds.getValue(GuessItUserData.class));
                                                                                     }else if(ds.getKey().equals(mAuth.getUid())){
                                                                                         continue;
                                                                                     }
-                                                                                    if(guessItUserDataList.size() == 3){
+                                                                                    if(guessItUserDataList.size() == 2){
                                                                                         listener.onProgress("Yarışma ayarları yapılandırılıyor.");
                                                                                         listener.onProgress("Yarışma Hazır...");
                                                                                         listener.onSuccess(guessItUserDataList,false);
@@ -138,10 +138,10 @@ public class Database {
                                                                                 }
                                                                             }
                                                                         }else {
-                                                                            if(dataSnapshotApproved.getChildrenCount() > 3){
+                                                                            if(dataSnapshotApproved.exists()){
                                                                                 listener.onProgress("Uygunsuz kullanıcılar ayıklandı.");
                                                                                 for (DataSnapshot ds:dataSnapshotApproved.getChildren()){
-                                                                                    if(!dataSnapshotCorrect.hasChild(ds.getKey())){
+                                                                                    if(dataSnapshotCorrect.exists()&&!dataSnapshotCorrect.hasChild(ds.getKey())){
                                                                                         if(guessItUserDataList.size() <= 3 &&!ds.getKey().equals(mAuth.getUid())){
                                                                                             guessItUserDataList.add(ds.getValue(GuessItUserData.class));
                                                                                         }else {

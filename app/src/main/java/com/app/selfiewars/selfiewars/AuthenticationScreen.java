@@ -96,12 +96,12 @@ public class AuthenticationScreen extends Activity {
                             Log.d(TAG, "signInWithCredential:success");
                             final FirebaseUser user = mAuth.getCurrentUser();
 
-                            myRefAccountState.addListenerForSingleValueEvent(new ValueEventListener() {
+                            myRefAccountState.child(user.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
                                 @Override
                                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                                     //Gmail hesabı ile giriş yapılmış fakat gerekli bilgilerin dolurulup doldurumladığını kontrol eder.
-                                    if(dataSnapshot.hasChild(user.getUid())){
-                                        Boolean isReady = dataSnapshot.child(user.getUid()).child(getResources().getString(R.string.account_State)).child(getResources().getString(R.string.isReady)).getValue(Boolean.class);
+                                    if(dataSnapshot.exists()){
+                                        Boolean isReady = dataSnapshot.child(getResources().getString(R.string.account_State)).child(getResources().getString(R.string.isReady)).getValue(Boolean.class);
                                         if(isReady){
                                             Intent i = new Intent(getApplicationContext(),MainActivity.class);
                                             startActivity(i);

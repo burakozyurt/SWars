@@ -10,6 +10,10 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 
@@ -18,8 +22,8 @@ import java.util.List;
 
 public class RankFragmentAdapter extends RecyclerView.Adapter<RankFragmentAdapter.ViewHolder>{
     private Context context;
-    private List<RankingInfoActivity> mData;
-    public RankFragmentAdapter(Context context, List<RankingInfoActivity> mData) {
+    private List<ScoreInfo> mData;
+    public RankFragmentAdapter(Context context, List<ScoreInfo> mData) {
         this.context = context;
         this.mData = mData;
     }
@@ -34,13 +38,24 @@ public class RankFragmentAdapter extends RecyclerView.Adapter<RankFragmentAdapte
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ViewHolder viewHolder, int i) {
-        viewHolder.usernameTextView.setText(mData.get(i).getUserName());
+    public void onBindViewHolder(@NonNull final ViewHolder viewHolder, int i) {
+        FirebaseDatabase.getInstance().getReference("Users/"+mData.get(i).getUid()).child("properties").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                UserProperties userProperties = dataSnapshot.getValue(UserProperties.class);
+                viewHolder.usernameTextView.setText(""+userProperties.getUserName());
+                Picasso.get().load(userProperties.getPhotoUrl()).into(viewHolder.userPhotoImageView);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
         if(i==0)
         viewHolder.starImageView.setImageResource(R.drawable.star);
         else viewHolder.starImageView.setVisibility(View.INVISIBLE);
         viewHolder.rankNumber.setText(""+(i+1));
-        Picasso.get().load(mData.get(i).getUserPhotoImageView()).into(viewHolder.userPhotoImageView);
     }
 
     @Override

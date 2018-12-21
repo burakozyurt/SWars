@@ -16,7 +16,6 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.*;
 
-import java.sql.Time;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -27,12 +26,11 @@ import java.util.concurrent.TimeUnit;
  * A simple {@link Fragment} subclass.
  */
 public class RankFragment extends Fragment {
-    List<RankingInfoActivity> rankingInfoActivityList;
-    TextView dayValueTextView;
-    TextView hourValueTextView;
-    TextView minValueTextView;
+    private List<RankingInfoActivity> rankingInfoActivityList;
+    private TextView dayValueTextView;
+    private TextView hourValueTextView;
+    private TextView minValueTextView;
     private CountDownTimer countDownTimer;
-
     public RankFragment() {
 
         rankingInfoActivityList = new ArrayList<>();
@@ -72,39 +70,18 @@ public class RankFragment extends Fragment {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 final List<ScoreInfo> scoreInfos = new ArrayList<>();
-                for(DataSnapshot ds: dataSnapshot.getChildren()) {
+                for (DataSnapshot ds : dataSnapshot.getChildren()) {
                     ScoreInfo scoreInfo = new ScoreInfo();
                     scoreInfo.setScoreValue(ds.getValue(Integer.class));
                     scoreInfo.setUid(ds.getKey());
                     scoreInfos.add(scoreInfo);
-                    if (scoreInfos.size() == 6){
-                        myRefUsers.addListenerForSingleValueEvent(new ValueEventListener() {
-                            @Override
-                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                int i;
-                                for (i = 0; i < scoreInfos.size();i++){
-                                    UserProperties userProperties = dataSnapshot.child(scoreInfos.get(i).getUid()).child(getResources().getString(R.string.properties))
-                                            .getValue(UserProperties.class);
-                                    RankingInfoActivity  rankingInfoActivity = new RankingInfoActivity();
-                                    rankingInfoActivity.setUserName(userProperties.getUserName());
-                                    rankingInfoActivity.setUserPhotoImageView(userProperties.getPhotoUrl());
-                                    rankingInfoActivityList.add(rankingInfoActivity);
-                                    if (rankingInfoActivityList.size() == 6){
-                                        Collections.reverse(rankingInfoActivityList);
-                                        RecyclerView recyclerView = view.findViewById(R.id.recyclerViewRank);
-                                        RankFragmentAdapter rankRcycView = new RankFragmentAdapter(getContext(), rankingInfoActivityList);
-                                        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-                                        recyclerView.setAdapter(rankRcycView);
-                                        break;
-                                    }
-                                }
-                            }
-
-                            @Override
-                            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                            }
-                        });
+                    if (scoreInfos.size() == 5) {
+                        Collections.reverse(scoreInfos);
+                        RecyclerView recyclerView = view.findViewById(R.id.recyclerViewRank);
+                        RankFragmentAdapter rankRcycView = new RankFragmentAdapter(getContext(),
+                                scoreInfos);
+                        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+                        recyclerView.setAdapter(rankRcycView);
                         break;
                     }
                 }
@@ -115,8 +92,7 @@ public class RankFragment extends Fragment {
 
             }
         });
-
-    }
+        }
     private void setRankEndTime(View view) {
         dayValueTextView = view.findViewById(R.id.rank_valueOfDayTextView);
         hourValueTextView = view.findViewById(R.id.rank_valueOfHourTextView);

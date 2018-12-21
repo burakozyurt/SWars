@@ -30,7 +30,7 @@ public class AuthUsersInfoActivity extends Activity {
     private DatabaseReference myRefUser;
     private DatabaseReference myRefAward;
     private DatabaseReference myRefRightOfGame;
-    private DatabaseReference myRefUserName;
+    private DatabaseReference   myRefUserName;
     private DatabaseReference myRefRequest;
     private FirebaseStorage firebaseStorage;
     private StorageReference mStorageRef;

@@ -392,7 +392,6 @@ public class GuessItActivity extends AppCompatActivity {
                             startCountDownTimer();
                             setJokerReset();
                             questionCounTextView.setText(""+countQuestion);
-
                         }
 
                         @Override
@@ -1082,7 +1081,7 @@ public class GuessItActivity extends AppCompatActivity {
         Picasso.get().load(listUserProperties.get(index).getPhotoUrl()).noFade().networkPolicy(NetworkPolicy.NO_STORE).into(loadTempImageView, new Callback() {
             @Override
             public void onSuccess() {
-                Toast.makeText(GuessItActivity.this, "Index arka planda yüklendi :" +index   , Toast.LENGTH_SHORT).show();
+                //  Toast.makeText(GuessItActivity.this, "Index arka planda yüklendi :" +index   , Toast.LENGTH_SHORT).show();
 
             }
 
