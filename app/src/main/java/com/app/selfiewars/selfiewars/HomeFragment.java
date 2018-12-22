@@ -240,7 +240,6 @@ public class HomeFragment extends Fragment {
                                                                                         Intent i = new Intent(getActivity(),GuessItActivity.class);
                                                                                         startActivity(i);
                                                                                         isClickGuessitButton = false;
-                                                                                        getActivity().finish();
                                                                                     }
                                                                                 });
                                                                             }
@@ -256,9 +255,7 @@ public class HomeFragment extends Fragment {
                                                             }else {
                                                                 Intent i = new Intent(getActivity(),GuessItActivity.class);
                                                                 startActivity(i);
-                                                                getActivity().finish();
-
-
+                                                                isClickGuessitButton = false;
                                                             }
 
                                                         }else {

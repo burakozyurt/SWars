@@ -52,8 +52,7 @@ public class SettingsActivity extends AppCompatActivity {
         backspace.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getApplicationContext(),MainActivity.class);
-                startActivity(intent);
+                SettingsActivity.super.onBackPressed();
                 finish();
             }
         });
@@ -107,8 +106,6 @@ public class SettingsActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        Intent intent = new Intent(getApplicationContext(),MainActivity.class);
-        startActivity(intent);
         finish();
 
     }

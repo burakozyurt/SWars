@@ -252,7 +252,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onStop() {
         super.onStop();
-        finish();
         //Toast.makeText(this, "MainACtivity Stoped", Toast.LENGTH_SHORT).show();
 
     }

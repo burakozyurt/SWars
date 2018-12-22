@@ -127,6 +127,7 @@ public class RankFragment extends Fragment {
                                     startRefreshCountTime(nowTimestamp, endtime);
                                 }
                                 else {
+                                    if(countDownTimer !=null)
                                     countDownTimer.cancel();
                                     dayValueTextView.setText("00");
                                     hourValueTextView.setText("00");

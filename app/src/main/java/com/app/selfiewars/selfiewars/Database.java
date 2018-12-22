@@ -2,10 +2,7 @@ package com.app.selfiewars.selfiewars;
 
 import android.support.annotation.NonNull;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.database.*;
 import com.google.firebase.storage.FirebaseStorage;
 
 import java.util.ArrayList;
@@ -14,7 +11,11 @@ import java.util.Collections;
 import java.util.List;
 
 public class Database {
+    FirebaseDatabase mdatabase;
+    DatabaseReference myDataBaseRef;
     public Database() {
+        mdatabase = FirebaseDatabase.getInstance();
+        myDataBaseRef = mdatabase.getReference();
     }
 
     public void mReadDataOnce(String child, final OnGetDataListener listener) {
@@ -33,7 +34,7 @@ public class Database {
     }
     public void mReadDataRealTime(String child, final OnGetDataListener listener) {
         listener.onStart();
-        FirebaseDatabase.getInstance().getReference(child).addValueEventListener(new ValueEventListener() {
+        myDataBaseRef.child(child).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 listener.onSuccess(dataSnapshot);
@@ -51,11 +52,11 @@ public class Database {
         final List<String> userPropertiesUidList = new ArrayList<>();
         if(mAuth != null){
             listener.onProgress("Veriler çekiliyor.");
-            FirebaseDatabase.getInstance().getReference("AppType").child("isBeta").addListenerForSingleValueEvent(new ValueEventListener() {
+            myDataBaseRef.child("AppType").child("isBeta").addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                         if (dataSnapshot.getValue(Boolean.class)){
-                            FirebaseDatabase.getInstance().getReference("Dataset").addListenerForSingleValueEvent(new ValueEventListener() {
+                            myDataBaseRef.child("Dataset").addListenerForSingleValueEvent(new ValueEventListener() {
                                 @Override
                                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                                     for (DataSnapshot ds:dataSnapshot.getChildren()){
@@ -80,27 +81,27 @@ public class Database {
                             });
                         }else
                         {
-                            FirebaseDatabase.getInstance().getReference(ApprovedUsers).limitToLast(50).addListenerForSingleValueEvent(new ValueEventListener() {
-                                @Override
-                                public void onDataChange(@NonNull final DataSnapshot dataSnapshotApproved) {
-                                    FirebaseDatabase.getInstance().getReference(CorrectUsers).child(mAuth.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
-                                        @Override
-                                        public void onDataChange(@NonNull DataSnapshot dataSnapshotCorrect) {
-                                            if(!dataSnapshotCorrect.exists()){
-                                                if(dataSnapshotApproved.exists()){
-                                                    for (DataSnapshot ds:dataSnapshotApproved.getChildren()){
-                                                        if(guessItUserDataList.size() <= 2 && !ds.getKey().equals(mAuth.getUid())){
-                                                            guessItUserDataList.add(ds.getValue(GuessItUserData.class));
-                                                        }else if(ds.getKey().equals(mAuth.getUid())){
-                                                            continue;
-                                                        }
-                                                        if(guessItUserDataList.size() == 2){
-                                                            listener.onProgress("Yarışma ayarları yapılandırılıyor.");
-                                                            listener.onProgress("Yarışma Hazır...");
-                                                            listener.onSuccess(guessItUserDataList,false);
-                                                            break;
-                                                        }
-                                                    }
+                            myDataBaseRef.child(ApprovedUsers).limitToLast(50).addListenerForSingleValueEvent(new ValueEventListener() {
+                                                        @Override
+                                                        public void onDataChange(@NonNull final DataSnapshot dataSnapshotApproved) {
+                                                            myDataBaseRef.child(CorrectUsers).child(mAuth.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
+                                                                @Override
+                                                                public void onDataChange(@NonNull DataSnapshot dataSnapshotCorrect) {
+                                                                    if(!dataSnapshotCorrect.exists()){
+                                                                        if(dataSnapshotApproved.exists()){
+                                                                            for (DataSnapshot ds:dataSnapshotApproved.getChildren()){
+                                                                                if(guessItUserDataList.size() <= 2 && !ds.getKey().equals(mAuth.getUid())){
+                                                                                    guessItUserDataList.add(ds.getValue(GuessItUserData.class));
+                                                                                }else if(ds.getKey().equals(mAuth.getUid())){
+                                                                                    continue;
+                                                                                }
+                                                                                if(guessItUserDataList.size() == 2){
+                                                                                    listener.onProgress("Yarışma ayarları yapılandırılıyor.");
+                                                                                    listener.onProgress("Yarışma Hazır...");
+                                                                                    listener.onSuccess(guessItUserDataList,false);
+                                                                                    break;
+                                                                                }
+                                                                            }
                                                 }
                                             }else {
                                                 if(dataSnapshotApproved.exists()){
@@ -115,10 +116,10 @@ public class Database {
                                                         }
                                                     }
                                                     if(guessItUserDataList.size() == 0){
-                                                        FirebaseDatabase.getInstance().getReference(ApprovedUsers).limitToLast(100).addListenerForSingleValueEvent(new ValueEventListener() {
+                                                        myDataBaseRef.child(ApprovedUsers).limitToLast(100).addListenerForSingleValueEvent(new ValueEventListener() {
                                                             @Override
                                                             public void onDataChange(@NonNull final DataSnapshot dataSnapshotApproved) {
-                                                                FirebaseDatabase.getInstance().getReference(CorrectUsers).child(mAuth.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
+                                                                myDataBaseRef.child(CorrectUsers).child(mAuth.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
                                                                     @Override
                                                                     public void onDataChange(@NonNull DataSnapshot dataSnapshotCorrect) {
                                                                         if(!dataSnapshotCorrect.exists()){

@@ -761,8 +761,7 @@ public class GuessItActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 if(!isGameStart){
-                    Intent i = new Intent(getApplicationContext(),MainActivity.class);
-                    startActivity(i);
+                    GuessItActivity.super.onBackPressed();
                     finish();
                 }
             }

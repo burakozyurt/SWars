@@ -613,6 +613,7 @@ public class SpinFragment extends Fragment{
             countDownTimer.cancel();
         }
         if (isrunnigluckywheel == true) isrunnigluckywheel = false;
+
     }
 
 }
