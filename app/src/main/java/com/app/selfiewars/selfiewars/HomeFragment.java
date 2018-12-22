@@ -237,9 +237,9 @@ public class HomeFragment extends Fragment {
                                                                                 myUserRef.child(getResources().getString(R.string.timestamp)).child("guessItMilisecond").setValue(nowTimestamp + 86400000).addOnSuccessListener(new OnSuccessListener<Void>() {
                                                                                     @Override
                                                                                     public void onSuccess(Void aVoid) {
+                                                                                        isClickGuessitButton = false;
                                                                                         Intent i = new Intent(getActivity(),GuessItActivity.class);
                                                                                         startActivity(i);
-                                                                                        isClickGuessitButton = false;
                                                                                     }
                                                                                 });
                                                                             }
@@ -253,12 +253,13 @@ public class HomeFragment extends Fragment {
                                                                 });
 
                                                             }else {
+                                                                isClickGuessitButton = false;
                                                                 Intent i = new Intent(getActivity(),GuessItActivity.class);
                                                                 startActivity(i);
-                                                                isClickGuessitButton = false;
                                                             }
 
                                                         }else {
+                                                            MainActivity.showPopUpInfo(null,"Günlük tahmin hakkınız bitmiştir!!",null,getContext());
                                                             if(rightOfGame == 0 && guessItAdsCount > 0){
                                                                 rightOfGameDiamondImageView.setVisibility(View.GONE);
                                                                 lottieAds.setVisibility(View.VISIBLE);
