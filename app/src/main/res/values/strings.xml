@@ -47,13 +47,15 @@
     <string name="CorrectUsers">CorrectUsers</string>
     <string name="photoUrl">photoUrl</string>
     <string name="spinValue">spinValue</string>
+    <string name="Scores">Scores</string>
+    <string name="spicAdsCount">spinAdsCount</string>
     <string name="loadingMessage">Kullanıcı Bilgileri Yükleniyor...</string>
 
     <!-- TODo: Ayarlar kısmı başlık ismi -->
     <string name="home_settings_title_follow">Follow</string>
     <string name="home_settings_title_updatetouserinfo">Update To User Profile</string>
     <string name="home_settings_title_useragreement">User Agreement</string>
-    <string name="home_settings_title_about">About</string>
+    <string name="home_settings_title_sss">SSS</string>
     <string name="home_settings_title_logout">Logout</string>
 
 
@@ -71,9 +73,9 @@
 
     <!-- TODo: UserSignInPopUpAlert -->
     <string name="sign_in_choose_image_alert_title">Notice</string>
-    <string name="sign_in_choose_image_alert_desc">Make sure to enter the information correctly. Unsuited photos are rejected and your account may be permanently blocked</string>
-    <string name="Scores">Scores</string>
-    <string name="spicAdsCount">spinAdsCount</string>
+    <string name="sign_in_choose_image_alert_desc">Make sure to enter the information correctly. Unsuited photos are
+        rejected and your account may be permanently blocked
+    </string>
 
 
 </resources>

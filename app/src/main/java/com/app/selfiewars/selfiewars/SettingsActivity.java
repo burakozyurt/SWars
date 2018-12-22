@@ -20,7 +20,7 @@ public class SettingsActivity extends AppCompatActivity {
     LinearLayout follow;
     LinearLayout updatetouserprofile;
     LinearLayout useragreement;
-    LinearLayout about;
+    LinearLayout sss;
     LinearLayout logout;
     ImageView backspace;
     FirebaseAuth firebaseAuth;
@@ -34,6 +34,8 @@ public class SettingsActivity extends AppCompatActivity {
         backspaceIconClicked();
         followClicked();
         updateToUserProfileClicked();
+        userAgreementClicked();
+        SSSClicked();
         logoutClicked();
     }
 
@@ -41,7 +43,7 @@ public class SettingsActivity extends AppCompatActivity {
         follow = findViewById(R.id.followLinearLayout);
         updatetouserprofile = findViewById(R.id.updatetouserprofileLinearLayout);
         useragreement = findViewById(R.id.useragreementLinearLayout);
-        about = findViewById(R.id.aboutLinearLayout);
+        sss = findViewById(R.id.SSSLinearLayout);
         logout = findViewById(R.id.logoutLinearLayout);
         backspace = findViewById(R.id.backspaceIcon);
         firebaseAuth = FirebaseAuth.getInstance();
@@ -110,5 +112,24 @@ public class SettingsActivity extends AppCompatActivity {
         finish();
 
     }
-
+    public void userAgreementClicked(){
+        useragreement.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getApplicationContext(),UserAgreementandSSSActivity.class);
+                intent.putExtra("type","agreement");
+                startActivity(intent);
+            }
+        });
+    }
+    public void SSSClicked(){
+        sss.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getApplicationContext(),UserAgreementandSSSActivity.class);
+                intent.putExtra("type","sss");
+                startActivity(intent);
+            }
+        });
+    }
 }
