@@ -222,13 +222,13 @@ public class AuthUsersInfoActivity extends Activity {
             case 1:
                 if (resultCode == RESULT_OK){
                     selectedImage = data.getData();
-                    Picasso.get().load(selectedImage).transform(new ExifTransformation(this,selectedImage)).into(profileImageView);
+                    Picasso.with(getApplicationContext()).load(selectedImage).transform(new ExifTransformation(this,selectedImage)).into(profileImageView);
                 }break;
             case CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE:
                 CropImage.ActivityResult result = CropImage.getActivityResult(data);
                 if (resultCode == RESULT_OK) {
                     selectedImage = result.getUri();
-                    Picasso.get().load(selectedImage).networkPolicy(NetworkPolicy.NO_STORE,NetworkPolicy.NO_CACHE   ).into(profileImageView);
+                    Picasso.with(getApplicationContext()).load(selectedImage).networkPolicy(NetworkPolicy.NO_STORE,NetworkPolicy.NO_CACHE   ).into(profileImageView);
                 } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
                     Toast.makeText(this, "Seçilmedi Resim", Toast.LENGTH_SHORT).show();
                 }

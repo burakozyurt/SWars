@@ -227,7 +227,7 @@ public class MainActivity extends AppCompatActivity {
 
         productimageView = mydialog.findViewById(R.id.popup_product_Info_Image);
         productTitleView = mydialog.findViewById(R.id.popup_product_Info_TitleTextView);
-        if(photoUrl !=null)Picasso.get().load(photoUrl).resize(500, 500).into(productimageView);
+        if(photoUrl !=null)Picasso.with(context).load(photoUrl).resize(500, 500).into(productimageView);
         if(productTitle != null)
             productTitleView.setText(productTitle);
 

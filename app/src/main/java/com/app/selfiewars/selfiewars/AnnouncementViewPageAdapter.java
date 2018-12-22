@@ -64,7 +64,7 @@ public class AnnouncementViewPageAdapter extends PagerAdapter {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                     photoUrl = dataSnapshot.getValue(String.class);
-                    if (photoUrl != null) Picasso.get().load(photoUrl).resize(500, 500).into(announceLogoImageView);
+                    if (photoUrl != null) Picasso.with(context).load(photoUrl).resize(500, 500).into(announceLogoImageView);
                     else Toast.makeText(context, "Ödül resmi yüklenemedi", Toast.LENGTH_SHORT).show();
                 }
 

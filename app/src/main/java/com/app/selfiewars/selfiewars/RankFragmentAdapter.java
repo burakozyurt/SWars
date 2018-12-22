@@ -36,7 +36,6 @@ public class RankFragmentAdapter extends RecyclerView.Adapter<RankFragmentAdapte
         view = layoutInflater.inflate(R.layout.rankcardview, viewGroup, false);
         return new ViewHolder(view);
     }
-
     @Override
     public void onBindViewHolder(@NonNull final ViewHolder viewHolder, int i) {
         FirebaseDatabase.getInstance().getReference("Users/"+mData.get(i).getUid()).child("properties").addListenerForSingleValueEvent(new ValueEventListener() {
@@ -44,7 +43,7 @@ public class RankFragmentAdapter extends RecyclerView.Adapter<RankFragmentAdapte
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 UserProperties userProperties = dataSnapshot.getValue(UserProperties.class);
                 viewHolder.usernameTextView.setText(""+userProperties.getUserName());
-                Picasso.get().load(userProperties.getPhotoUrl()).into(viewHolder.userPhotoImageView);
+                Picasso.with(context).load(userProperties.getPhotoUrl()).into(viewHolder.userPhotoImageView);
             }
 
             @Override

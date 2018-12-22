@@ -382,7 +382,7 @@ public class GuessItActivity extends AppCompatActivity {
     }
     private void setUserImageAndUserName(final GuessItUserData guessItUserData){
             userNameTextView.setVisibility(View.INVISIBLE);
-            Picasso.get().load(guessItUserData.getPhotoUrl()).networkPolicy(NetworkPolicy.NO_STORE,NetworkPolicy.NO_CACHE).into(userProfileImageView, new Callback() {
+            Picasso.with(getApplicationContext()).load(guessItUserData.getPhotoUrl()).networkPolicy(NetworkPolicy.NO_STORE,NetworkPolicy.NO_CACHE).into(userProfileImageView, new Callback() {
                         @Override
                         public void onSuccess() {
                             setButtonsText(options(listUserProperties.get(listUserPropertiesIndex).getAge()));
@@ -395,7 +395,7 @@ public class GuessItActivity extends AppCompatActivity {
                         }
 
                         @Override
-                        public void onError(Exception e) {
+                        public void onError() {
                             Toast.makeText(GuessItActivity.this, "Hata resim yüklenmedi", Toast.LENGTH_SHORT).show();
                         }
                     });
@@ -1056,7 +1056,7 @@ public class GuessItActivity extends AppCompatActivity {
         return null;
     }
     private void loadFirstUserImage(final Integer index){
-        Picasso.get().load(listUserProperties.get(index).getPhotoUrl()).noFade().networkPolicy(NetworkPolicy.NO_STORE).into(loadTempImageView, new Callback() {
+        Picasso.with(getApplicationContext()).load(listUserProperties.get(index).getPhotoUrl()).noFade().networkPolicy(NetworkPolicy.NO_STORE).into(loadTempImageView, new Callback() {
             @Override
             public void onSuccess() {
                 loadinglayout.setVisibility(View.GONE);
@@ -1066,7 +1066,7 @@ public class GuessItActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onError(Exception e) {
+            public void onError() {
                 isNextUserList = false;
             }
         });
@@ -1078,7 +1078,7 @@ public class GuessItActivity extends AppCompatActivity {
         btn4Lottie.setVisibility(View.VISIBLE);
     }
     private void loadNextImage(final Integer index){
-        Picasso.get().load(listUserProperties.get(index).getPhotoUrl()).noFade().networkPolicy(NetworkPolicy.NO_STORE).into(loadTempImageView, new Callback() {
+        Picasso.with(getApplicationContext()).load(listUserProperties.get(index).getPhotoUrl()).noFade().networkPolicy(NetworkPolicy.NO_STORE).into(loadTempImageView, new Callback() {
             @Override
             public void onSuccess() {
                 //  Toast.makeText(GuessItActivity.this, "Index arka planda yüklendi :" +index   , Toast.LENGTH_SHORT).show();
@@ -1086,7 +1086,7 @@ public class GuessItActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onError(Exception e) {
+            public void onError() {
 
             }
         });

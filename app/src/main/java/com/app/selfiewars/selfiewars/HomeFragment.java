@@ -12,6 +12,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,6 +21,7 @@ import com.airbnb.lottie.LottieAnimationView;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.*;
+import com.google.firebase.iid.FirebaseInstanceId;
 import com.squareup.picasso.Picasso;
 import de.hdodenhof.circleimageview.CircleImageView;
 import me.relex.circleindicator.CircleIndicator;
@@ -78,8 +80,6 @@ public class HomeFragment extends Fragment {
 
     public HomeFragment() {
         // Required empty public constructor
-        mPicasso = Picasso.get();
-        mPicasso.setIndicatorsEnabled(true);
         rightOfGame = 0;
     }
 
@@ -338,7 +338,7 @@ public class HomeFragment extends Fragment {
                         usernameTextView.setText(properties.getUserName());
                         ageTextView.setText(String.valueOf(properties.getAge()));
                         photoUrl = properties.getPhotoUrl();
-                        mPicasso.load(photoUrl).into(profileImageView);
+                        mPicasso.with(getContext()).load(photoUrl).into(profileImageView);
                         getScore();
                         if(dataSnapshot.hasChild(getResources().getString(R.string.token))){
                             diamondToken =dataSnapshot.child(getResources().getString(R.string.token)).child((getResources().getString(R.string.diamondValue))).getValue(Integer.class);
