@@ -22,6 +22,7 @@
         <meta-data
                 android:name="com.google.android.gms.ads.APPLICATION_ID"
                 android:value="ca-app-pub-7004761147200711~5104636223"/>
+
         <activity android:name=".AuthenticationScreen">
         </activity>
         <activity android:name=".AuthUsersInfoActivity">
@@ -43,9 +44,11 @@
         </activity>
         <activity android:name=".UpdateToUserProfile">
         </activity>
-        <activity android:name="com.theartofdev.edmodo.cropper.CropImageActivity" android:theme="@style/Theme.AppCompat.Light"/>
-
-
+        <activity
+                android:name="com.theartofdev.edmodo.cropper.CropImageActivity"
+                android:theme="@style/Theme.AppCompat.Light"/>
+        <activity android:name=".UserAgreementandSSSActivity">
+        </activity>
     </application>
 
 </manifest>
