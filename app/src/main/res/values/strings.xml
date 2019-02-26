@@ -31,11 +31,12 @@
     <string name="currency_type">$</string>
     <string name="default_web_lient_id">412883841103-oltcc80bcdoj4r0f3qknruh5elvvk1ed.apps.googleusercontent.com
     </string>
+    <string name="Age">Age</string>
+
 
     <!-- TODo: Çeviri yapılmayacak olan stringler  Firebase -->
     <string name="account_State">accountstate</string>
     <string name="isReady">isReady</string>
-    <string name="Age">Age</string>
     <string name="properties">properties</string>
     <string name="token">token</string>
     <string name="diamondValue">diamondValue</string>

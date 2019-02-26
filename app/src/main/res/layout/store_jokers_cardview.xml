@@ -56,7 +56,7 @@
                 app:layout_constraintEnd_toStartOf="@+id/store_joker_price"
                 app:layout_constraintBottom_toBottomOf="@+id/store_joker_price"/>
         <TextView
-                android:text="Buy"
+                android:text="Satın Al"
                 android:textColor="@color/background5050"
                 android:textSize="14sp"
                 android:textStyle="bold"

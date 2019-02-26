@@ -2,4 +2,24 @@
 <resources>
     <dimen name="store_diamond_cardview_image_width">55dp</dimen>
     <dimen name="store_diamond_cardview_image_height">55dp</dimen>
+    <dimen name="announcement">130dp</dimen>
+    <dimen name="guess_it_health_width_height">75dp</dimen>
+    <dimen name="guess_it_photo_width_height">200dp</dimen>
+    <dimen name="guess_it_jokers_width_height">40dp</dimen>
+    <dimen name="fragment_spin_wheel_width_height">300dp</dimen>
+    <dimen name="fragment_home_profile_photo_width_height">70dp</dimen>
+    <dimen name="fragment_title_Text_Size">18sp</dimen>
+    <dimen name="fragment_home_score_and_scoreVal_Text_Size">14sp</dimen>
+    <dimen name="fragment_home_guess_it_button_witdh">180dp</dimen>
+    <dimen name="fragment_home_guess_it_button_height">32dp</dimen>
+
+    <dimen name="cardview_rank_star_width_height">24dp</dimen>
+    <dimen name="cardview_rank_profile_image_width_height">40dp</dimen>
+    <dimen name="cardview_rank_username_and_number_text_size">11sp</dimen>
+    <dimen name="cardview_rank_layout_height">44dp</dimen>
+
+
+    <dimen name="activity_splashscreen_logo_width_height">170dp</dimen>
+    <dimen name="activity_splashscreen_lottie_text_height">90dp</dimen>
+
 </resources>

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="colorPrimary">#008577</color>
-    <color name="colorPrimaryDark">#00574B</color>
+    <color name="colorPrimaryDark">#eeeeee</color>
     <color name="colorAccent">#D81B60</color>
     <color name="background">#FFFFFF</color>
     <color name="announcement">#03a9f4</color>
@@ -22,6 +22,10 @@
     <color name="spinadsbanner">#f8c82b</color>
     <color name="loseadsbanner">#03a9f4</color>
     <color name="transparent">#0003a9f4</color>
+    <color name="slide1color">#794EC9</color>
+    <color name="slide2color">#F34336</color>
+    <color name="slide3color">#03A8F3</color>
+    <color name="statusbarcolor">#eeeeee</color>
     #4F1AC9
     
 </resources>

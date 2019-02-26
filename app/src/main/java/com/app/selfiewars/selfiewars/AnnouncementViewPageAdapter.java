@@ -3,7 +3,6 @@ package com.app.selfiewars.selfiewars;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
-import android.os.CountDownTimer;
 import android.support.annotation.NonNull;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
@@ -17,9 +16,10 @@ import com.airbnb.lottie.LottieAnimationView;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.*;
+import com.squareup.picasso.Callback;
+import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 
-import java.sql.Time;
 import java.util.concurrent.TimeUnit;
 
 
@@ -27,11 +27,15 @@ public class AnnouncementViewPageAdapter extends PagerAdapter {
     private Context context;
     private LayoutInflater layoutInflater;
     private Integer image = R.drawable.instagram;
+    private FirebaseDatabase firebaseDatabase;
+    private DatabaseReference databaseReference;
     private String photoUrl;
     private boolean isClick = false;
 
     public AnnouncementViewPageAdapter(Context context) {
         this.context = context;
+        firebaseDatabase = FirebaseDatabase.getInstance();
+        databaseReference = firebaseDatabase.getReference("Announcement");
     }
 
     @Override
@@ -60,12 +64,21 @@ public class AnnouncementViewPageAdapter extends PagerAdapter {
             announceLogoImageViewInstagram.setVisibility(View.INVISIBLE);
             announcementTitle.setText(R.string.announcement_title0);
             announcementDesc.setText(R.string.announcement_description0);
-            FirebaseDatabase.getInstance().getReference("Announcement").child("photoUrl").addListenerForSingleValueEvent(new ValueEventListener() {
+            databaseReference.child("photoUrl").addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                     photoUrl = dataSnapshot.getValue(String.class);
-                    if (photoUrl != null) Picasso.with(context).load(photoUrl).resize(500, 500).into(announceLogoImageView);
-                    else Toast.makeText(context, "Ödül resmi yüklenemedi", Toast.LENGTH_SHORT).show();
+                    if (photoUrl != null)
+                        Picasso.with(context).load(photoUrl).networkPolicy(NetworkPolicy.OFFLINE).resize(500, 500).into(announceLogoImageView, new Callback() {
+                            @Override
+                            public void onSuccess() {
+                            }
+                            @Override
+                            public void onError() {
+                                Picasso.with(context).load(photoUrl).resize(500, 500).into(announceLogoImageView);
+                            }
+                        });
+                        //Toast.makeText(context, "Ödül resmi yüklenemedi", Toast.LENGTH_SHORT).show();
                 }
 
                 @Override
@@ -98,12 +111,12 @@ public class AnnouncementViewPageAdapter extends PagerAdapter {
                     MainActivity.showPopupProductInfo(photoUrl, "Steel Series Efsanevi Mouse", context);
                     isClick = false;
                 } else if (position == 1) {
-                    Toast.makeText(context, "1", Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(context, "1", Toast.LENGTH_SHORT).show();
                         rightOfDailyAwardIncreaseValue(announcementTitle);
                 } else {
-                    Toast.makeText(context, "2", Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(context, "2", Toast.LENGTH_SHORT).show();
                     Intent intent = new Intent(Intent.ACTION_VIEW);
-                    intent.setData(Uri.parse("https://www.youtube.com/"));
+                    intent.setData(Uri.parse("https://www.instagram.com/selfiewarsapp/"));
                     context.startActivity(intent);
                     isClick = false;
                     }
@@ -132,11 +145,11 @@ public class AnnouncementViewPageAdapter extends PagerAdapter {
         mAuth = FirebaseAuth.getInstance();
         mydatabase = FirebaseDatabase.getInstance();
         myRefUser = mydatabase.getReference("Users/"+mAuth.getUid());
-
-        myRefUser.child("nowtimestamp").child("timestamp").setValue(ServerValue.TIMESTAMP).addOnSuccessListener(new OnSuccessListener<Void>() {
+        myRefUser.keepSynced(true);
+        MainActivity.myRefUser.child("nowtimestamp").child("timestamp").setValue(ServerValue.TIMESTAMP).addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
             public void onSuccess(Void aVoid) {
-                myRefUser.addListenerForSingleValueEvent(new ValueEventListener() {
+                MainActivity.myRefUser.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                         if (dataSnapshot.child("nowtimestamp").hasChild("timestamp")) {
@@ -171,11 +184,11 @@ public class AnnouncementViewPageAdapter extends PagerAdapter {
         mAuth = FirebaseAuth.getInstance();
         mydatabase = FirebaseDatabase.getInstance();
         myRefUser = mydatabase.getReference("Users/"+mAuth.getUid());
-
-        myRefUser.child("nowtimestamp").child("timestamp").setValue(ServerValue.TIMESTAMP).addOnSuccessListener(new OnSuccessListener<Void>() {
+        myRefUser.keepSynced(true);
+        MainActivity.myRefUser.child("nowtimestamp").child("timestamp").setValue(ServerValue.TIMESTAMP).addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
             public void onSuccess(Void aVoid) {
-                myRefUser.addListenerForSingleValueEvent(new ValueEventListener() {
+                MainActivity.myRefUser.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                         if (dataSnapshot.child("nowtimestamp").hasChild("timestamp")) {
@@ -195,17 +208,17 @@ public class AnnouncementViewPageAdapter extends PagerAdapter {
                                     Integer doubleDipValue = dataSnapshot.child("wildcards").child("doubleDipValue").getValue(Integer.class);
                                     Integer healthValue = dataSnapshot.child("wildcards").child("healthValue").getValue(Integer.class);
                                     final Wildcards wildcards = new Wildcards(doubleDipValue + 1,fiftyFiftyValue+1,healthValue+1);
-                                    myRefUser.child("rightofdailyaward").child("dailyAwardValue").setValue(nowTimestamp + 86400000).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                    MainActivity.myRefUser.child("rightofdailyaward").child("dailyAwardValue").setValue(nowTimestamp + 86400000).addOnSuccessListener(new OnSuccessListener<Void>() {
                                         @Override
                                         public void onSuccess(Void aVoid) {
-                                            myRefUser.child("token").child("diamondValue").setValue(diamondValue).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                            MainActivity.myRefUser.child("token").child("diamondValue").setValue(diamondValue).addOnSuccessListener(new OnSuccessListener<Void>() {
                                                 @Override
                                                 public void onSuccess(Void aVoid) {
-                                                    myRefUser.child("wildcards").setValue(wildcards).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                    MainActivity.myRefUser.child("wildcards").setValue(wildcards).addOnSuccessListener(new OnSuccessListener<Void>() {
                                                         @Override
                                                         public void onSuccess(Void aVoid) {
                                                             title.setText("Günlük Ödüller");
-                                                            MainActivity.showPopUpInfo(null,"Günlük ödüller başarılya alındı",null,context);
+                                                            MainActivity.showPopUpInfo(null,"Günlük ödüller başarıyla alındı",null,context);
                                                             isClick = false;
                                                         }
                                                     }) ;
@@ -221,13 +234,13 @@ public class AnnouncementViewPageAdapter extends PagerAdapter {
                                 Integer doubleDipValue = dataSnapshot.child("wildcards").child("doubleDipValue").getValue(Integer.class);
                                 Integer healthValue = dataSnapshot.child("wildcards").child("healthValue").getValue(Integer.class);
                                 final Wildcards wildcards = new Wildcards(doubleDipValue + 1,fiftyFiftyValue+1,healthValue+1);
-                                myRefUser.child("rightofdailyaward").child("dailyAwardValue").setValue(nowTimestamp + 86400000).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                MainActivity.myRefUser.child("rightofdailyaward").child("dailyAwardValue").setValue(nowTimestamp + 86400000).addOnSuccessListener(new OnSuccessListener<Void>() {
                                     @Override
                                     public void onSuccess(Void aVoid) {
-                                        myRefUser.child("token").child("diamondValue").setValue(diamondValue).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                        MainActivity.myRefUser.child("token").child("diamondValue").setValue(diamondValue).addOnSuccessListener(new OnSuccessListener<Void>() {
                                             @Override
                                             public void onSuccess(Void aVoid) {
-                                                myRefUser.child("wildcards").setValue(wildcards).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                MainActivity.myRefUser.child("wildcards").setValue(wildcards).addOnSuccessListener(new OnSuccessListener<Void>() {
                                                     @Override
                                                     public void onSuccess(Void aVoid) {
                                                         title.setText("Günlük Ödüller");

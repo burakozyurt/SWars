@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
           xmlns:tools="http://schemas.android.com/tools"
-          package="com.app.selfiewars.selfiewars">
+          package="com.app.selfiewars.selfiewars"
+          android:versionCode="14"
+          android:versionName="14.0"
+>
 
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
@@ -12,28 +15,61 @@
     <uses-permission android:name="android.permission.AUTHENTICATE_ACCOUNTS"/>
 
     <application
+            android:name=".SelfieWars"
             android:allowBackup="true"
+            android:hardwareAccelerated="false"
             android:icon="@mipmap/selfiewarslogofit"
             android:label="@string/app_name"
+            android:largeHeap="true"
             android:roundIcon="@mipmap/selfiewarslogofit"
             android:supportsRtl="true"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar"
             tools:ignore="GoogleAppIndexingWarning">
+
+        <!--
+     Set custom default icon. This is used when no icon is set for incoming notification messages.
+     See README(https://goo.gl/l4GJaQ) for more.
+        -->
+        <meta-data
+                android:name="com.google.firebase.messaging.default_notification_icon"
+                android:resource="@drawable/sellfiewarslogo"/>
+        <!--
+             Set color used with incoming notification messages. This is used when no color is set for the incoming
+             notification message. See README(https://goo.gl/6BKBk7) for more.
+        -->
+        <meta-data
+                android:name="com.google.firebase.messaging.default_notification_color"
+                android:resource="@color/textcolorblack"/>
+
+        <service android:name=".MyFirebaseMessagingService">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT"/>
+            </intent-filter>
+        </service>
+
         <meta-data
                 android:name="com.google.android.gms.ads.APPLICATION_ID"
                 android:value="ca-app-pub-7004761147200711~5104636223"/>
         <meta-data
                 android:name="firebase_inapp_messaging_auto_data_collection_enabled"
-                android:value="true" />
+                android:value="true"/>
 
-        <activity android:name=".AuthenticationScreen">
+        <activity
+                android:name=".AuthenticationScreen"
+                android:screenOrientation="portrait">
         </activity>
-        <activity android:name=".AuthUsersInfoActivity">
+        <activity
+                android:name=".AuthUsersInfoActivity"
+                android:screenOrientation="portrait">
         </activity>
-        <activity android:name=".MainActivity">
+        <activity
+                android:name=".MainActivity"
+                android:launchMode="singleTask"
+                android:screenOrientation="portrait">
         </activity>
         <activity
                 android:name=".SplashScreenActivity"
+                android:screenOrientation="portrait"
                 android:theme="@style/AppTheme.Fullscreen">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
@@ -41,17 +77,30 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
-        <activity android:name=".GuessItActivity">
+        <activity
+                android:name=".GuessItActivity"
+                android:screenOrientation="portrait">
         </activity>
-        <activity android:name=".SettingsActivity">
+        <activity
+                android:name=".SettingsActivity"
+                android:screenOrientation="portrait">
         </activity>
-        <activity android:name=".UpdateToUserProfile">
+        <activity
+                android:name=".UpdateToUserProfile"
+                android:screenOrientation="portrait">
         </activity>
         <activity
                 android:name="com.theartofdev.edmodo.cropper.CropImageActivity"
+                android:screenOrientation="portrait"
                 android:theme="@style/Theme.AppCompat.Light"/>
-        <activity android:name=".UserAgreementandSSSActivity">
+        <activity
+                android:name=".UserAgreementandSSSActivity"
+                android:screenOrientation="portrait">
+        </activity>
+        <activity android:name=".InAppBillingActivity">
         </activity>
     </application>
+    <uses-permission android:name="com.android.vending.BILLING"/>
+
 
 </manifest>

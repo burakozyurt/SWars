@@ -2,12 +2,11 @@ package com.app.selfiewars.selfiewars;
 
 import android.content.Intent;
 import android.net.Uri;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
@@ -63,7 +62,7 @@ public class SettingsActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(Intent.ACTION_VIEW);
-                intent.setData(Uri.parse("https://www.youtube.com/"));
+                intent.setData(Uri.parse("https://www.instagram.com/selfiewarsapp/"));
                 startActivity(intent);
             }
         });
@@ -86,11 +85,12 @@ public class SettingsActivity extends AppCompatActivity {
                     @Override
                     public void onSuccess(Void aVoid) {
                         firebaseAuth.signOut();
+                        Intent intent = new Intent(getApplicationContext(),SplashScreenActivity.class);
+                        startActivity(intent);
+                        finishAffinity();
                     }
                 });
-                Intent intent = new Intent(getApplicationContext(),SplashScreenActivity.class);
-                startActivity(intent);
-                finish();
+
             }
         });
     }

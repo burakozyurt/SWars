@@ -17,7 +17,7 @@
                 android:layout_marginStart="0dp" android:layout_alignParentTop="true" android:layout_marginTop="0dp">
 
             <TextView
-                    android:textSize="24sp"
+                    android:textSize="@dimen/fragment_title_Text_Size"
                     android:textColor="@color/textcolor"
                     android:text="@string/store"
                     android:layout_width="wrap_content"

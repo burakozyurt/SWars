@@ -1,12 +1,11 @@
 package com.app.selfiewars.selfiewars;
 
+import android.os.Bundle;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
-import android.widget.ScrollView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -65,7 +64,7 @@ public class UserAgreementandSSSActivity extends AppCompatActivity {
         sssItemList.add(new SSSItem("Haftalık ödül sistemi nasıl çalışıyor?\n", "Her hafta sizler için ödüllerimiz var. " +
                 "Skor tablosunda dereceye gir ve haftalık ödülü kazanma fırsatını kaçırma!\n"));
 
-        sssItemList.add(new SSSItem("Haftanın ödülünü almak için ne yapmalıyım?\n", "Bolca rekabetin olduğu SelfieWars'ta en iyi tahminleri sen yap ve haftanın ödülü kap! " +
+        sssItemList.add(new SSSItem("Ödül almak için ne yapmalıyım?\n", "Bolca rekabetin olduğu SelfieWars'ta en iyi tahminleri sen yap ve haftanın ödülü kap! " +
                 "Soruların değerleri giderek artarak sana daha çok puan kazandırır bu yüzden yapabildiğinin en iyisini yap. Bol şans!\n"));
 
         sssItemList.add(new SSSItem("Profil bilgilerimi neden girmeliyim?\n", "Mağazadan aldığın ürünlerin kargolanabilmesi için adres bilgilerine ihtiyacımız var. " +

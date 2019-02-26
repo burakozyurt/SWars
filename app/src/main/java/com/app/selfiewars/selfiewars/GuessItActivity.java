@@ -10,10 +10,21 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
-import android.widget.*;
+import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.TextView;
+import android.widget.Toast;
 import com.airbnb.lottie.LottieAnimationView;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.MobileAds;
+import com.google.android.gms.ads.reward.RewardItem;
+import com.google.android.gms.ads.reward.RewardedVideoAd;
+import com.google.android.gms.ads.reward.RewardedVideoAdListener;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.*;
 import com.squareup.picasso.Callback;
@@ -24,7 +35,6 @@ import com.squareup.picasso.Picasso;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Random;
 
 public class GuessItActivity extends AppCompatActivity {
     private ImageView userProfileImageView;
@@ -36,6 +46,7 @@ public class GuessItActivity extends AppCompatActivity {
     private TextView scoreValueTextView;
     private TextView loadingFeedBackTextView;
     private TextView loseLAyoutRightOfGameTextView;
+    private LottieAnimationView loseadsLottie;
     private LottieAnimationView joker1btn;
     private LottieAnimationView joker2btn;
     private LottieAnimationView btn1Lottie;
@@ -56,16 +67,11 @@ public class GuessItActivity extends AppCompatActivity {
     private ConstraintLayout loadinglayout;
     private ConstraintLayout guessitlayout;
     private ConstraintLayout loselayout;
+    private ConstraintLayout doubeleScoreloselayout;
     private FirebaseAuth mAuth;
     private FirebaseDatabase mDatabase;
-    private DatabaseReference myUserRef;
-    private DatabaseReference myScoreRef;
     private DatabaseReference mAllUsersRef;
-    private DatabaseReference mApprovedUserRef;
     private DatabaseReference mCorrectUserRef;
-    private DatabaseReference myRightOfGame;
-    private DatabaseReference myEndTime;
-    private OnGetDataListener onGetUserDataListener;
     private Integer score = 0;
     private Long time;
     private boolean isGameStart;
@@ -91,6 +97,8 @@ public class GuessItActivity extends AppCompatActivity {
     private boolean isNextUserList = false;
     private boolean buttonClick = false;
     private boolean isBetaGame = false;
+    private RewardedVideoAd mRewardedVideoAd;
+    private boolean adsrunning =false;
 
     @Override
     public void onBackPressed() {
@@ -112,17 +120,13 @@ public class GuessItActivity extends AppCompatActivity {
     private void defineFirebase(){
         mAuth = FirebaseAuth.getInstance();
         mDatabase = FirebaseDatabase.getInstance();
-        myUserRef = mDatabase.getReference("Users/"+mAuth.getUid());
         mAllUsersRef = mDatabase.getReference("Users");
-        mApprovedUserRef = mDatabase.getReference(getResources().getString(R.string.ApprovedUser));
         mCorrectUserRef = mDatabase.getReference(getResources().getString(R.string.CorrectUsers));
-        myScoreRef = mDatabase.getReference(getResources().getString(R.string.Scores));
-        myRightOfGame = mDatabase.getReference("RightOfGame/" + mAuth.getUid());
-        myEndTime = mDatabase.getReference("EndTime");
     }
     private void define(){
         userProfileImageView = findViewById(R.id.guessit_user_profile_imageView);
         loadTempImageView = findViewById(R.id.guess_it_load_imageView_TEMP);
+        loseadsLottie = findViewById(R.id.guess_it_lose_ads_ImageView);
         userNameTextView = findViewById(R.id.guessit_user_profile_username_TextView);
         scoreValueTextView = findViewById(R.id.guessit_scoreValueTextView);
         timeValueTextView = findViewById(R.id.guessit_timeValueTextView);
@@ -148,6 +152,7 @@ public class GuessItActivity extends AppCompatActivity {
         loadingFeedBackTextView = findViewById(R.id.loading_feedback_TextView);
         loadinglayout = findViewById(R.id.guess_it_activity_loading_ConstrainLayout);
         guessitlayout = findViewById(R.id.guess_it_activity_guess_it_ConstrainLayout);
+        doubeleScoreloselayout = findViewById(R.id.double_score_ConstraintLayout);
         loselayout = findViewById(R.id.guess_it_activity_lose_ConstrainLayout);
         healthValueTextView = findViewById(R.id.guess_it_health_TextView);
         btn1Lottie.setSpeed(3);
@@ -221,29 +226,6 @@ public class GuessItActivity extends AppCompatActivity {
 
             }
         });
-
-    }
-    private boolean isAnswerCorrect(String buttonText){
-        if (buttonText.equalsIgnoreCase(listUserProperties.get(listUserPropertiesIndex).getAge().toString())){
-            return true;
-        }else {
-            return false;
-        }
-
-    }
-    private void setBtnTextVisibility(Boolean visibility){
-        if(visibility){
-            btn1TextView.setVisibility(View.VISIBLE);
-            btn2TextView.setVisibility(View.VISIBLE);
-            btn3TextView.setVisibility(View.VISIBLE);
-            btn4TextView.setVisibility(View.VISIBLE);
-        }
-        else {
-            btn1TextView.setVisibility(View.INVISIBLE);
-            btn2TextView.setVisibility(View.INVISIBLE);
-            btn3TextView.setVisibility(View.INVISIBLE);
-            btn4TextView.setVisibility(View.INVISIBLE);
-        }
     }
     private void setButtonClickable(Boolean clickable){
         btn1Lottie.setClickable(clickable);
@@ -258,15 +240,105 @@ public class GuessItActivity extends AppCompatActivity {
         btn3TextView.setText(""+ıntegerList.get(2).toString());
         btn4TextView.setText(""+ıntegerList.get(3).toString());
     }
-    private void setButtonAnimation(){
-        if (!btn1Lottie.isAnimating()&& !btn2Lottie.isAnimating() && !btn3Lottie.isAnimating()&& !btn4Lottie.isAnimating()){
-            btn1Lottie.reverseAnimationSpeed();
-            btn2Lottie.reverseAnimationSpeed();
-            btn3Lottie.reverseAnimationSpeed();
-            btn4Lottie.reverseAnimationSpeed();
-            btn1Lottie.playAnimation();
-           // Toast.makeText(this, ""+btn1Lottie.getDuration(), Toast.LENGTH_SHORT).show();
-        }
+    private void getUserListFromDatabase(){
+        new Database().mReadDataAndGetUserListForGuessIt(mAuth, getResources().getString(R.string.ApprovedUser), getResources().getString(R.string.CorrectUsers), new OnGetUserlistDataListener() {
+            @Override
+            public void onStart() {
+                loadinglayout.setVisibility(View.VISIBLE);
+                guessitlayout.setVisibility(View.GONE);
+                loselayout.setVisibility(View.GONE);
+
+            }
+            @Override
+            public void onProgress(String string) {
+                loadingFeedBackTextView.setText(""+string);
+            }
+
+            @Override
+            public void onSuccess(final List<GuessItUserData> guessItUserDataList,Boolean isBeta) {
+                isBetaGame = isBeta;
+                listUserProperties = guessItUserDataList;
+                allquestionsCount = listUserProperties.size();
+                loadFirstUserImage(0);
+            }
+
+            @Override
+            public void onFailed() {
+                loadinglayout.setVisibility(View.GONE);
+                MainActivity.showPopUpInfo(null,"Tüm kullanıcıların yaşları tahmin edildi","Veritbanındaki tüm onaylı kullanıcıların yaşını tahmin ettiniz. Yeni kullanıcılar kısa sürede eklenecektir. Daha sonra tekrar gel.",GuessItActivity.this);
+                setScoreDataInFirebaseAndLoseLayoutOpen();
+            }
+        });
+    }
+    public void getSecondUserListFromDatabase(){
+        new Database().mReadDataAndGetUserListForGuessIt(mAuth, getResources().getString(R.string.ApprovedUser), getResources().getString(R.string.CorrectUsers), new OnGetUserlistDataListener() {
+            @Override
+            public void onStart() {
+                isNextUserList = false;
+            }
+
+            @Override
+            public void onProgress(String string) {
+
+            }
+            @Override
+            public void onSuccess(final List<GuessItUserData> guessItUserDataList,Boolean isBeta) {
+                isBetaGame = isBeta;
+                listUserProperties.addAll(guessItUserDataList);
+                allquestionsCount = listUserProperties.size();
+                isNextUserList = true;
+            }
+
+            @Override
+            public void onFailed() {
+                isNextUserList = false;
+            }
+        });
+    }
+    private void setUserImageAndUserName(final GuessItUserData guessItUserData){
+        userNameTextView.setVisibility(View.INVISIBLE);
+        Picasso.with(getApplicationContext()).load(guessItUserData.getPhotoUrl()).noFade().networkPolicy(NetworkPolicy.NO_STORE,NetworkPolicy.NO_CACHE).memoryPolicy(MemoryPolicy.NO_STORE,MemoryPolicy.NO_CACHE).into(userProfileImageView, new Callback() {
+            @Override
+            public void onSuccess() {
+                setButtonsText(options(listUserProperties.get(listUserPropertiesIndex).getAge()));
+                playAnimationButtons();
+                userNameTextView.setText(guessItUserData.getUserName());
+                userNameTextView.setVisibility(View.VISIBLE);
+                startCountDownTimer();
+                setJokerReset();
+                questionCounTextView.setText(""+countQuestion);
+            }
+
+            @Override
+            public void onError() {
+                listUserPropertiesIndex++;
+               // Toast.makeText(GuessItActivity.this, "Resim Yüklenemedi :" +guessItUserData.getUserName()   , Toast.LENGTH_SHORT).show();
+                gameManagement();
+            }
+        });
+    }
+    private void loadNextImage(final Integer index){
+        Picasso.with(getApplicationContext()).load(listUserProperties.get(index).getPhotoUrl()).noFade().into(loadTempImageView, new Callback() {
+            @Override
+            public void onSuccess() {
+
+            }
+
+            @Override
+            public void onError() {
+                Picasso.with(getApplicationContext()).load(listUserProperties.get(index).getPhotoUrl()).noFade().into(loadTempImageView, new Callback() {
+                    @Override
+                    public void onSuccess() {
+
+                    }
+
+                    @Override
+                    public void onError() {
+
+                    }
+                });
+            }
+        });
     }
     private void selectOptionAndWaitCorrectAnswer(final TextView btnTextView){
         final Handler handler = new Handler();
@@ -288,12 +360,12 @@ public class GuessItActivity extends AppCompatActivity {
                         mCorrectUserRef.child(mAuth.getUid()).child(listUserProperties.get(listUserPropertiesIndex).getUid()).setValue(ServerValue.TIMESTAMP).addOnSuccessListener(new OnSuccessListener<Void>() {
                             @Override
                             public void onSuccess(Void aVoid) {
-                                handler.postDelayed(runnable,1000);
+                                handler.postDelayed(runnable,600);
                                 btnTextView.setBackgroundResource(R.drawable.guess_it_true_answer);
                             }
                         });
                     }else {
-                        handler.postDelayed(runnable,1000);
+                        handler.postDelayed(runnable,600);
                         btnTextView.setBackgroundResource(R.drawable.guess_it_true_answer);
                     }
                     joker1btn.setClickable(false);
@@ -314,7 +386,6 @@ public class GuessItActivity extends AppCompatActivity {
                         btnTextView.setBackgroundResource(R.drawable.guess_it_false_answer);
                     }else {
                         btnTextView.setBackgroundResource(R.drawable.guess_it_false_answer);
-                        healthSetClickableAndVisible(true);
                         healthHandler = new Handler();
                         healthRunnable = new Runnable() {
                             @Override
@@ -323,7 +394,14 @@ public class GuessItActivity extends AppCompatActivity {
                                 setScoreDataInFirebaseAndLoseLayoutOpen();
                             }
                         };
-                        healthHandler.postDelayed(healthRunnable,4000);
+                        if(MainActivity.wildcards.getHealthValue() == 0){
+                            healthHandler.postDelayed(healthRunnable,300);
+                        }else {
+                            healthSetClickableAndVisible(true);
+                            healthHandler.postDelayed(healthRunnable,4000);
+
+                        }
+
                     }
                 }
                 buttonClick = false;
@@ -337,69 +415,213 @@ public class GuessItActivity extends AppCompatActivity {
 
     }
     private void setScoreDataInFirebaseAndLoseLayoutOpen(){
-        myScoreRef.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if(dataSnapshot.hasChild(mAuth.getUid())){
-                    myScoreRef.child(mAuth.getUid()).runTransaction(new Transaction.Handler() {
-                        @NonNull
-                        @Override
-                        public Transaction.Result doTransaction(@NonNull MutableData mutableData) {
-                            if(score != 0){
-                                Integer dbscore = mutableData.getValue(Integer.class);
-                                dbscore +=score;
-                                mutableData.setValue(dbscore);
-                                return Transaction.success(mutableData);
-                            }else {
-                                return null;
-                            }
-                        }
+        if(score!=0){
+            MainActivity.myScoreRef.child(mAuth.getUid()).runTransaction(new Transaction.Handler() {
+                @NonNull
+                @Override
+                public Transaction.Result doTransaction(@NonNull MutableData mutableData) {
+                    Integer dbscore = mutableData.getValue(Integer.class);
+                    dbscore +=score;
+                    mutableData.setValue(dbscore);
+                    return Transaction.success(mutableData);
+                }
 
-                        @Override
-                        public void onComplete(@Nullable DatabaseError databaseError, boolean b, @Nullable DataSnapshot dataSnapshot) {
+                @Override
+                public void onComplete(@Nullable final DatabaseError databaseError, boolean b, @Nullable DataSnapshot dataSnapshot) {
+                    if (b){
+                        guessitlayout.setVisibility(View.GONE);
+                        loselayout.setVisibility(View.VISIBLE);
+                        loseScore.setText("" + score + " Puan");
+                    }else {
+                        if(score !=0){
+                            MainActivity.myScoreRef.child(mAuth.getUid()).setValue(MainActivity.UserScore+score).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                @Override
+                                public void onComplete(@NonNull Task<Void> task) {
+                                    guessitlayout.setVisibility(View.GONE);
+                                    loselayout.setVisibility(View.VISIBLE);
+                                    loseScore.setText("" + score + " Puan");
+                                    Toast.makeText(GuessItActivity.this,databaseError.getMessage(),Toast.LENGTH_SHORT).show();
+                                }
+                            });
+                        }else {
+                            Toast.makeText(GuessItActivity.this,databaseError.getMessage(),Toast.LENGTH_SHORT).show();
                             guessitlayout.setVisibility(View.GONE);
                             loselayout.setVisibility(View.VISIBLE);
                             loseScore.setText("" + score + " Puan");
                         }
-                    });
-                }else {
-                    myScoreRef.child(mAuth.getUid()).setValue(score).addOnSuccessListener(new OnSuccessListener<Void>() {
+                    }
+                }
+            });
+        }else {
+            guessitlayout.setVisibility(View.GONE);
+            loselayout.setVisibility(View.VISIBLE);
+            loseScore.setText("" + score + " Puan");
+        }
+    }
+    private void setLoselayoutItemsClickListener(){
+        loseLAyoutRightOfGameTextView.setText("Kalan Tahmin: "+MainActivity.myRigtOfGame+"/10");
+        setRewardAds();
+        playAgainTextView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(!isGameStart){
+                    isGameStart = true;
+                    MainActivity.myRefUser.child("nowtimestamp").child(getResources().getString(R.string.timestamp)).runTransaction(new Transaction.Handler() {
+                        @NonNull
                         @Override
-                        public void onSuccess(Void aVoid) {
-                            guessitlayout.setVisibility(View.GONE);
-                            loselayout.setVisibility(View.VISIBLE);
-                            loseScore.setText("" + score +" Puan");
+                        public Transaction.Result doTransaction(@NonNull MutableData mutableData) {
+                            mutableData.setValue(ServerValue.TIMESTAMP);
+                            return Transaction.success(mutableData);
+                        }
+
+                        @Override
+                        public void onComplete(@Nullable DatabaseError databaseError, boolean b, @Nullable DataSnapshot dataSnapshot) {
+                            final Long nowtimeStamp = dataSnapshot.getValue(Long.class);
+                            if(nowtimeStamp < MainActivity.endTimeStamp) {
+                                MainActivity.myRigtOfGameRef.runTransaction(new Transaction.Handler() {
+                                    @NonNull
+                                    @Override
+                                    public Transaction.Result doTransaction(@NonNull MutableData mutableData) {
+                                        Integer i = mutableData.getValue(Integer.class);
+                                        if (i == 0) {
+                                            return null;
+                                        } else {
+                                            i--;
+                                            mutableData.setValue(i);
+                                            return Transaction.success(mutableData);
+                                        }
+                                    }
+
+                                    @Override
+                                    public void onComplete(@Nullable DatabaseError databaseError, boolean b, @Nullable DataSnapshot dataSnapshot) {
+                                        if (b) {
+                                            if (MainActivity.myRigtOfGame == 9) {
+                                                MainActivity.myRefUser.child(getResources().getString(R.string.timestamp)).child("guessItMilisecond").setValue(nowtimeStamp + 86400000).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                    @Override
+                                                    public void onSuccess(Void aVoid) {
+                                                        Intent i = new Intent(getApplicationContext(), GuessItActivity.class);
+                                                        startActivity(i);
+                                                        finish();
+                                                    }
+                                                });
+                                            } else {
+                                                Intent i = new Intent(getApplicationContext(), GuessItActivity.class);
+                                                startActivity(i);
+                                                finish();
+                                            }
+                                        }
+                                        else {
+                                            MainActivity.showPopUpInfo(null,"Günlük tahmin hakkınız bitmiştir!!",null,GuessItActivity.this);
+                                            isGameStart = false;
+                                        }
+                                    }
+                                });
+                            }
+                            else {
+                                MainActivity.showPopUpInfo(null,"Hafta yenilenmemiştir!!",
+                                        "Sistem bu haftanın yapılandırmasını tamamladıktan sonra yeni hafta başlayacaktır. Başladığında bildirim gönderilecektir. \n \n ~Selfie Wars Tavsiyesi~ \n Yeni hafta için joker hazırlığı yapmak sıralamada avantaj sağlayacaktır."
+                                        , GuessItActivity.this);
+                                isGameStart = false;
+                            }
                         }
                     });
                 }
             }
+        });
+        homeButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(!isGameStart){
+                    GuessItActivity.super.onBackPressed();
+                    finish();
+                }
+            }
+        });
+    }
+    private void onClickListenerAds(){
+        loseadsLottie.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                loseadsLottie.setClickable(false);
+                if(mRewardedVideoAd.isLoaded()) {
+                    adsrunning = true;
+                    mRewardedVideoAd.show();
+                    loseadsLottie.setClickable(true);
+                }
+                else
+                    mRewardedVideoAd.loadAd("ca-app-pub-3940256099942544/5224354917",
+                            new AdRequest.Builder().build());
+            }
+        });
+    }
+
+    private void setRewardAds(){
+        mRewardedVideoAd = MobileAds.getRewardedVideoAdInstance(GuessItActivity.this);
+        mRewardedVideoAd.loadAd("ca-app-pub-7004761147200711/1490368779",
+                new AdRequest.Builder().build());
+        mRewardedVideoAd.setRewardedVideoAdListener(new RewardedVideoAdListener() {
+            @Override
+            public void onRewardedVideoAdLoaded() {
+                //Toast.makeText(getApplicationContext(), "Reklam Yüklendi", Toast.LENGTH_SHORT).show();
+                onClickListenerAds();
+            }
 
             @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
+            public void onRewardedVideoAdOpened() {
+
+            }
+
+            @Override
+            public void onRewardedVideoStarted() {
+
+            }
+
+            @Override
+            public void onRewardedVideoAdClosed() {
+
+            }
+
+            @Override
+            public void onRewarded(RewardItem rewardItem) {
+                Log.d("RewardItemFB","Rewarded");
+                MainActivity.myScoreRef.child(mAuth.getUid()).runTransaction(new Transaction.Handler() {
+                    @NonNull
+                    @Override
+                    public Transaction.Result doTransaction(@NonNull MutableData mutableData) {
+                        Integer dbscore = mutableData.getValue(Integer.class);
+                        dbscore+=score;
+                        mutableData.setValue(dbscore);
+                        return Transaction.success(mutableData);
+                    }
+
+                    @Override
+                    public void onComplete(@Nullable DatabaseError databaseError, boolean b, @Nullable DataSnapshot dataSnapshot) {
+                        if (b){
+                            loseScore.setText("" + 2*score + " Puan");
+                            doubeleScoreloselayout.setVisibility(View.GONE);
+                        }
+                        adsrunning = false;
+                    }
+                });
+            }
+
+            @Override
+            public void onRewardedVideoAdLeftApplication() {
+
+            }
+
+            @Override
+            public void onRewardedVideoAdFailedToLoad(int i) {
+
+            }
+
+            @Override
+            public void onRewardedVideoCompleted() {
 
             }
         });
     }
-    private void setUserImageAndUserName(final GuessItUserData guessItUserData){
-            userNameTextView.setVisibility(View.INVISIBLE);
-            Picasso.with(getApplicationContext()).load(guessItUserData.getPhotoUrl()).networkPolicy(NetworkPolicy.NO_STORE,NetworkPolicy.NO_CACHE).into(userProfileImageView, new Callback() {
-                        @Override
-                        public void onSuccess() {
-                            setButtonsText(options(listUserProperties.get(listUserPropertiesIndex).getAge()));
-                            playAnimationButtons();
-                            userNameTextView.setText(guessItUserData.getUserName());
-                            userNameTextView.setVisibility(View.VISIBLE);
-                            startCountDownTimer();
-                            setJokerReset();
-                            questionCounTextView.setText(""+countQuestion);
-                        }
 
-                        @Override
-                        public void onError() {
-                            Toast.makeText(GuessItActivity.this, "Hata resim yüklenmedi", Toast.LENGTH_SHORT).show();
-                        }
-                    });
-    }
     private void setButtonAnimationListener(){
         btn1Lottie.addAnimatorListener(new Animator.AnimatorListener() {
             @Override
@@ -544,8 +766,9 @@ public class GuessItActivity extends AppCompatActivity {
             public void onClick(View view) {
                 if(!buttonClick && isGameStart){
                     joker1SetClickableAndVisible(false);
-                    joker2btn.setClickable(false);
-                    myUserRef.child("wildcards").child("fiftyFiftyValue").runTransaction(new Transaction.Handler() {
+                    joker2SetClickableAndVisible(false);
+
+                    MainActivity.myRefUser.child("wildcards").child("fiftyFiftyValue").runTransaction(new Transaction.Handler() {
                         @NonNull
                         @Override
                         public Transaction.Result doTransaction(@NonNull MutableData mutableData) {
@@ -567,7 +790,7 @@ public class GuessItActivity extends AppCompatActivity {
                                 eliminateTwoOption();
                             }else {
                                 MainActivity.showPopUpInfo(null,"Yeterli jokeriniz bulunmamaktadır.",null,GuessItActivity.this);
-                                joker2btn.setClickable(true);
+                                joker2SetClickableAndVisible(true);
                             }
                         }
                     });
@@ -580,8 +803,8 @@ public class GuessItActivity extends AppCompatActivity {
             public void onClick(View view) {
                 if(!buttonClick && isGameStart){
                     joker2SetClickableAndVisible(false);
-                    joker1btn.setClickable(false);
-                    myUserRef.child("wildcards").child("doubleDipValue").runTransaction(new Transaction.Handler() {
+                    joker1SetClickableAndVisible(false);
+                    MainActivity.myRefUser.child("wildcards").child("doubleDipValue").runTransaction(new Transaction.Handler() {
                         @NonNull
                         @Override
                         public Transaction.Result doTransaction(@NonNull MutableData mutableData) {
@@ -602,8 +825,7 @@ public class GuessItActivity extends AppCompatActivity {
                                 joker2UsingCount++;
                             }else {
                                 MainActivity.showPopUpInfo(null,"Yeterli jokeriniz bulunmamaktadır.",null,GuessItActivity.this);
-                                joker1btn.setClickable(true);
-
+                                joker1SetClickableAndVisible(true);
                             }
                         }
                     });
@@ -615,7 +837,7 @@ public class GuessItActivity extends AppCompatActivity {
             public void onClick(View view) {
                 healthSetClickableAndVisible(false);
                 if(!buttonClick){
-                    myUserRef.child("wildcards").child("healthValue").runTransaction(new Transaction.Handler() {
+                    MainActivity.myRefUser.child("wildcards").child("healthValue").runTransaction(new Transaction.Handler() {
                         @NonNull
                         @Override
                         public Transaction.Result doTransaction(@NonNull MutableData mutableData) {
@@ -642,6 +864,8 @@ public class GuessItActivity extends AppCompatActivity {
                             }else {
                                 isGameStart = false;
                                 MainActivity.showPopUpInfo(null,"Yeterli jokeriniz bulunmamaktadır.",null,GuessItActivity.this);
+                                guessitlayout.setVisibility(View.GONE);
+                                loselayout.setVisibility(View.VISIBLE);
                             }
                         }
                     });
@@ -650,124 +874,6 @@ public class GuessItActivity extends AppCompatActivity {
         });
 
     }
-    private void setLoselayoutItemsClickListener(){
-        myRightOfGame.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                rightOfGame  = dataSnapshot.getValue(Integer.class);
-                loseLAyoutRightOfGameTextView.setText("Kalan Tahmin: "+rightOfGame+"/10");
-
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
-        playAgainTextView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if(!isGameStart){
-                    isGameStart = true;
-                    myUserRef.child("nowtimestamp").child(getResources().getString(R.string.timestamp)).setValue(ServerValue.TIMESTAMP).addOnSuccessListener(new OnSuccessListener<Void>() {
-                        @Override
-                        public void onSuccess(Void aVoid) {
-                        myUserRef.child("nowtimestamp").child(getResources().getString(R.string.timestamp)).addListenerForSingleValueEvent(new ValueEventListener() {
-                            @Override
-                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                final Long nowtimeStamp = dataSnapshot.getValue(Long.class);
-                                myEndTime.child(getResources().getString(R.string.timestamp)).addListenerForSingleValueEvent(new ValueEventListener() {
-                                    @Override
-                                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                        Long endTime= dataSnapshot.getValue(Long.class);
-                                        if(nowtimeStamp < endTime){
-                                            myRightOfGame.runTransaction(new Transaction.Handler() {
-                                                @NonNull
-                                                @Override
-                                                public Transaction.Result doTransaction(@NonNull MutableData mutableData) {
-                                                    Integer i = mutableData.getValue(Integer.class);
-                                                    if(i == 0){
-                                                        return null;
-                                                    }else {
-                                                        i--;
-                                                        mutableData.setValue(i);
-                                                        return Transaction.success(mutableData);
-                                                    }
-                                                }
-
-                                                @Override
-                                                public void onComplete(@Nullable DatabaseError databaseError, boolean b, @Nullable DataSnapshot dataSnapshot) {
-                                                    if(b){
-                                                        if(rightOfGame == 9){
-                                                            myUserRef.child(getResources().getString(R.string.nowtimestamp)).child(getResources().getString(R.string.timestamp)).setValue(ServerValue.TIMESTAMP).addOnSuccessListener(new OnSuccessListener<Void>() {
-                                                                @Override
-                                                                public void onSuccess(Void aVoid) {
-                                                                    myUserRef.addListenerForSingleValueEvent(new ValueEventListener() {
-                                                                        @Override
-                                                                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                                                            Long nowTimestamp = dataSnapshot.child(getResources().getString(R.string.nowtimestamp)).child(getResources().getString(R.string.timestamp)).getValue(Long.class);
-                                                                            myUserRef.child(getResources().getString(R.string.timestamp)).child("guessItMilisecond").setValue(nowTimestamp + 86400000).addOnSuccessListener(new OnSuccessListener<Void>() {
-                                                                                @Override
-                                                                                public void onSuccess(Void aVoid) {
-                                                                                    Intent i = new Intent(getApplicationContext(),GuessItActivity.class);
-                                                                                    startActivity(i);
-                                                                                    finish();
-                                                                                }
-                                                                            });
-                                                                        }
-
-                                                                        @Override
-                                                                        public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                                                                        }
-                                                                    });
-                                                                }
-                                                            });
-
-                                                        }else {
-                                                            Intent i = new Intent(getApplicationContext(),GuessItActivity.class);
-                                                            startActivity(i);
-                                                            finish();
-                                                        }
-                                                    }
-                                                }
-                                            });
-                                        }else {
-                                            MainActivity.showPopUpInfo(null,"Hafta yenilenmemiştir!!",
-                                                    "Sistem bu haftanın yapılandırmasını tamamladıktan sonra yeni hafta başlayacaktır. Başladığında bildirim gönderilecektir. \n \n ~Selfie Wars Tavsiyesi~ \n Yeni hafta için joker hazırlığı yapmak sıralamada avantaj sağlayacaktır."
-                                                    , GuessItActivity.this);
-                                            isGameStart = false;
-                                        }
-                                    }
-
-                                    @Override
-                                    public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                                    }
-                                });
-                            }
-
-                            @Override
-                            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                            }
-                        });
-                        }
-                    });
-                }
-            }
-        });
-        homeButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if(!isGameStart){
-                    GuessItActivity.super.onBackPressed();
-                    finish();
-                }
-            }
-        });
-    }
-
     private void setJokerReset(){
         healthDecValue = (int) Math.pow(2,healthUsingCount);
         joker1DecValue = (int) Math.pow(2,joker1UsingCount);
@@ -795,73 +901,6 @@ public class GuessItActivity extends AppCompatActivity {
             healthAnimView.setVisibility(View.GONE);
             healthAnimView.setClickable(false);
         }
-    }
-    private List<Integer> getShuffleThreeOptions(List<Integer> alloptions){
-        Collections.shuffle(alloptions);
-        List<Integer> ıntegerList =  new ArrayList<>();
-        ıntegerList.add(alloptions.get(0));
-        ıntegerList.add(alloptions.get(1));
-        ıntegerList.add(alloptions.get(2));
-        return ıntegerList;
-    }
-    private void getUserListFromDatabase(){
-        new Database().mReadDataAndGetUserListForGuessIt(mAuth, getResources().getString(R.string.ApprovedUser), getResources().getString(R.string.CorrectUsers), new OnGetUserlistDataListener() {
-            @Override
-            public void onStart() {
-                loadinglayout.setVisibility(View.VISIBLE);
-                guessitlayout.setVisibility(View.GONE);
-                loselayout.setVisibility(View.GONE);
-
-            }
-
-            @Override
-            public void onProgress(String string) {
-                loadingFeedBackTextView.setText(""+string);
-            }
-
-            @Override
-            public void onSuccess(final List<GuessItUserData> guessItUserDataList,Boolean isBeta) {
-                isBetaGame = isBeta;
-                listUserProperties = guessItUserDataList;
-                allquestionsCount = listUserProperties.size();
-                Toast.makeText(GuessItActivity.this, "Toplam kullanıcı Sayısı: "+listUserProperties.size(), Toast.LENGTH_SHORT).show();
-                loadFirstUserImage(0);
-            }
-
-            @Override
-            public void onFailed() {
-                loadinglayout.setVisibility(View.GONE);
-                MainActivity.showPopUpInfo(null,"Tüm kullanıcıların yaşları tahmin edildi","Veritbanındaki tüm onaylı kullanıcıların yaşını tahmin ettiniz. Yeni kullanıcılar kısa sürede eklenecektir. Daha sonra tekrar gel.",GuessItActivity.this);
-                setScoreDataInFirebaseAndLoseLayoutOpen();
-            }
-        });
-    }
-    public void getSecondUserListFromDatabase(){
-        new Database().mReadDataAndGetUserListForGuessIt(mAuth, getResources().getString(R.string.ApprovedUser), getResources().getString(R.string.CorrectUsers), new OnGetUserlistDataListener() {
-            @Override
-            public void onStart() {
-                isNextUserList = false;
-            }
-
-            @Override
-            public void onProgress(String string) {
-
-            }
-
-            @Override
-            public void onSuccess(final List<GuessItUserData> guessItUserDataList,Boolean isBeta) {
-                isBetaGame = isBeta;
-                listUserProperties.addAll(guessItUserDataList);
-                allquestionsCount = listUserProperties.size();
-                isNextUserList = true;
-            }
-
-            @Override
-            public void onFailed() {
-                isNextUserList = false;
-            }
-        });
-
     }
     private void joker1SetClickableAndVisible(Boolean clickable){
         if (clickable){
@@ -972,90 +1011,8 @@ public class GuessItActivity extends AppCompatActivity {
         btn3Lottie.playAnimation();
         btn4Lottie.playAnimation();
     }
-    private List<Integer> options(Integer answer){
-        if(countQuestion >= 1 && countQuestion <= 3){
-            List<Integer> allOptions = new ArrayList<>();
-            List<Integer> options = new ArrayList<>();
-            if(answer >= 15 ){
-                for (int i = 1; i<6; i++){
-                    //Toast.makeText(this, "i nin değeri: "+i, Toast.LENGTH_SHORT).show();
-                    allOptions.add(answer - i); //20 19 18 17 16
-                }
-                for (int i = 1; i<6; i++){
-                    allOptions.add(answer + i); //22 23 24 25 26 all options // 16 17 18 19 20 22 23 24 25 26
-                }
-                if(allOptions.size() == 10){
-                    options = getShuffleThreeOptions(allOptions);
-                    secondfiftyFityOption = options.get(0);
-                    options.add(answer);
-                    Collections.shuffle(options);
-                    return options;
-                }
-            }
-        }else if(countQuestion >=4 && countQuestion <=6){
-            List<Integer> allOptions = new ArrayList<>();
-            List<Integer> options = new ArrayList<>();
-            if(answer >= 15 ){
-                for (int i = 1; i<5; i++){
-                    //Toast.makeText(this, "i nin değeri: "+i, Toast.LENGTH_SHORT).show();
-                    allOptions.add(answer - i); //20 19 18 17
-                }
-                for (int i = 1; i<5; i++){
-                    allOptions.add(answer + i); //22 23 24 25 all options // 17 18 19 20 22 23 24 25
-                }
-                if(allOptions.size() == 8){
-                    options = getShuffleThreeOptions(allOptions);
-                    secondfiftyFityOption = options.get(0);
-                    options.add(answer);
-                    Collections.shuffle(options);
-                    return options;
-                }
-            }
-            return null;
-
-        }else if(countQuestion >=7 && countQuestion <=10){
-            List<Integer> allOptions = new ArrayList<>();
-            List<Integer> options = new ArrayList<>();
-            if(answer >= 15 ){
-                for (int i = 1; i<4; i++){
-                    //Toast.makeText(this, "i nin değeri: "+i, Toast.LENGTH_SHORT).show();
-                    allOptions.add(answer - i); //20 19 18
-                }
-                for (int i = 1; i<4; i++){
-                    allOptions.add(answer + i); //22 23 24 all options // 18 19 20 22 23 24
-                }
-                if(allOptions.size() == 6){
-                    options = getShuffleThreeOptions(allOptions);
-                    secondfiftyFityOption = options.get(0);
-                    options.add(answer);
-                    Collections.shuffle(options);
-                    return options;
-                }
-            }
-        }else {
-            List<Integer> allOptions = new ArrayList<>();
-            List<Integer> options = new ArrayList<>();
-            if(answer >= 15 ){
-                for (int i = 1; i<3; i++){
-                    ///Toast.makeText(this, "i nin değeri: "+i, Toast.LENGTH_SHORT).show();
-                    allOptions.add(answer - i); //20 19
-                }
-                for (int i = 1; i<3; i++){
-                    allOptions.add(answer + i); //22 23 all options // 19 20 22 23
-                }
-                if(allOptions.size() == 4){
-                    options = getShuffleThreeOptions(allOptions);
-                    secondfiftyFityOption = options.get(0);
-                    options.add(answer);
-                    Collections.shuffle(options);
-                    return options;
-                }
-            }
-        }
-        return null;
-    }
     private void loadFirstUserImage(final Integer index){
-        Picasso.with(getApplicationContext()).load(listUserProperties.get(index).getPhotoUrl()).noFade().networkPolicy(NetworkPolicy.NO_STORE).into(loadTempImageView, new Callback() {
+        Picasso.with(getApplicationContext()).load(listUserProperties.get(index).getPhotoUrl()).noFade().into(loadTempImageView, new Callback() {
             @Override
             public void onSuccess() {
                 loadinglayout.setVisibility(View.GONE);
@@ -1067,26 +1024,6 @@ public class GuessItActivity extends AppCompatActivity {
             @Override
             public void onError() {
                 isNextUserList = false;
-            }
-        });
-    }
-    private void setVisibleLottie(){
-        btn1Lottie.setVisibility(View.VISIBLE);
-        btn2Lottie.setVisibility(View.VISIBLE);
-        btn3Lottie.setVisibility(View.VISIBLE);
-        btn4Lottie.setVisibility(View.VISIBLE);
-    }
-    private void loadNextImage(final Integer index){
-        Picasso.with(getApplicationContext()).load(listUserProperties.get(index).getPhotoUrl()).noFade().networkPolicy(NetworkPolicy.NO_STORE).into(loadTempImageView, new Callback() {
-            @Override
-            public void onSuccess() {
-                //  Toast.makeText(GuessItActivity.this, "Index arka planda yüklendi :" +index   , Toast.LENGTH_SHORT).show();
-
-            }
-
-            @Override
-            public void onError() {
-
             }
         });
     }
@@ -1109,7 +1046,6 @@ public class GuessItActivity extends AppCompatActivity {
                     public void onFinish() {
                         isGameStart = false;
                         setScoreDataInFirebaseAndLoseLayoutOpen();
-
                     }
                 }.start();
             }else {
@@ -1123,7 +1059,6 @@ public class GuessItActivity extends AppCompatActivity {
                             timeValueTextView.setTextColor(Color.WHITE);
                         }
                     }
-
                     @Override
                     public void onFinish() {
                         isGameStart = false;
@@ -1137,22 +1072,165 @@ public class GuessItActivity extends AppCompatActivity {
         }
     }
     private void setScore(){
-        score += (countQuestion * 50);
+        score += (countQuestion * 25);
         scoreValueTextView.setText(""+score);
+    }
+    private List<Integer> getShuffleThreeOptions(List<Integer> alloptions){
+        Collections.shuffle(alloptions);
+        List<Integer> ıntegerList =  new ArrayList<>();
+        ıntegerList.add(alloptions.get(0));
+        ıntegerList.add(alloptions.get(1));
+        ıntegerList.add(alloptions.get(2));
+        return ıntegerList;
+    }
+    private List<Integer> options(Integer answer) {
+        List<Integer> options = new ArrayList<>();
+        if (MainActivity.UserScore != null && MainActivity.UserScore > 10000) {
+            if (countQuestion >= 1 && countQuestion <= 3) {
+                if (answer >= 15 && answer < 27) {
+                    options =optionsAlgorith(answer,6,1);
+                    return options;
+
+                } else if (answer >= 27 && answer < 45) {
+                    options = optionsAlgorith(answer,6,2);
+                    return options;
+
+                }else if (answer >= 45 && answer < 75){
+                    options= optionsAlgorith(answer,6,2);
+                    return options;
+
+                }
+            } else if (countQuestion >= 4 && countQuestion <= 6) {
+                if (answer >= 15 && answer < 27) {
+                    options= optionsAlgorith(answer,5,1);
+                    return options;
+
+                } else if (answer >= 27 && answer < 45) {
+                    options= optionsAlgorith(answer,5,1);
+                    return options;
+
+                }else if (answer >= 45 && answer < 75){
+                    options= optionsAlgorith(answer,5,2);
+                    return options;
+                }
+            } else if (countQuestion >= 7 && countQuestion <= 10) {
+                if (answer >= 15 && answer < 27) {
+                    options= optionsAlgorith(answer,4,1);
+                    return options;
+
+                } else if (answer >= 27 && answer < 45) {
+                    options= optionsAlgorith(answer,4,1);
+                    return options;
+
+                }else if (answer >= 45 && answer < 75){
+                    options= optionsAlgorith(answer,4,1);
+                    return options;
+                }
+            } else {
+                if (answer >= 15 && answer < 27) {
+                    options= optionsAlgorith(answer,3,1);
+                    return options;
+
+                } else if (answer >= 27 && answer < 45) {
+                    options= optionsAlgorith(answer,3,1);
+                    return options;
+
+                }else if (answer >= 45 && answer < 75){
+                    options= optionsAlgorith(answer,3,1);
+                    return options;
+                }
+            }
+        }else if(MainActivity.UserScore != null && MainActivity.UserScore <= 10000){
+            if (countQuestion >= 1 && countQuestion <= 3) {
+                if (answer >= 15 && answer < 27) {
+                    options= optionsAlgorith(answer,6,1);
+                    return options;
+
+                } else if (answer >= 27 && answer < 45) {
+                    options= optionsAlgorith(answer,6,2);
+                    return options;
+                }else if (answer >= 45 && answer < 75){
+                    options= optionsAlgorith(answer,6,4);
+                    return options;
+
+                }
+            } else if (countQuestion >= 4 && countQuestion <= 6) {
+                if (answer >= 15 && answer < 27) {
+                    options= optionsAlgorith(answer,5,1);
+                    return options;
+
+                } else if (answer >= 27 && answer < 45) {
+                    options= optionsAlgorith(answer,5,2);
+                    return options;
+
+                }else if (answer >= 45 && answer < 75){
+                    options= optionsAlgorith(answer,5,3);
+                    return options;
+
+                }
+            } else if (countQuestion >= 7 && countQuestion <= 10) {
+                if (answer >= 15 && answer < 27) {
+                    options=  optionsAlgorith(answer,4,1);
+                    return options;
+
+                } else if (answer >= 27 && answer < 45) {
+                    options= optionsAlgorith(answer,4,2);
+                    return options;
+
+                }else if (answer >= 45 && answer < 75){
+                    options= optionsAlgorith(answer,4,2);
+                    return options;
+
+                }
+            } else {
+                if (answer >= 15 && answer < 27) {
+                    options =  optionsAlgorith(answer,3,1);
+                    return options;
+
+                } else if (answer >= 27 && answer < 45) {
+                    options= optionsAlgorith(answer,3,1);
+                    return options;
+
+                }else if (answer >= 45 && answer < 75){
+                    options= optionsAlgorith(answer,3,1);
+                    return options;
+                }
+            }
+        }
+        return optionsAlgorith(answer,3,1);
+    }
+    private List<Integer> optionsAlgorith(Integer answer,Integer scale,Integer incvalue){
+        List<Integer> allOptions = new ArrayList<>();
+        List<Integer> options = new ArrayList<>();
+        for (int i = 1; i < scale; i++) {
+            ///Toast.makeText(this, "i nin değeri: "+i, Toast.LENGTH_SHORT).show();
+            allOptions.add(answer - (i*incvalue)); //20 19
+        }
+        for (int i = 1; i < scale; i++) {
+            allOptions.add(answer + (i*incvalue)); //22 23 all options // 19 20 22 23
+        }
+        if (allOptions.size() == (scale-1)*2) {
+            options = getShuffleThreeOptions(allOptions);
+            secondfiftyFityOption = options.get(0);
+            options.add(answer);
+            Collections.shuffle(options);
+            return options;
+        }return null;
+    }
+    private boolean isAnswerCorrect(String buttonText){
+        if (buttonText.equalsIgnoreCase(listUserProperties.get(listUserPropertiesIndex).getAge().toString())){
+            return true;
+        }else {
+            return false;
+        }
+
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        finish();
+        if(!adsrunning){
+            finish();
+        }
     }
- /* @Override
-    protected void onResume() {
-        super.onResume();
-        Intent i = new Intent(getApplicationContext(),MainActivity.class);
-        startActivity(i);
-        finish();
-    }*/
-
-    //.networkPolicy(NetworkPolicy.NO_STORE).networkPolicy(NetworkPolicy.NO_STORE).memoryPolicy(MemoryPolicy.NO_STORE,MemoryPolicy.NO_CACHE)
 }

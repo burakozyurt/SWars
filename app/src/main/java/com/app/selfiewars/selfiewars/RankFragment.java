@@ -4,10 +4,11 @@ package com.app.selfiewars.selfiewars;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,6 +21,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+
+import static android.support.constraint.Constraints.TAG;
 
 
 /**
@@ -58,15 +61,7 @@ public class RankFragment extends Fragment {
     }
 
     public void rankSetup(final View view) {
-        FirebaseDatabase mydatabase;
-        final DatabaseReference myRefScore;
-        final DatabaseReference myRefUsers;
-        FirebaseAuth mAuth;
-        mAuth = FirebaseAuth.getInstance();
-        mydatabase = FirebaseDatabase.getInstance();
-        myRefUsers = mydatabase.getReference("Users");
-        myRefScore = mydatabase.getReference("Scores");
-        myRefScore.orderByValue().limitToLast(6).addListenerForSingleValueEvent(new ValueEventListener() {
+        MainActivity.myScoreRef.orderByValue().limitToLast(10).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 final List<ScoreInfo> scoreInfos = new ArrayList<>();
@@ -75,7 +70,7 @@ public class RankFragment extends Fragment {
                     scoreInfo.setScoreValue(ds.getValue(Integer.class));
                     scoreInfo.setUid(ds.getKey());
                     scoreInfos.add(scoreInfo);
-                    if (scoreInfos.size() == 5) {
+                    if (scoreInfos.size() == dataSnapshot.getChildrenCount()) {
                         Collections.reverse(scoreInfos);
                         RecyclerView recyclerView = view.findViewById(R.id.recyclerViewRank);
                         RankFragmentAdapter rankRcycView = new RankFragmentAdapter(getContext(),
@@ -101,30 +96,39 @@ public class RankFragment extends Fragment {
 
     }
     private void getTimestampForEndTime(){
-        FirebaseDatabase mydatabase;
-        final DatabaseReference myRefUser;
-        final DatabaseReference myRefEndTime;
-        FirebaseAuth myAuth;
+        MainActivity.myRefUser.child(getResources().getString(R.string.timestamp)).child("timestamp").runTransaction(new Transaction.Handler() {
+            @NonNull
+            @Override
+            public Transaction.Result doTransaction(@NonNull MutableData mutableData) {
+                mutableData.setValue(ServerValue.TIMESTAMP);
+                return Transaction.success(mutableData);
+            }
 
-        mydatabase = FirebaseDatabase.getInstance();
-        myAuth = FirebaseAuth.getInstance();
-        myRefUser = mydatabase.getReference("Users/" + myAuth.getUid());
-        myRefEndTime = mydatabase.getReference("EndTime/" + getResources().getString(R.string.timestamp));
-
-        myRefUser.child(getResources().getString(R.string.timestamp)).child("timestamp").setValue(ServerValue.TIMESTAMP).addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onComplete(@Nullable DatabaseError databaseError, boolean b, @Nullable DataSnapshot dataSnapshot) {
+                Long nowtimestamp = dataSnapshot.getValue(Long.class);
+                if(nowtimestamp < MainActivity.endTimeStamp) { // Hafta ediyodur.
+                    startRefreshCountTime(nowtimestamp, MainActivity.endTimeStamp);
+                }
+                else {
+                    if(countDownTimer !=null)
+                        countDownTimer.cancel();
+                    dayValueTextView.setText("00");
+                    hourValueTextView.setText("00");
+                    minValueTextView.setText("00");
+                }
+            }
+        });
+        /*MainActivity.myRefUser.child(getResources().getString(R.string.timestamp)).child("timestamp").setValue(ServerValue.TIMESTAMP).addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
             public void onSuccess(Void aVoid) {
-                myRefUser.addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        final Long nowTimestamp = dataSnapshot.child("nowtimestamp").child(getResources().getString(R.string.timestamp)).getValue(Long.class);
-
-                        myRefEndTime.addListenerForSingleValueEvent(new ValueEventListener() {
+                MainActivity.myRefEndTime.addListenerForSingleValueEvent(new ValueEventListener() {
                             @Override
                             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                Log.d("Endtime",""+dataSnapshot.getValue(Long.class));
                                 Long endtime = dataSnapshot.getValue(Long.class);
-                                if(nowTimestamp < endtime) { // Hafta ediyodur.
-                                    startRefreshCountTime(nowTimestamp, endtime);
+                                if(MainActivity.nowTimeStamp < endtime) { // Hafta ediyodur.
+                                    startRefreshCountTime(MainActivity.nowTimeStamp, endtime);
                                 }
                                 else {
                                     if(countDownTimer !=null)
@@ -140,15 +144,8 @@ public class RankFragment extends Fragment {
 
                             }
                         });
-                    }
-
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                    }
-                });
             }
-        });
+        });*/
     }
 
     private void startRefreshCountTime(Long nowTimestamp, Long endtime) {

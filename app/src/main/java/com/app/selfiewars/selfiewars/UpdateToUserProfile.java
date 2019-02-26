@@ -1,19 +1,15 @@
 package com.app.selfiewars.selfiewars;
 
-import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.Dialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.view.View;
-import android.widget.*;
+import android.widget.Button;
+import android.widget.EditText;
 import com.github.pinball83.maskededittext.MaskedEditText;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
@@ -71,7 +67,7 @@ public class UpdateToUserProfile extends AppCompatActivity {
         myDatabase = FirebaseDatabase.getInstance();
         myAuth = FirebaseAuth.getInstance();
         myRefUserInfoAward = myDatabase.getReference("UserInfoAward/" + getResources().getString(R.string.diamondValue));
-        myRef = myDatabase.getReference("Users/" + myAuth.getUid());
+        //myRef = myDatabase.getReference("Users/" + myAuth.getUid());
     }
 
     public void updateButtonClicked() {
@@ -90,11 +86,11 @@ public class UpdateToUserProfile extends AppCompatActivity {
                     userInfoDetails.setDisplay_dateofbirth(updated_day.getText().toString() + "/" + updated_month.getText().toString() + "/" + updated_year.getText().toString());
                     userInfoDetails.setDisplay_adress(updated_adress.getText().toString());
 
-                    myRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                   MainActivity.myRefUser.addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
                         public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                             if (dataSnapshot.hasChild(getResources().getString(R.string.infodetail))) {
-                                myRef.child(getResources().getString(R.string.infodetail)).setValue(userInfoDetails).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                MainActivity.myRefUser.child(getResources().getString(R.string.infodetail)).setValue(userInfoDetails).addOnSuccessListener(new OnSuccessListener<Void>() {
                                     @Override
                                     public void onSuccess(Void aVoid) {
                                        // Toast.makeText(UpdateToUserProfile.this, "Başarıyla Güncellendi", Toast.LENGTH_SHORT).show();
@@ -102,14 +98,14 @@ public class UpdateToUserProfile extends AppCompatActivity {
                                     }
                                 });
                             } else {
-                                myRef.child(getResources().getString(R.string.infodetail)).setValue(userInfoDetails).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                MainActivity.myRefUser.child(getResources().getString(R.string.infodetail)).setValue(userInfoDetails).addOnSuccessListener(new OnSuccessListener<Void>() {
                                     @Override
                                     public void onSuccess(Void aVoid) {
                                         myRefUserInfoAward.addListenerForSingleValueEvent(new ValueEventListener() {
                                             @Override
                                             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                                                 final Integer diamondValue = dataSnapshot.getValue(Integer.class);
-                                                myRef.child(getResources().getString(R.string.token)).child(getResources().getString(R.string.diamondValue)).runTransaction(new Transaction.Handler() {
+                                                MainActivity.myRefUser.child(getResources().getString(R.string.token)).child(getResources().getString(R.string.diamondValue)).runTransaction(new Transaction.Handler() {
                                                     @NonNull
                                                     @Override
                                                     public Transaction.Result doTransaction(@NonNull MutableData mutableData) {
@@ -144,7 +140,9 @@ public class UpdateToUserProfile extends AppCompatActivity {
 
                         }
                     });
-                }
+                }else {
+                   MainActivity.showPopUpInfo(null,"Eksik Bilgi!","Alanları eksiksiz doldurduğunuzdan emin olun.",UpdateToUserProfile.this);
+               }
             }
         });
     }
@@ -173,7 +171,7 @@ public class UpdateToUserProfile extends AppCompatActivity {
     }
 
     private void getUserProfile(){
-        myRef.addListenerForSingleValueEvent(new ValueEventListener() {
+        MainActivity.myRefUser.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if (dataSnapshot.hasChild(getResources().getString(R.string.infodetail))) {

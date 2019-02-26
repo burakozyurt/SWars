@@ -1,7 +1,6 @@
 package com.app.selfiewars.selfiewars;
 
 import android.content.Context;
-import android.media.Image;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -12,12 +11,9 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class RankFragmentAdapter extends RecyclerView.Adapter<RankFragmentAdapter.ViewHolder>{
@@ -38,11 +34,14 @@ public class RankFragmentAdapter extends RecyclerView.Adapter<RankFragmentAdapte
     }
     @Override
     public void onBindViewHolder(@NonNull final ViewHolder viewHolder, int i) {
-        FirebaseDatabase.getInstance().getReference("Users/"+mData.get(i).getUid()).child("properties").addListenerForSingleValueEvent(new ValueEventListener() {
+        MainActivity.myRefNodeUser.child(mData.get(i).getUid()).child("properties").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 UserProperties userProperties = dataSnapshot.getValue(UserProperties.class);
                 viewHolder.usernameTextView.setText(""+userProperties.getUserName());
+                if(userProperties.getUserName().equals(MainActivity.userProperties.getUserName())){
+                    viewHolder.usernameTextView.setTextColor(context.getResources().getColor(R.color.background5050));
+                }
                 Picasso.with(context).load(userProperties.getPhotoUrl()).into(viewHolder.userPhotoImageView);
             }
 

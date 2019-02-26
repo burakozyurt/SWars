@@ -2,16 +2,18 @@ package com.app.selfiewars.selfiewars;
 
 import android.app.Activity;
 import android.app.Dialog;
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.*;
+import com.airbnb.lottie.LottieAnimationView;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.*;
@@ -19,10 +21,10 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+import com.squareup.picasso.Callback;
 import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 import com.theartofdev.edmodo.cropper.CropImage;
-import com.theartofdev.edmodo.cropper.CropImageView;
 
 public class AuthUsersInfoActivity extends Activity {
     private FirebaseAuth mAuth;
@@ -36,6 +38,8 @@ public class AuthUsersInfoActivity extends Activity {
     private StorageReference mStorageRef;
     private UserProperties userProperties;
     private ImageView profileImageView;
+    private LottieAnimationView loadlottie;
+    private TextView signupText;
     private Button continueButton;
     private Uri selectedImage;
     private EditText usernameText;
@@ -46,6 +50,7 @@ public class AuthUsersInfoActivity extends Activity {
     private Integer age;
     private String photoUrl;
     private final Integer firstRightOfGameValue = 10;
+    private Animation animation;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -54,6 +59,8 @@ public class AuthUsersInfoActivity extends Activity {
         usernameText =findViewById(R.id.signin_info_username_editText);
         ageText = findViewById(R.id.signin_info_age_editText);
         chooseprofileText = findViewById(R.id.signin_profile_desc_textView);
+        loadlottie = findViewById(R.id.auth_info_screen_sign_lottie2);
+        signupText = findViewById(R.id.auth_info_screen_sign_text3);
         mAuth = FirebaseAuth.getInstance();
         database = FirebaseDatabase.getInstance();
         firebaseStorage = FirebaseStorage.getInstance();
@@ -66,19 +73,27 @@ public class AuthUsersInfoActivity extends Activity {
         myRefUserName = database.getReference("UserName");
         myRefRequest = database.getReference("Requests");
         continueButtonClick();
+        animation = AnimationUtils.loadAnimation(this,R.anim.smalltobig);
+        profileImageView.startAnimation(animation);
+
     }
     public void continueButtonClick(){
         continueButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 final UserProperties userProperties = new UserProperties();
-
-                userName = usernameText.getText().toString();
-                age = Integer.valueOf(ageText.getText().toString());
                 if(isFilled()){
-                 userName = usernameText.getText().toString();
-                 age = Integer.valueOf(ageText.getText().toString());
-                 myRefUserName.child(userName).addListenerForSingleValueEvent(new ValueEventListener() {
+                    try  {
+                        InputMethodManager imm = (InputMethodManager)getSystemService(INPUT_METHOD_SERVICE);
+                        imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
+                    } catch (Exception e) {
+
+                    }
+                    signupText.setVisibility(View.VISIBLE);
+                    loadlottie.setVisibility(View.VISIBLE);
+                    userName = usernameText.getText().toString();
+                    age = Integer.valueOf(ageText.getText().toString());
+                    myRefUserName.child(userName).addListenerForSingleValueEvent(new ValueEventListener() {
                      @Override
                      public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                             if(!dataSnapshot.exists()){
@@ -98,7 +113,6 @@ public class AuthUsersInfoActivity extends Activity {
                                                 myRefUser.child(getString(R.string.properties)).setValue(userProperties).addOnSuccessListener(new OnSuccessListener<Void>() {
                                                     @Override
                                                     public void onSuccess(Void aVoid) {
-                                                        Toast.makeText(getApplicationContext(),"Hesap Oluşturuldu",Toast.LENGTH_LONG).show();
                                                         myRefAward.addListenerForSingleValueEvent(new ValueEventListener() {
                                                             @Override
                                                             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -135,6 +149,7 @@ public class AuthUsersInfoActivity extends Activity {
                                                                                                                                     myRefUser.child(getResources().getString(R.string.account_State)).child(getResources().getString(R.string.isReady)).setValue(true).addOnSuccessListener(new OnSuccessListener<Void>() {
                                                                                                                                         @Override
                                                                                                                                         public void onSuccess(Void aVoid) {
+                                                                                                                                            signupText.setText("Hesap Oluşturuldu.");
                                                                                                                                             Intent i = new Intent(getApplicationContext(),MainActivity.class);
                                                                                                                                             startActivity(i);
                                                                                                                                             finish();
@@ -193,21 +208,27 @@ public class AuthUsersInfoActivity extends Activity {
 
                      }
                  });
-
+//*/
                 }
             }
         });
     }
     public boolean isFilled(){
-        if(!usernameText.getText().toString().isEmpty() && usernameText.getText().toString().length() > 6 && !ageText.getText().toString().isEmpty()
-                && Integer.parseInt(ageText.getText().toString()) > 15 &&
-                !selectedImage.toString().isEmpty()){
+        if(!usernameText.getText().toString().isEmpty() && usernameText.getText().toString().length() > 4 && !ageText.getText().toString().isEmpty()
+                && Integer.parseInt(ageText.getText().toString()) > 13 &&
+                selectedImage !=null){
             return true;
-            }
-        else return false;
+        }
+        else if(usernameText.getText().toString().length() <= 4) {
+            showPopUpInfo("Karakter sayısı yetersiz!","'"+ usernameText.getText()+"' Kullanıcı adınız en az 5 karakterden oluşmalı.");
+            return false;
+        }else if( selectedImage ==null){
+            showPopUpInfo("Fotoğraf Seçilmedi.",""+getResources().getString(R.string.sign_in_choose_image_alert_desc));
+            return false;
+        }else return false;
     }
     public void handlerInsertData(View view) {
-        showPopUpInfo(getResources().getString(R.string.sign_in_choose_image_alert_title),
+        showPopUpInfoGallery(getResources().getString(R.string.sign_in_choose_image_alert_title),
                 getResources().getString(R.string.sign_in_choose_image_alert_desc));
     }
 
@@ -228,14 +249,58 @@ public class AuthUsersInfoActivity extends Activity {
                 CropImage.ActivityResult result = CropImage.getActivityResult(data);
                 if (resultCode == RESULT_OK) {
                     selectedImage = result.getUri();
-                    Picasso.with(getApplicationContext()).load(selectedImage).networkPolicy(NetworkPolicy.NO_STORE,NetworkPolicy.NO_CACHE   ).into(profileImageView);
+                    if(profileImageView.getAnimation() !=null){
+                        profileImageView.getAnimation().cancel();
+                    }
+                    Picasso.with(getApplicationContext()).load(selectedImage).networkPolicy(NetworkPolicy.OFFLINE).into(profileImageView, new Callback() {
+                        @Override
+                        public void onSuccess() {
+
+                        }
+
+                        @Override
+                        public void onError() {
+                            Picasso.with(getApplicationContext()).load(selectedImage).networkPolicy(NetworkPolicy.OFFLINE).into(profileImageView);
+                        }
+                    });
                 } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
-                    Toast.makeText(this, "Seçilmedi Resim", Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(this, "Seçilmedi Resim", Toast.LENGTH_SHORT).show();
                 }
         }
     }
 
     private void showPopUpInfo(String Title, String Description) {
+        final Dialog mydialog = new Dialog(AuthUsersInfoActivity.this);
+        mydialog.setContentView(R.layout.popup_info);
+        mydialog.getWindow().getAttributes().windowAnimations = R.style.UptoDown;
+        ImageView ımageView;
+        TextView titleView;
+        TextView descriptionView;
+        Button btnOk;
+
+        ımageView = mydialog.findViewById(R.id.popupInfo_Image);
+        titleView = mydialog.findViewById(R.id.popupInfo_TitleTextView);
+        descriptionView = mydialog.findViewById(R.id.popupInfo_descriptionTextView);
+        btnOk = mydialog.findViewById(R.id.popupInfo_BtnOkey);
+        ımageView.setVisibility(View.GONE);
+        if (Title !=null)
+            titleView.setText(Title);
+        if(Description !=null) {
+            descriptionView.setText(Description);
+        }
+        btnOk.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //Intent pickerPhotoIntent =  new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                //startActivityForResult(pickerPhotoIntent,1);
+                mydialog.dismiss();
+            }
+        });
+        mydialog.setCanceledOnTouchOutside(false);
+        mydialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        mydialog.show();
+    }
+    private void showPopUpInfoGallery(String Title, String Description) {
         final Dialog mydialog = new Dialog(AuthUsersInfoActivity.this);
         mydialog.setContentView(R.layout.popup_info);
         mydialog.getWindow().getAttributes().windowAnimations = R.style.UptoDown;

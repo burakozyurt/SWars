@@ -15,34 +15,34 @@
                 android:layout_height="match_parent" android:layout_alignParentStart="true"
                 android:layout_alignParentTop="true">
             <rubikstudio.library.LuckyWheelView
-                    android:layout_centerInParent="true"
                     app:lkwBackgroundColor="#64b5f6"
                     app:lkwTextColor="#263238"
                     app:lkwCenterImage="@drawable/wheel2"
                     app:lkwCursor="@drawable/ic_cursor"
                     android:id="@+id/luckyWheel"
-                    android:layout_width="0dp"
-                    android:layout_height="350dp"
+                    android:layout_width="@dimen/fragment_spin_wheel_width_height"
+                    android:layout_height="@dimen/fragment_spin_wheel_width_height"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    android:layout_marginEnd="32dp" android:layout_marginStart="32dp"
-                    app:layout_constraintHorizontal_bias="0.0" android:layout_marginTop="32dp"
+                    android:layout_marginEnd="16dp" android:layout_marginStart="16dp"
+                    android:layout_marginTop="16dp"
                     app:layout_constraintTop_toBottomOf="@+id/imageView15" android:layout_marginBottom="1dp"
-                    app:layout_constraintBottom_toTopOf="@+id/button3"/>
+                    app:layout_constraintBottom_toTopOf="@+id/button3"
+                    android:gravity="center"/>
             <Button
-                    android:text="Spin"
+                    android:text="Çevir"
                     android:textColor="@color/textcolor"
                     android:background="@drawable/spin_button_oval"
-                    android:layout_width="100dp"
-                    android:layout_height="45dp" android:id="@+id/button3"
+                    android:layout_width="95dp"
+                    android:layout_height="40dp" android:id="@+id/button3"
                     app:layout_constraintEnd_toEndOf="parent" android:layout_marginEnd="8dp"
                     app:layout_constraintStart_toStartOf="parent" android:layout_marginStart="8dp"
                     app:layout_constraintHorizontal_bias="0.496"
                     app:layout_constraintTop_toBottomOf="@+id/luckyWheel"
-                    app:layout_constraintBottom_toTopOf="@+id/endtimSpinTextView" android:layout_marginBottom="8dp"/>
+                    app:layout_constraintBottom_toTopOf="@+id/endtimSpinTextView"/>
             <TextView
                     android:text="End Time: 19h 23m"
-                    android:layout_width="135dp"
+                    android:layout_width="wrap_content"
                     android:textStyle="bold"
                     android:textColor="@color/textcolorblack"
                     android:layout_gravity="center"
@@ -65,7 +65,7 @@
                     app:layout_constraintStart_toStartOf="@+id/endtimSpinTextView" android:layout_marginStart="8dp"
                     android:id="@+id/spin_adsLinearLayout"
                     app:layout_constraintBottom_toTopOf="@+id/spin_adsConstraintLayout"
-                    android:layout_marginBottom="8dp">
+            >
                 <ImageView
                         android:src="@drawable/spin"
                         android:layout_width="30dp"
@@ -105,9 +105,9 @@
 
             </LinearLayout>
             <TextView
-                    android:text="Spin"
+                    android:text="Çark"
                     android:textColor="@color/textcolor"
-                    android:textSize="24sp"
+                    android:textSize="@dimen/fragment_title_Text_Size"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:id="@+id/textView12" app:layout_constraintStart_toStartOf="parent"

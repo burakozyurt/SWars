@@ -3,6 +3,7 @@
     <!-- Base application theme. -->
     <style name="AppTheme" parent="android:Theme.Material.Light.NoActionBar">
         <!-- Customize your theme here. -->
+        <item name="android:statusBarColor">@color/statusbarcolor</item>
     </style>
 
     <style name="UptoDown">
@@ -17,5 +18,7 @@
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
         <item name="android:windowFullscreen">true</item>
+        <item name="android:statusBarColor">@color/statusbarcolor</item>
+
     </style>
 </resources>

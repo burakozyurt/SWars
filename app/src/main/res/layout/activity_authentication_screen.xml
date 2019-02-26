@@ -39,26 +39,35 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Giris Yapılıyor.."
-            android:textSize="20dp"
+            android:textSize="12dp"
             android:layout_gravity="center"
-            tools:layout_editor_absoluteX="114dp" android:layout_marginTop="8dp"
-            app:layout_constraintTop_toBottomOf="@+id/selfiewarsText" android:id="@+id/textView"
-            android:visibility="gone"/>
-    <ImageView android:layout_width="wrap_content"
-               android:layout_height="wrap_content"
-               android:background="@drawable/loadingicon"
-               android:layout_gravity="center"
-               tools:layout_editor_absoluteX="164dp" android:layout_marginTop="8dp"
-               app:layout_constraintTop_toBottomOf="@+id/textView" android:visibility="gone"/>
+            android:id="@+id/auth_screen_sign_text"
+            android:visibility="visible" app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" android:layout_marginStart="8dp"
+            app:layout_constraintHorizontal_bias="0.502"
+            android:layout_marginBottom="16dp" app:layout_constraintBottom_toBottomOf="parent"/>
+    <com.airbnb.lottie.LottieAnimationView
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            app:lottie_loop="true"
+            app:lottie_autoPlay="true"
+            app:lottie_fileName="minilogoload.json"
+            app:lottie_repeatMode="reverse"
+            android:layout_gravity="center"
+            android:visibility="visible"
+            app:layout_constraintTop_toTopOf="@+id/auth_screen_sign_text"
+            app:layout_constraintBottom_toBottomOf="@+id/auth_screen_sign_text"
+            android:layout_marginEnd="4dp" app:layout_constraintEnd_toStartOf="@+id/auth_screen_sign_text"
+            android:id="@+id/auth_screen_sign_lottie"/>
 
-    <ImageView
+    <Button
             android:layout_width="60dp"
             android:layout_height="60dp"
-            android:background="@drawable/mailicon"
             android:layout_weight="1" android:id="@+id/googlesign_imageview"
             app:layout_constraintStart_toStartOf="@+id/selfiewarsLogoauth"
             app:layout_constraintEnd_toEndOf="@+id/selfiewarsLogoauth" android:layout_marginTop="32dp"
-            app:layout_constraintTop_toBottomOf="@+id/selfiewarsText"/>
+            app:layout_constraintTop_toBottomOf="@+id/selfiewarsText" style="@style/FiamUI.CollapseButtonBase"
+            android:textAppearance="@style/TextAppearance.AppCompat" android:background="@drawable/mailicon"/>
 
 
 </android.support.constraint.ConstraintLayout>

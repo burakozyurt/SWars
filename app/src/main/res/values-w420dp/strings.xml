@@ -41,10 +41,10 @@
     <string name="diamondValue">diamondValue</string>
     <string name="wildcards">wildcards</string>
     <string name="timestamp">timestamp</string>
-    <string name="nowtimestamp">nowtimestamp</string>
+    <string name="nowtimestamp">timestamp</string>
     <string name="infodetail">infodetail</string>
     <string name="ApprovedUser">ApprovedUsers</string>
-    <string name="CorrectUsers">CorrectUsers</string>
+    <string name="CorrectUsers">ApprovedUsers</string>
     <string name="photoUrl">photoUrl</string>
     <string name="spinValue">spinValue</string>
     <string name="loadingMessage">Kullanıcı Bilgileri Yükleniyor...</string>

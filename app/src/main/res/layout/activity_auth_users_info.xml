@@ -17,7 +17,7 @@
             android:layout_marginTop="50dp"
             android:id="@+id/signin_info_profile_imageview" android:onClick="handlerInsertData"/>
     <TextView
-            android:text=" Choose profile picture"
+            android:text="Fotoğraf seç"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" android:id="@+id/signin_profile_desc_textView"
             android:textAlignment="center"/>
@@ -26,7 +26,7 @@
               android:textSize="20dp"
               android:singleLine="true"
               android:inputType="textPersonName"
-              android:minLines="6"
+              android:minLines="4"
               android:layout_marginTop="50dp"
               android:hint="@string/user_name"
               android:layout_gravity="center"
@@ -47,6 +47,31 @@
             android:background="@drawable/guess_it_and_game_button_oval"
             android:layout_gravity="center" android:layout_marginTop="16dp"
             android:id="@+id/signin_info_continue_button"/>
+    <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" android:layout_gravity="center" android:gravity="center"
+            android:layout_marginTop="16dp">
+        <com.airbnb.lottie.LottieAnimationView
+                android:layout_height="24dp"
+                app:lottie_loop="true"
+                app:lottie_autoPlay="true"
+                app:lottie_fileName="minilogoload.json"
+                app:lottie_repeatMode="reverse"
+                android:layout_gravity="center"
+                android:visibility="gone"
+                android:id="@+id/auth_info_screen_sign_lottie2" android:layout_width="24dp"/>
+        <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Kayıt Oluşturuluyor.."
+                android:textSize="12sp"
+                android:textColor="@color/textcolorblack"
+                android:layout_gravity="center"
+                android:id="@+id/auth_info_screen_sign_text3"
+                android:visibility="gone"
+                android:layout_marginLeft="4dp"/>
+    </LinearLayout>
 
 
 </LinearLayout>

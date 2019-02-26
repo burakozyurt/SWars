@@ -3,13 +3,16 @@ package com.app.selfiewars.selfiewars;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.provider.MediaStore;
+import android.os.Handler;
 import android.support.annotation.NonNull;
-import android.support.design.widget.Snackbar;
 import android.util.Log;
 import android.view.View;
-import android.widget.ImageView;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
+import com.airbnb.lottie.LottieAnimationView;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
@@ -30,7 +33,10 @@ public class AuthenticationScreen extends Activity {
     private DatabaseReference myRefAccountState;
     private static final String TAG = "GoogleActivity";
     private static final int RC_SIGN_IN = 9001;
-    private ImageView googleSignImageView;
+    private Button googleSignImageView;
+    private LottieAnimationView signloadanim;
+    private TextView signtext;
+    private Animation animation;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -40,15 +46,36 @@ public class AuthenticationScreen extends Activity {
         myRefAccountState = database.getReference("Users");
         googleSignImageView = findViewById(R.id.googlesign_imageview);
         googleSignInOptions();
+        googleSignImageView.setVisibility(View.GONE);
         googleSignImageView.setOnClickListener(new View.OnClickListener() {
                @Override
                public void onClick(View view) {
                    signIn();
                }
            });
+        signtext = findViewById(R.id.auth_screen_sign_text);
+        signloadanim = findViewById(R.id.auth_screen_sign_lottie);
+        setSignProgresVisiblity(false);
+        animation = AnimationUtils.loadAnimation(this,R.anim.smalltobig);
+        Handler handler = new Handler();
+        Runnable runnable = new Runnable() {
+            @Override
+            public void run() {
+                googleSignImageView.startAnimation(animation);
+                googleSignImageView.setVisibility(View.VISIBLE);
 
-
-
+            }
+        };
+        handler.postDelayed(runnable,400);
+    }
+    private void  setSignProgresVisiblity(boolean visiblity){
+        if(visiblity){
+            signloadanim.setVisibility(View.VISIBLE);
+            signtext.setVisibility(View.VISIBLE);
+        }else {
+            signloadanim.setVisibility(View.GONE);
+            signtext.setVisibility(View.GONE);
+        }
     }
     public void googleSignInOptions (){
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
@@ -85,7 +112,7 @@ public class AuthenticationScreen extends Activity {
 
     private void firebaseAuthWithGoogle(GoogleSignInAccount account) {
         Log.d(TAG, "firebaseAuthWithGoogle:" + account.getId());
-
+        setSignProgresVisiblity(true);
         AuthCredential credential = GoogleAuthProvider.getCredential(account.getIdToken(), null);
         mAuth.signInWithCredential(credential)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {

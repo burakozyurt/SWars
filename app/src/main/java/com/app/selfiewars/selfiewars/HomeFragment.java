@@ -10,24 +10,34 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.*;
 import com.airbnb.lottie.LottieAnimationView;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.MobileAds;
+import com.google.android.gms.ads.reward.RewardItem;
+import com.google.android.gms.ads.reward.RewardedVideoAd;
+import com.google.android.gms.ads.reward.RewardedVideoAdListener;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.*;
-import com.google.firebase.iid.FirebaseInstanceId;
+import com.squareup.picasso.Callback;
+import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 import de.hdodenhof.circleimageview.CircleImageView;
 import me.relex.circleindicator.CircleIndicator;
 
 import java.text.DateFormat;
-import java.util.*;
+import java.util.Date;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.concurrent.TimeUnit;
 
 import static java.text.DateFormat.getDateTimeInstance;
@@ -45,6 +55,7 @@ public class HomeFragment extends Fragment {
     private TextView fiftyFiftyTextView;
     private TextView doubleDipTextView;
     private TextView diamondTextView;
+    private TextView diamondAdsTextView;
     private static TextView righOfGameEndTimeTextView;
     private TextView usernameTextView;
     private TextView rightOfGameTextView;
@@ -52,10 +63,7 @@ public class HomeFragment extends Fragment {
     private ImageView rightOfGameDiamondImageView;
     private String photoUrl;
     private FirebaseDatabase mdatabase;
-    private DatabaseReference myUserRef;
-    private DatabaseReference myRigtOfGameRef;
-    private DatabaseReference myAnnouncementRef;
-    private DatabaseReference myScoreRef;
+    private DatabaseReference myCorrectUsersRef;
     private FirebaseAuth mAuth;
     private Picasso mPicasso;
     private Button guessitButton;
@@ -65,9 +73,7 @@ public class HomeFragment extends Fragment {
     private ProgressDialog mProgressDialog;
     private ImageView settingsIcon;
     private static CountDownTimer countDownTimer;
-    private Boolean isStartedCountDownTimerRightOfGame;
     private static Long guessItMilisecond;
-    private Long nowTimestamp;
     private Integer guessItAdsCount;
     private LottieAnimationView lottieAds;
     private AnnouncementViewPageAdapter announcementViewPageAdapter;
@@ -77,7 +83,7 @@ public class HomeFragment extends Fragment {
     private Timer timer;
     private LinearLayout announcementLinearLayout;
     private boolean isClickGuessitButton = false;
-
+    private RewardedVideoAd mRewardedVideoAd;
     public HomeFragment() {
         // Required empty public constructor
         rightOfGame = 0;
@@ -91,19 +97,29 @@ public class HomeFragment extends Fragment {
         View rootview = inflater.inflate(R.layout.fragment_home, container, false);
         mAuth = FirebaseAuth.getInstance();
         mdatabase = FirebaseDatabase.getInstance();
-        myUserRef = mdatabase.getReference("Users/" + mAuth.getUid());
+        /*myUserRef = mdatabase.getReference("Users/" + mAuth.getUid());
         myRigtOfGameRef = mdatabase.getReference("RightOfGame/" + mAuth.getUid());
-        myAnnouncementRef = mdatabase.getReference("Announcement");
-        myScoreRef = mdatabase.getReference(getResources().getString(R.string.Scores));
-        updateHandler=new Handler();
-        getTimeStampControl();
-        define(rootview);
-        setViewPager();
-        //getUserData();
-        onClick_GuessIt();
-        mCheckInforInServer("Users/" + mAuth.getUid());
-        mGetInforInServer("RightOfGame/" + mAuth.getUid());
-        settingsIconClicked();
+        myAnnouncementRef = mdatabase.getReference("Announcement");*/
+        myCorrectUsersRef = mdatabase.getReference("CorrectUsers/"+mAuth.getUid());
+        //myScoreRef = mdatabase.getReference(getResources().getString(R.string.Scores));
+        /*myUserRef.keepSynced(true);
+        myRigtOfGameRef.keepSynced(true);
+        myAnnouncementRef.keepSynced(true);*/
+        //myScoreRef.keepSynced(true);
+        try {
+            updateHandler=new Handler();
+            define(rootview);
+            setViewPager();
+            //getUserData();
+            onClick_GuessIt();
+            mCheckInforInServer("Users/" + mAuth.getUid());
+            mGetInforInServer("RightOfGame/" + mAuth.getUid());
+            //getTimeStampControl();
+            settingsIconClicked();
+            setRewardAds();
+        }catch (Exception e){
+            Toast.makeText(getActivity(), ""+e.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
+        }
         return rootview;
     }
     private void define(View rootview){
@@ -115,6 +131,7 @@ public class HomeFragment extends Fragment {
         fiftyFiftyTextView = rootview.findViewById(R.id.home_profile_fiftyfifty_textView);
         doubleDipTextView = rootview.findViewById(R.id.home_profile_double_dip_textView);
         diamondTextView = rootview.findViewById(R.id.home_profile_diamond_textView);
+        diamondAdsTextView = rootview.findViewById(R.id.rightOfGameDiamondTextView);
         usernameTextView = rootview.findViewById(R.id.home_profile_username_textView);
         profileImageView = rootview.findViewById(R.id.home_profile_circleImageView);
         guessitButton = rootview.findViewById(R.id.home_profile_guessit_button);
@@ -126,7 +143,7 @@ public class HomeFragment extends Fragment {
         viewPager = rootview.findViewById(R.id.announcementViewPager);
         circleIndicator = rootview.findViewById(R.id.announcement_indicator);
         announcementLinearLayout = rootview.findViewById(R.id.linearLayoutAnnouncement);
-        isStartedCountDownTimerRightOfGame =false;
+        MobileAds.initialize(getActivity(), "ca-app-pub-7004761147200711~5104636223");
     }
     private void setViewPager(){
         announcementViewPageAdapter =  new AnnouncementViewPageAdapter(getContext());
@@ -150,150 +167,88 @@ public class HomeFragment extends Fragment {
             }
         }, 5000, 5000);
     }
-
-    private void setViewPageItemClicked(){
-        announcementLinearLayout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Toast.makeText(getContext(), "Instagrama yönlendir.", Toast.LENGTH_SHORT).show();
-                if(viewPager.getCurrentItem() == 2){
-                    Toast.makeText(getContext(), "Instagrama yönlendir.", Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
-    }
-    private void getUserData(){
-        myUserRef.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                Boolean isReady = dataSnapshot.child(getResources().getString(R.string.account_State)).child(getResources().getString(R.string.isReady)).getValue(Boolean.class);
-                if(isReady){
-                    UserProperties properties = dataSnapshot.child(getResources().getString(R.string.properties)).getValue(UserProperties.class);
-                    displayNameTextView.setText(properties.getDisplayName());
-                    usernameTextView.setText(properties.getUserName());
-                    ageTextView.setText(String.valueOf(properties.getAge()));
-                    photoUrl = properties.getPhotoUrl();
-                    mPicasso.load(photoUrl).resize(400,400).into(profileImageView);
-                    if(dataSnapshot.hasChild(getResources().getString(R.string.token))){
-                        diamondToken =dataSnapshot.child(getResources().getString(R.string.token)).child((getResources().getString(R.string.diamondValue))).getValue(Integer.class);
-                        diamondTextView.setText(""+diamondToken);}
-                    if(dataSnapshot.hasChild(getResources().getString(R.string.wildcards))) {
-                        wildcards = dataSnapshot.child(getResources().getString(R.string.wildcards)).getValue(Wildcards.class);
-                        doubleDipTextView.setText(""+wildcards.getDoubleDipValue());
-                        healthTextView.setText(""+wildcards.getHealthValue());
-                        fiftyFiftyTextView.setText(""+wildcards.getFiftyFiftyValue());
-                    }
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
-    }
     private void onClick_GuessIt(){
         guessitButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if(!isClickGuessitButton){
                     isClickGuessitButton = true;
-                    myUserRef.child("nowtimestamp").child(getResources().getString(R.string.timestamp)).setValue(ServerValue.TIMESTAMP).addOnSuccessListener(new OnSuccessListener<Void>() {
+                    MainActivity.myRefUser.child("nowtimestamp").child(getResources().getString(R.string.timestamp)).runTransaction(new Transaction.Handler() {
+                        @NonNull
                         @Override
-                        public void onSuccess(Void aVoid) {
-                            myUserRef.child("nowtimestamp").child(getResources().getString(R.string.timestamp)).addListenerForSingleValueEvent(new ValueEventListener() {
-                                @Override
-                                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                    nowTimestamp = dataSnapshot.getValue(Long.class);
-                                    FirebaseDatabase.getInstance().getReference("EndTime").child("timestamp").addListenerForSingleValueEvent(new ValueEventListener() {
-                                        @Override
-                                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                            if(dataSnapshot.getValue(Long.class) > nowTimestamp ){
-                                                myRigtOfGameRef.runTransaction(new Transaction.Handler() {
-                                                    @NonNull
+                        public Transaction.Result doTransaction(@NonNull MutableData mutableData) {
+                            mutableData.setValue(ServerValue.TIMESTAMP);
+                            return Transaction.success(mutableData);
+                        }
+
+                        @Override
+                        public void onComplete(@Nullable DatabaseError databaseError, boolean b, @Nullable DataSnapshot dataSnapshot) {
+                            final Long nowtimeStamp = dataSnapshot.getValue(Long.class);
+                            if(MainActivity.endTimeStamp > nowtimeStamp ){
+                                MainActivity.myRigtOfGameRef.runTransaction(new Transaction.Handler() {
+                                    @NonNull
+                                    @Override
+                                    public Transaction.Result doTransaction(@NonNull MutableData mutableData) {
+                                        Integer i = mutableData.getValue(Integer.class);
+                                        if(i == 0){
+                                            return null;
+                                        }
+                                        else {
+                                            i--;
+                                            if(i == 0){
+                                                getTimeStampControl();
+                                            }
+                                            mutableData.setValue(i);
+                                            return Transaction.success(mutableData);
+                                        }
+                                    }
+                                    @Override
+                                    public void onComplete(@Nullable DatabaseError databaseError, boolean b, @Nullable DataSnapshot dataSnapshot) {
+                                        if(b){
+                                            if(rightOfGame == 9){
+                                                MainActivity.myRefUser.child(getResources().getString(R.string.timestamp)).child("guessItMilisecond").setValue(nowtimeStamp + 86400000).addOnSuccessListener(new OnSuccessListener<Void>() {
                                                     @Override
-                                                    public Transaction.Result doTransaction(@NonNull MutableData mutableData) {
-                                                        Integer i = mutableData.getValue(Integer.class);
-                                                        if(i == 0){
-                                                            return null;
-                                                        }else {
-                                                            i--;
-                                                            mutableData.setValue(i);
-                                                            return Transaction.success(mutableData);
-                                                        }
-                                                    }
-
-                                                    @Override
-                                                    public void onComplete(@Nullable DatabaseError databaseError, boolean b, @Nullable DataSnapshot dataSnapshot) {
-                                                        if(b){
-                                                            if(rightOfGame == 9){
-                                                                myUserRef.child(getResources().getString(R.string.nowtimestamp)).child(getResources().getString(R.string.timestamp)).setValue(ServerValue.TIMESTAMP).addOnSuccessListener(new OnSuccessListener<Void>() {
-                                                                    @Override
-                                                                    public void onSuccess(Void aVoid) {
-                                                                        myUserRef.addListenerForSingleValueEvent(new ValueEventListener() {
-                                                                            @Override
-                                                                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                                                                Long nowTimestamp = dataSnapshot.child(getResources().getString(R.string.nowtimestamp)).child(getResources().getString(R.string.timestamp)).getValue(Long.class);
-                                                                                myUserRef.child(getResources().getString(R.string.timestamp)).child("guessItMilisecond").setValue(nowTimestamp + 86400000).addOnSuccessListener(new OnSuccessListener<Void>() {
-                                                                                    @Override
-                                                                                    public void onSuccess(Void aVoid) {
-                                                                                        isClickGuessitButton = false;
-                                                                                        Intent i = new Intent(getActivity(),GuessItActivity.class);
-                                                                                        startActivity(i);
-                                                                                    }
-                                                                                });
-                                                                            }
-
-                                                                            @Override
-                                                                            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                                                                            }
-                                                                        });
-                                                                    }
-                                                                });
-
-                                                            }else {
-                                                                isClickGuessitButton = false;
+                                                    public void onSuccess(Void aVoid) { isClickGuessitButton = false;
+                                                        MainActivity.myRefUser.child(getResources().getString(R.string.timestamp)).child("guessItAdsCount").setValue(3).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                            @Override
+                                                            public void onSuccess(Void aVoid) {
                                                                 Intent i = new Intent(getActivity(),GuessItActivity.class);
                                                                 startActivity(i);
                                                             }
-
-                                                        }else {
-                                                            MainActivity.showPopUpInfo(null,"Günlük tahmin hakkınız bitmiştir!!",null,getContext());
-                                                            if(rightOfGame == 0 && guessItAdsCount > 0){
-                                                                rightOfGameDiamondImageView.setVisibility(View.GONE);
-                                                                lottieAds.setVisibility(View.VISIBLE);
-
-                                                            }else if(rightOfGame == 0 && guessItAdsCount == 0){
-                                                                lottieAds.setVisibility(View.GONE);
-                                                                rightOfGameDiamondImageView.setVisibility(View.VISIBLE);
-
-                                                            }
-                                                        }
+                                                        });
 
                                                     }
                                                 });
                                             }else {
-                                                MainActivity.showPopUpInfo(null,"Hafta yenilenmemiştir!!",
-                                                        "Sistem bu haftanın yapılandırmasını tamamladıktan sonra yeni hafta başlayacaktır. Başladığında bildirim gönderilecektir. \n \n ~Selfie Wars Tavsiyesi~ \n Yeni hafta için joker hazırlığı yapmak sıralamada avantaj sağlayacaktır."
-                                                        , getActivity());
                                                 isClickGuessitButton = false;
+                                                Intent i = new Intent(getActivity(),GuessItActivity.class);
+                                                startActivity(i);
                                             }
+                                        }else {
+                                            MainActivity.showPopUpInfo(null,"Günlük tahmin hakkınız bitmiştir!!",null,getContext());
+                                            Log.d("rightofgame:" ,"rightofgame:--"+rightOfGame+"---    guessadsCount : "+guessItAdsCount);
+                                            if(rightOfGame == 0 && MainActivity.guessItAdsCount > 0){
+                                                rightOfGameDiamondImageView.setVisibility(View.GONE);
+                                                lottieAds.setVisibility(View.VISIBLE);
+                                            }
+                                            else if(rightOfGame == 0 && MainActivity.guessItAdsCount == 0 && diamondToken >=5){
+                                                lottieAds.setVisibility(View.GONE);
+                                                rightOfGameDiamondImageView.setVisibility(View.VISIBLE);
+                                                diamondAdsTextView.setVisibility(View.VISIBLE);
+                                            }
+                                            righOfGameEndTimeTextView.setVisibility(View.VISIBLE);
+                                            isClickGuessitButton = false;
                                         }
 
-                                        @Override
-                                        public void onCancelled(@NonNull DatabaseError databaseError) {
+                                    }
 
-                                        }
-                                    });
-
-                                }
-
-                                @Override
-                                public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                                }
-                            });
+                                });
+                            }else {
+                                MainActivity.showPopUpInfo(null,"Hafta yenilenmemiştir!!",
+                                        "Sistem bu haftanın yapılandırmasını tamamladıktan sonra yeni hafta başlayacaktır. Başladığında bildirim gönderilecektir. \n \n ~Selfie Wars Tavsiyesi~ \n Yeni hafta için joker hazırlığı yapmak sıralamada avantaj sağlayacaktır."
+                                        ,getActivity());
+                                isClickGuessitButton = false;
+                            }
                         }
                     });
                 }
@@ -302,13 +257,156 @@ public class HomeFragment extends Fragment {
             }
         });
     }
+    private void setRewardAds(){
+        mRewardedVideoAd = MobileAds.getRewardedVideoAdInstance(getActivity());
+        mRewardedVideoAd.loadAd("ca-app-pub-7004761147200711/4140582849",
+                new AdRequest.Builder().build());
+        mRewardedVideoAd.setRewardedVideoAdListener(new RewardedVideoAdListener() {
+            @Override
+            public void onRewardedVideoAdLoaded() {
+               // Toast.makeText(getContext(), "Reklam Yüklendi", Toast.LENGTH_SHORT).show();
+                onClickListener_LottieAds();
+            }
+
+            @Override
+            public void onRewardedVideoAdOpened() {
+
+            }
+
+            @Override
+            public void onRewardedVideoStarted() {
+
+            }
+
+            @Override
+            public void onRewardedVideoAdClosed() {
+                getTimeStampControl();
+            }
+
+            @Override
+            public void onRewarded(RewardItem rewardItem) {
+                Log.d("RewardItemFB","Rewarded");
+                MainActivity.myRigtOfGameRef.runTransaction(new Transaction.Handler() {
+                    @NonNull
+                    @Override
+                    public Transaction.Result doTransaction(@NonNull MutableData mutableData) {
+                        Integer rightOfGameValue = mutableData.getValue(Integer.class);
+                        rightOfGameValue++;
+                        mutableData.setValue(rightOfGameValue);
+                        return Transaction.success(mutableData);
+                    }
+
+                    @Override
+                    public void onComplete(@Nullable DatabaseError databaseError, boolean b, @Nullable DataSnapshot dataSnapshot) {
+                        if (b){
+                            getTimeStampControl();
+                            setRewardAds();
+                            MainActivity.showPopUpInfo(null,"Tebrikler tekrar tahmin edebilirsiniz.",null,getContext());
+                        }
+                    }
+                });
+            }
+
+            @Override
+            public void onRewardedVideoAdLeftApplication() {
+
+            }
+
+            @Override
+            public void onRewardedVideoAdFailedToLoad(int i) {
+
+            }
+
+            @Override
+            public void onRewardedVideoCompleted() {
+
+            }
+        });
+    }
+
     private void onClickListener_LottieAds(){
         lottieAds.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(getContext(), "Reklam Yükleniyor", Toast.LENGTH_SHORT).show();
+                lottieAds.setClickable(false);
+               // Toast.makeText(getContext(), "Reklam Yükleniyor", Toast.LENGTH_SHORT).show();
+                MainActivity.myRefUser.child("timestamp").child("guessItAdsCount").runTransaction(new Transaction.Handler() {
+                    @NonNull
+                    @Override
+                    public Transaction.Result doTransaction(@NonNull MutableData mutableData) {
+                        Integer value= mutableData.getValue(Integer.class);
+                        if(value == 0){
+                            return null;
+                        }
+                        else {
+                            value--;
+                            mutableData.setValue(value);
+                            return Transaction.success(mutableData);
+                        }
+                    }
+
+                    @Override
+                    public void onComplete(@Nullable DatabaseError databaseError, boolean b, @Nullable DataSnapshot dataSnapshot) {
+                        if (b){
+                            lottieAds.setClickable(true);
+                            if(mRewardedVideoAd.isLoaded())
+                                mRewardedVideoAd.show();
+                            else
+                                mRewardedVideoAd.loadAd("ca-app-pub-3940256099942544/5224354917",
+                                        new AdRequest.Builder().build());
+                        }
+                        else {
+                            getTimeStampControl();
+                        }
+                    }
+                });
             }
         });
+    }
+    private void onClickListener_DiamondsAds(){
+        rightOfGameDiamondImageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                rightOfGameDiamondImageView.setClickable(false);
+                MainActivity.myRefUser.child("token").runTransaction(new Transaction.Handler() {
+                    @NonNull
+                    @Override
+                    public Transaction.Result doTransaction(@NonNull MutableData mutableData) {
+                        Integer diamond = mutableData.child("diamondValue").getValue(Integer.class);
+                        if(diamond == 0)
+                            return null;
+                        else if (diamond >=5){
+                            diamond-=5;
+                            mutableData.child("diamondValue").setValue(diamond);
+                            return Transaction.success(mutableData);
+                        }else {
+                            return null;
+                        }
+                    }
+
+                    @Override
+                    public void onComplete(@Nullable DatabaseError databaseError, boolean b, @Nullable DataSnapshot dataSnapshot) {
+                        if (b){
+                                MainActivity.myRigtOfGameRef.setValue(1).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<Void> task) {
+                                        getTimeStampControl();
+                                        rightOfGameDiamondImageView.setClickable(true);
+
+                                    }
+                                });
+                        }else {
+                            MainActivity.showPopUpInfo(null,"Elmas Yetersiz!!",null,getContext());
+                            righOfGameEndTimeTextView.setVisibility(View.GONE);
+                            diamondAdsTextView.setVisibility(View.GONE);
+                            rightOfGameDiamondImageView.setVisibility(View.GONE);
+                            rightOfGameDiamondImageView.setClickable(true);
+                        }
+                    }
+                });
+            }
+        });
+
     }
     private void mCheckInforInServer(String child) {
         new Database().mReadDataRealTime(child, new OnGetDataListener() {
@@ -328,6 +426,7 @@ public class HomeFragment extends Fragment {
             @Override
             public void onSuccess(DataSnapshot dataSnapshot) {
                 //DO SOME THING WHEN GET DATA SUCCESS HERE
+                Log.d("UserListener  ","Çalışıyor ");
                 try {
                     Boolean isReady = dataSnapshot.child(getResources().getString(R.string.account_State)).child(getResources().getString(R.string.isReady)).getValue(Boolean.class);
                     if(isReady){
@@ -336,8 +435,24 @@ public class HomeFragment extends Fragment {
                         usernameTextView.setText(properties.getUserName());
                         ageTextView.setText(String.valueOf(properties.getAge()));
                         photoUrl = properties.getPhotoUrl();
-                        mPicasso.with(getContext()).load(photoUrl).into(profileImageView);
-                        getScore();
+                        mPicasso.with(getContext()).load(photoUrl).networkPolicy(NetworkPolicy.OFFLINE).into(profileImageView, new Callback() {
+                            @Override
+                            public void onSuccess() {
+                                Log.d("BPiccasso","Yüklendi");
+                            }
+                            @Override
+                            public void onError() {
+                                Log.d("BPiccasso","Hata Verdi");
+                                mPicasso.with(getContext()).load(photoUrl).into(profileImageView, new Callback() {
+                                    @Override
+                                    public void onSuccess() {}
+                                    @Override
+                                    public void onError() {
+                                        mPicasso.with(getContext()).load(photoUrl).into(profileImageView);
+                                    }
+                                });
+                            }
+                        });
                         if(dataSnapshot.hasChild(getResources().getString(R.string.token))){
                             diamondToken =dataSnapshot.child(getResources().getString(R.string.token)).child((getResources().getString(R.string.diamondValue))).getValue(Integer.class);
                             diamondTextView.setText(""+diamondToken);}
@@ -350,14 +465,13 @@ public class HomeFragment extends Fragment {
                         if (mProgressDialog != null && mProgressDialog.isShowing()) {
                             mProgressDialog.dismiss();
                         }
-
+                        getScore();
+                        getUserData();
+                        getTimeStampControl();
                     }
                 }catch (Exception e){
-
                 }
-
             }
-
             @Override
             public void onFailed(DatabaseError databaseError) {
                 //DO SOME THING WHEN GET DATA FAILED HERE
@@ -365,12 +479,98 @@ public class HomeFragment extends Fragment {
         });
 
     }
-    private void getScore(){
-        myScoreRef.child(mAuth.getUid()).addValueEventListener(new ValueEventListener() {
+    private void getUserData(){
+        myCorrectUsersRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if (dataSnapshot.exists())
-                    scoreTextView.setText("" + dataSnapshot.getValue(Integer.class));
+                if(dataSnapshot.getChildrenCount()>100){
+                    myCorrectUsersRef.setValue(true);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+        MainActivity.myRefUser.child("token").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if(dataSnapshot.exists()){
+                    diamondToken = dataSnapshot.child((getResources().getString(R.string.diamondValue))).getValue(Integer.class);
+                    diamondTextView.setText(""+diamondToken);
+                    MainActivity.diamondValue = diamondToken;
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+        MainActivity.myRefUser.child("wildcards").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if(dataSnapshot.exists()) {
+                    Log.d("wildcards","çalıştı");
+                    wildcards = dataSnapshot.getValue(Wildcards.class);
+                    doubleDipTextView.setText(""+wildcards.getDoubleDipValue());
+                    healthTextView.setText(""+wildcards.getHealthValue());
+                    fiftyFiftyTextView.setText(""+wildcards.getFiftyFiftyValue());
+                    MainActivity.wildcards = wildcards;
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+        MainActivity.myRefUser.child("properties").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                UserProperties properties = dataSnapshot.getValue(UserProperties.class);
+                MainActivity.userProperties = properties;
+                MainActivity.userDataSnapShot = dataSnapshot;
+                displayNameTextView.setText(properties.getDisplayName());
+                usernameTextView.setText(properties.getUserName());
+                ageTextView.setText(String.valueOf(properties.getAge()));
+                photoUrl = properties.getPhotoUrl();
+                mPicasso.with(getContext()).load(photoUrl).networkPolicy(NetworkPolicy.OFFLINE).into(profileImageView, new Callback() {
+                    @Override
+                    public void onSuccess() {
+                        Log.d("BPiccasso","Yüklendi");
+                    }
+                    @Override
+                    public void onError() {
+                        Log.d("BPiccasso","Hata Verdi");
+                        mPicasso.with(getContext()).load(photoUrl).into(profileImageView);
+                    }
+                });
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+    }
+    private void getScore(){
+        MainActivity.myScoreRef.child(mAuth.getUid()).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()){
+                    Integer userscore = dataSnapshot.getValue(Integer.class);
+                    scoreTextView.setText(""+userscore );
+                    MainActivity.UserScore = userscore;
+                    Log.d("OptionsFirebase","UserScore"+MainActivity.UserScore);
+
+                }
+                else {
+                    Log.d("DbScore","User");
+                    MainActivity.myScoreRef.child(mAuth.getUid()).setValue(0);
+                }
+
             }
 
             @Override
@@ -390,25 +590,22 @@ public class HomeFragment extends Fragment {
 
     }
     private void mGetInforInServer(String child) {
-        new Database().mReadDataRealTime(child, new OnGetDataListener() {
-            @Override
-            public void onStart() {
 
-            }
-
+        MainActivity.myRigtOfGameRef.addValueEventListener(new ValueEventListener() {
             @Override
-            public void onSuccess(DataSnapshot data) {
-                rightOfGame = data.getValue(Integer.class);
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                rightOfGame = dataSnapshot.getValue(Integer.class);
+                Log.d("RightOfGame",""+rightOfGame);
                 rightOfGameTextView.setText(""+rightOfGame);
 
             }
 
             @Override
-            public void onFailed(DatabaseError databaseError) {
+            public void onCancelled(@NonNull DatabaseError databaseError) {
 
             }
         });
-        myScoreRef.orderByValue().addListenerForSingleValueEvent(new ValueEventListener() {
+        MainActivity.myScoreRef.orderByValue().addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 long i = 0;
@@ -440,12 +637,12 @@ public class HomeFragment extends Fragment {
         }
     }
 
-    private void startOrRefresCountTime(Long myDate){
+    private void startOrRefreshCountTime(Long myDate){
         try {
 
             if(countDownTimer !=null){
                 countDownTimer.cancel();
-                countDownTimer = new CountDownTimer((Math.abs(guessItMilisecond-myDate)),1000) {
+                countDownTimer = new CountDownTimer((Math.abs(MainActivity.guessItMilisecond-myDate)),1000) {
                     @Override
                     public void onTick(long l) {
                         righOfGameEndTimeTextView.setText(getResources().getString(R.string.Endtime) + TimeUnit.MILLISECONDS.toHours(l) +getResources().getString(R.string.hours)
@@ -455,90 +652,86 @@ public class HomeFragment extends Fragment {
 
                     @Override
                     public void onFinish() {
+                        getTimeStampControl();
 
                     }
                 }.start();
             }
             else {
-                countDownTimer = new CountDownTimer((Math.abs(guessItMilisecond-myDate)),1000) {
+                countDownTimer = new CountDownTimer((Math.abs(MainActivity.guessItMilisecond-myDate)),1000) {
                     @Override
                     public void onTick(long l) {
                         righOfGameEndTimeTextView.setText(getResources().getString(R.string.Endtime) + TimeUnit.MILLISECONDS.toHours(l) +getResources().getString(R.string.hours)
                                 + (TimeUnit.MILLISECONDS.toMinutes(l) - TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(l))) + getResources().getString(R.string.minute)
                                 +(TimeUnit.MILLISECONDS.toSeconds(l) - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(l)))+getResources().getString(R.string.second) );
                     }
-
                     @Override
                     public void onFinish() {
+                        getTimeStampControl();
 
                     }
                 }.start();
             }
         }catch (Exception e){
-
         }
     }
 
     private void getTimeStampControl(){
-        myUserRef.child(getResources().getString(R.string.nowtimestamp)).child(getResources().getString(R.string.timestamp)).setValue(ServerValue.TIMESTAMP).addOnSuccessListener(new OnSuccessListener<Void>() {
+        MainActivity.myRefUser.child(getResources().getString(R.string.nowtimestamp)).child(getResources().getString(R.string.timestamp)).runTransaction(new Transaction.Handler() {
+            @NonNull
             @Override
-            public void onSuccess(Void aVoid) {
-                myRigtOfGameRef.addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        final Integer controlrightOfGame = dataSnapshot.getValue(Integer.class);
-                        myUserRef.addListenerForSingleValueEvent(new ValueEventListener() {
-                            @Override
-                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                if(dataSnapshot.child(getResources().getString(R.string.nowtimestamp)).hasChild(getResources().getString(R.string.timestamp))){
-                                    nowTimestamp = dataSnapshot.child(getResources().getString(R.string.nowtimestamp)).child(getResources().getString(R.string.timestamp)).getValue(Long.class);
-                                    guessItAdsCount = dataSnapshot.child(getResources().getString(R.string.timestamp)).child("guessItAdsCount").getValue(Integer.class);
-                                    guessItMilisecond = (dataSnapshot.child(getResources().getString(R.string.timestamp)).child("guessItMilisecond").getValue(Long.class));
-                                    if(nowTimestamp < guessItMilisecond){
-                                        if(controlrightOfGame == 0){
-                                            righOfGameEndTimeTextView.setVisibility(View.VISIBLE);
-                                            startOrRefresCountTime(nowTimestamp);
-                                            if(guessItAdsCount > 0){
-                                                lottieAds.setVisibility(View.VISIBLE);
-                                                rightOfGameDiamondImageView.setVisibility(View.GONE);
-                                            }else {
-                                                lottieAds.setVisibility(View.GONE);
-                                                rightOfGameDiamondImageView.setVisibility(View.VISIBLE);
-                                            }
-                                        }else {
-                                            righOfGameEndTimeTextView.setVisibility(View.INVISIBLE);
-                                            rightOfGameDiamondImageView.setVisibility(View.GONE);
-                                            lottieAds.setVisibility(View.GONE);
-                                        }
-                                    }if(nowTimestamp > guessItMilisecond){
-                                        righOfGameEndTimeTextView.setVisibility(View.INVISIBLE);
-                                        if(controlrightOfGame < 10){
-                                            myRigtOfGameRef.setValue(10).addOnSuccessListener(new OnSuccessListener<Void>() {
-                                                @Override
-                                                public void onSuccess(Void aVoid) {
+            public Transaction.Result doTransaction(@NonNull MutableData mutableData) {
+                mutableData.setValue(ServerValue.TIMESTAMP);
+                return Transaction.success(mutableData);
+            }
 
-                                                }
-                                            });
-                                        }
-                                    }
+            @Override
+            public void onComplete(@Nullable DatabaseError databaseError, boolean b, @Nullable DataSnapshot dataSnapshot) {
+                Long nowtimeStamp = dataSnapshot.getValue(Long.class);
+                final Integer controlrightOfGame = MainActivity.myRightOfGameDataSnapShot.getValue(Integer.class);
+                if(nowtimeStamp != null){
+                    Log.d("TagRightOFGameControl","MainActivity Accessed:  ");
+                    if(nowtimeStamp< MainActivity.guessItMilisecond){
+                        if(MainActivity.myRigtOfGame == 0){
+                            righOfGameEndTimeTextView.setVisibility(View.VISIBLE);
+                            startOrRefreshCountTime(nowtimeStamp);
+                            if(MainActivity.guessItAdsCount > 0){
+                                if(!mRewardedVideoAd.isLoaded()){
+                                    setRewardAds();
+                                }
+                                lottieAds.setVisibility(View.VISIBLE);
+                                rightOfGameDiamondImageView.setVisibility(View.GONE);
+                                diamondAdsTextView.setVisibility(View.GONE);
+                            }
+                            else {
+                                lottieAds.setVisibility(View.GONE);
+                                if(diamondToken>=5){
+                                    rightOfGameDiamondImageView.setVisibility(View.VISIBLE);
+                                    diamondAdsTextView.setVisibility(View.VISIBLE);
+                                    onClickListener_DiamondsAds();
                                 }
                             }
-                            @Override
-                            public void onCancelled(@NonNull DatabaseError databaseError) {
+                        }else {
+                            righOfGameEndTimeTextView.setVisibility(View.INVISIBLE);
+                            rightOfGameDiamondImageView.setVisibility(View.GONE);
+                            lottieAds.setVisibility(View.GONE);
+                            diamondAdsTextView.setVisibility(View.GONE);
 
-                            }
-                        });
-
+                        }
+                    }if(nowtimeStamp > MainActivity.guessItMilisecond){
+                        righOfGameEndTimeTextView.setVisibility(View.INVISIBLE);
+                        rightOfGameDiamondImageView.setVisibility(View.GONE);
+                        diamondAdsTextView.setVisibility(View.GONE);
+                        lottieAds.setVisibility(View.GONE);
+                        if(MainActivity.myRigtOfGame < 10){
+                            MainActivity.myRigtOfGameRef.setValue(10);
+                        }
                     }
-
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                    }
-                });
+                }
             }
         });
-        /*
+        }
+            /*
         * Şu anki zamanla kıyasla
 eğer future ise
 rightofgame bak
@@ -549,8 +742,6 @@ righofgame bak 10 dan küçük ise
 righofgame 10 yap
 10 ise
 ekranda gösterme*/
-
-    }
 
     @Override
     public void onPause() {
