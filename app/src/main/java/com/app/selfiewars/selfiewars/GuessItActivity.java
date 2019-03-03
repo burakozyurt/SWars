@@ -17,7 +17,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.airbnb.lottie.LottieAnimationView;
+import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.InterstitialAd;
 import com.google.android.gms.ads.MobileAds;
 import com.google.android.gms.ads.reward.RewardItem;
 import com.google.android.gms.ads.reward.RewardedVideoAd;
@@ -99,6 +101,9 @@ public class GuessItActivity extends AppCompatActivity {
     private boolean isBetaGame = false;
     private RewardedVideoAd mRewardedVideoAd;
     private boolean adsrunning =false;
+    private boolean interstitalAdsrunning =false;
+    private InterstitialAd mInterstitialAd;
+
 
     @Override
     public void onBackPressed() {
@@ -116,6 +121,9 @@ public class GuessItActivity extends AppCompatActivity {
         setButtonOnClickListener();
         getUserListFromDatabase();
         setLoselayoutItemsClickListener();
+        MobileAds.initialize(GuessItActivity.this,
+                "ca-app-pub-7004761147200711~5104636223");
+        setRewardAds();
     }
     private void defineFirebase(){
         mAuth = FirebaseAuth.getInstance();
@@ -429,6 +437,15 @@ public class GuessItActivity extends AppCompatActivity {
                 @Override
                 public void onComplete(@Nullable final DatabaseError databaseError, boolean b, @Nullable DataSnapshot dataSnapshot) {
                     if (b){
+                        if (MainActivity.myRigtOfGame == 9 || MainActivity.myRigtOfGame == 1){
+                            if (mInterstitialAd.isLoaded()) {
+                                mInterstitialAd.show();
+                                interstitalAdsrunning = true;
+
+                            }else {
+                                Toast.makeText(GuessItActivity.this, "Yüklenmedi", Toast.LENGTH_SHORT).show();
+                            }
+                        }
                         guessitlayout.setVisibility(View.GONE);
                         loselayout.setVisibility(View.VISIBLE);
                         loseScore.setText("" + score + " Puan");
@@ -437,6 +454,18 @@ public class GuessItActivity extends AppCompatActivity {
                             MainActivity.myScoreRef.child(mAuth.getUid()).setValue(MainActivity.UserScore+score).addOnCompleteListener(new OnCompleteListener<Void>() {
                                 @Override
                                 public void onComplete(@NonNull Task<Void> task) {
+                                    if (MainActivity.myRigtOfGame == 9 || MainActivity.myRigtOfGame == 1){
+                                        if (mInterstitialAd.isLoaded()) {
+                                            mInterstitialAd.show();
+                                            interstitalAdsrunning = true;
+                                            // Toast.makeText(GuessItActivity.this, "Açıldı", Toast.LENGTH_SHORT).show();
+
+                                        }else
+                                        {
+                                            //Toast.makeText(GuessItActivity.this, "Yüklenmedi", Toast.LENGTH_SHORT).show();
+                                        }
+
+                                    }
                                     guessitlayout.setVisibility(View.GONE);
                                     loselayout.setVisibility(View.VISIBLE);
                                     loseScore.setText("" + score + " Puan");
@@ -445,6 +474,17 @@ public class GuessItActivity extends AppCompatActivity {
                             });
                         }else {
                             Toast.makeText(GuessItActivity.this,databaseError.getMessage(),Toast.LENGTH_SHORT).show();
+                            if (MainActivity.myRigtOfGame == 9 || MainActivity.myRigtOfGame == 1){
+                                if (mInterstitialAd.isLoaded()) {
+                                    mInterstitialAd.show();
+                                    interstitalAdsrunning = true;
+
+                                    // Toast.makeText(GuessItActivity.this, "Açıldı", Toast.LENGTH_SHORT).show();
+
+                                }else {
+                                   // Toast.makeText(GuessItActivity.this, "Yüklenmedi", Toast.LENGTH_SHORT).show();
+                                }
+                            }
                             guessitlayout.setVisibility(View.GONE);
                             loselayout.setVisibility(View.VISIBLE);
                             loseScore.setText("" + score + " Puan");
@@ -453,6 +493,16 @@ public class GuessItActivity extends AppCompatActivity {
                 }
             });
         }else {
+            if (MainActivity.myRigtOfGame == 9 || MainActivity.myRigtOfGame == 1){
+                if (mInterstitialAd.isLoaded()) {
+                    mInterstitialAd.show();
+                    interstitalAdsrunning = true;
+                    // Toast.makeText(GuessItActivity.this, "Açıldı", Toast.LENGTH_SHORT).show();
+
+                }else {
+                    //Toast.makeText(GuessItActivity.this, "Yüklenmedi", Toast.LENGTH_SHORT).show();
+                }
+            }
             guessitlayout.setVisibility(View.GONE);
             loselayout.setVisibility(View.VISIBLE);
             loseScore.setText("" + score + " Puan");
@@ -460,7 +510,7 @@ public class GuessItActivity extends AppCompatActivity {
     }
     private void setLoselayoutItemsClickListener(){
         loseLAyoutRightOfGameTextView.setText("Kalan Tahmin: "+MainActivity.myRigtOfGame+"/10");
-        setRewardAds();
+
         playAgainTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -549,13 +599,52 @@ public class GuessItActivity extends AppCompatActivity {
                     loseadsLottie.setClickable(true);
                 }
                 else
+                {
                     mRewardedVideoAd.loadAd("ca-app-pub-3940256099942544/5224354917",
                             new AdRequest.Builder().build());
+                    mRewardedVideoAd.show();
+                }
+
             }
         });
     }
 
     private void setRewardAds(){
+        //Geçiş Reklam
+        mInterstitialAd = new InterstitialAd(GuessItActivity.this);
+        mInterstitialAd.setAdUnitId("ca-app-pub-7004761147200711/8808242123");
+        mInterstitialAd.loadAd(new AdRequest.Builder().build());
+        mInterstitialAd.setAdListener(new AdListener() {
+            @Override
+            public void onAdLoaded() {
+                // Code to be executed when an ad finishes loading.
+                //Toast.makeText(GuessItActivity.this, "Geçiş Reklamı Yüklendi.", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onAdFailedToLoad(int errorCode) {
+                // Code to be executed when an ad request fails.
+                //Toast.makeText(GuessItActivity.this, "Geçiş Reklamı Fail.", Toast.LENGTH_SHORT).show();
+
+            }
+
+            @Override
+            public void onAdOpened() {
+                // Code to be executed when the ad is displayed.
+            }
+
+            @Override
+            public void onAdLeftApplication() {
+                // Code to be executed when the user has left the app.
+            }
+
+            @Override
+            public void onAdClosed() {
+                // Code to be executed when the interstitial ad is closed.
+            }
+        });
+
+        //Video Reklam
         mRewardedVideoAd = MobileAds.getRewardedVideoAdInstance(GuessItActivity.this);
         mRewardedVideoAd.loadAd("ca-app-pub-7004761147200711/1490368779",
                 new AdRequest.Builder().build());
@@ -620,6 +709,7 @@ public class GuessItActivity extends AppCompatActivity {
 
             }
         });
+
     }
 
     private void setButtonAnimationListener(){
@@ -1229,7 +1319,7 @@ public class GuessItActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
-        if(!adsrunning){
+        if(!adsrunning && !interstitalAdsrunning){
             finish();
         }
     }

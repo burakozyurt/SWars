@@ -30,14 +30,14 @@ public class SliderAdapter extends PagerAdapter {
             R.drawable.slide3};
     public String[] slidetitle = {
             "Yarışmaya Hoşgeldin!",
-            "Haftalık Ödül Merkezi",
+            "Ödül Merkezi",
             "Elmas ve Jokerler",
             "Çark Çevir."
     };
     public String[] slidedesc = {
             "",
-            "Her hafta sizler için ödüllerimiz var.\n" +
-                    "Puan tablosunda dereceye gir haftalık ödülü kazan!",
+            "Her ay sizler için ödüllerimiz var.\n" +
+                    "Puan tablosunda dereceye gir aylık ödülü kazan!",
             "Sorularda jokerlerini kullanarak daha çok \n" +
                     "tahmin yapabilirsin.",
             "Çark çevirerek yardımcıları kazanabilir ve\n" +

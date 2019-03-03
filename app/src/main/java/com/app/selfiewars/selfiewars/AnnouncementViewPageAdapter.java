@@ -162,6 +162,7 @@ public class AnnouncementViewPageAdapter extends PagerAdapter {
                                     title.setText("Günlük Ödüller");
                                 } else {
                                     title.setText("Günlük Ödüller Hazır");
+
                                     }
                             }else {
                                 title.setText("Günlük Ödüller Hazır");

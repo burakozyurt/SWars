@@ -40,7 +40,7 @@
                     android:layout_width="match_parent"
                     android:gravity="center"
                     android:layout_marginTop="10dp"
-                    android:layout_height="110dp"
+                    android:layout_height="100dp"
                     android:id="@+id/linearLayout2"
                     android:overScrollMode="always"
                     app:layout_constraintStart_toStartOf="parent"

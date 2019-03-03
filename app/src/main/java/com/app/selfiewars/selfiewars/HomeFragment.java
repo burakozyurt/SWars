@@ -14,8 +14,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.widget.*;
 import com.airbnb.lottie.LottieAnimationView;
 import com.google.android.gms.ads.AdRequest;
@@ -56,6 +54,7 @@ public class HomeFragment extends Fragment {
     private TextView doubleDipTextView;
     private TextView diamondTextView;
     private TextView diamondAdsTextView;
+    private TextView izlekazanAdsTextView;
     private static TextView righOfGameEndTimeTextView;
     private TextView usernameTextView;
     private TextView rightOfGameTextView;
@@ -137,6 +136,7 @@ public class HomeFragment extends Fragment {
         guessitButton = rootview.findViewById(R.id.home_profile_guessit_button);
         rightOfGameTextView = rootview.findViewById(R.id.home_profile_rightOfGame_textView);
         lottieAds = rootview.findViewById(R.id.lottieAds);
+        izlekazanAdsTextView = rootview.findViewById(R.id.home_fragment_lottieAdsTextView);
         rightOfGameDiamondImageView = rootview.findViewById(R.id.rightOfGameDiamond);
         settingsIcon = rootview.findViewById(R.id.settingsIcon);
         righOfGameEndTimeTextView = rootview.findViewById(R.id.rightofgame_endtime_textView);
@@ -230,9 +230,12 @@ public class HomeFragment extends Fragment {
                                             if(rightOfGame == 0 && MainActivity.guessItAdsCount > 0){
                                                 rightOfGameDiamondImageView.setVisibility(View.GONE);
                                                 lottieAds.setVisibility(View.VISIBLE);
+                                                izlekazanAdsTextView.setVisibility(View.GONE);
+
                                             }
                                             else if(rightOfGame == 0 && MainActivity.guessItAdsCount == 0 && diamondToken >=5){
                                                 lottieAds.setVisibility(View.GONE);
+                                                izlekazanAdsTextView.setVisibility(View.GONE);
                                                 rightOfGameDiamondImageView.setVisibility(View.VISIBLE);
                                                 diamondAdsTextView.setVisibility(View.VISIBLE);
                                             }
@@ -325,11 +328,12 @@ public class HomeFragment extends Fragment {
     }
 
     private void onClickListener_LottieAds(){
-        lottieAds.setOnClickListener(new View.OnClickListener() {
+        izlekazanAdsTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 lottieAds.setClickable(false);
-               // Toast.makeText(getContext(), "Reklam Yükleniyor", Toast.LENGTH_SHORT).show();
+                izlekazanAdsTextView.setClickable(false);
+                // Toast.makeText(getContext(), "Reklam Yükleniyor", Toast.LENGTH_SHORT).show();
                 MainActivity.myRefUser.child("timestamp").child("guessItAdsCount").runTransaction(new Transaction.Handler() {
                     @NonNull
                     @Override
@@ -349,6 +353,46 @@ public class HomeFragment extends Fragment {
                     public void onComplete(@Nullable DatabaseError databaseError, boolean b, @Nullable DataSnapshot dataSnapshot) {
                         if (b){
                             lottieAds.setClickable(true);
+                            izlekazanAdsTextView.setClickable(true);
+                            if(mRewardedVideoAd.isLoaded())
+                                mRewardedVideoAd.show();
+                            else
+                                mRewardedVideoAd.loadAd("ca-app-pub-3940256099942544/5224354917",
+                                        new AdRequest.Builder().build());
+                        }
+                        else {
+                            getTimeStampControl();
+                        }
+                    }
+                });
+            }
+        });
+        lottieAds.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                lottieAds.setClickable(false);
+                izlekazanAdsTextView.setClickable(false);
+                // Toast.makeText(getContext(), "Reklam Yükleniyor", Toast.LENGTH_SHORT).show();
+                MainActivity.myRefUser.child("timestamp").child("guessItAdsCount").runTransaction(new Transaction.Handler() {
+                    @NonNull
+                    @Override
+                    public Transaction.Result doTransaction(@NonNull MutableData mutableData) {
+                        Integer value= mutableData.getValue(Integer.class);
+                        if(value == 0){
+                            return null;
+                        }
+                        else {
+                            value--;
+                            mutableData.setValue(value);
+                            return Transaction.success(mutableData);
+                        }
+                    }
+
+                    @Override
+                    public void onComplete(@Nullable DatabaseError databaseError, boolean b, @Nullable DataSnapshot dataSnapshot) {
+                        if (b){
+                            lottieAds.setClickable(true);
+                            izlekazanAdsTextView.setClickable(true);
                             if(mRewardedVideoAd.isLoaded())
                                 mRewardedVideoAd.show();
                             else
@@ -539,11 +583,11 @@ public class HomeFragment extends Fragment {
                 mPicasso.with(getContext()).load(photoUrl).networkPolicy(NetworkPolicy.OFFLINE).into(profileImageView, new Callback() {
                     @Override
                     public void onSuccess() {
-                        Log.d("BPiccasso","Yüklendi");
+                        //Log.d("BPiccasso","Yüklendi");
                     }
                     @Override
                     public void onError() {
-                        Log.d("BPiccasso","Hata Verdi");
+                        //Log.d("BPiccasso","Hata Verdi");
                         mPicasso.with(getContext()).load(photoUrl).into(profileImageView);
                     }
                 });
@@ -563,11 +607,11 @@ public class HomeFragment extends Fragment {
                     Integer userscore = dataSnapshot.getValue(Integer.class);
                     scoreTextView.setText(""+userscore );
                     MainActivity.UserScore = userscore;
-                    Log.d("OptionsFirebase","UserScore"+MainActivity.UserScore);
+                    //Log.d("OptionsFirebase","UserScore"+MainActivity.UserScore);
 
                 }
                 else {
-                    Log.d("DbScore","User");
+                    //Log.d("DbScore","User");
                     MainActivity.myScoreRef.child(mAuth.getUid()).setValue(0);
                 }
 
@@ -595,7 +639,7 @@ public class HomeFragment extends Fragment {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 rightOfGame = dataSnapshot.getValue(Integer.class);
-                Log.d("RightOfGame",""+rightOfGame);
+                //Log.d("RightOfGame",""+rightOfGame);
                 rightOfGameTextView.setText(""+rightOfGame);
 
             }
@@ -690,7 +734,7 @@ public class HomeFragment extends Fragment {
                 Long nowtimeStamp = dataSnapshot.getValue(Long.class);
                 final Integer controlrightOfGame = MainActivity.myRightOfGameDataSnapShot.getValue(Integer.class);
                 if(nowtimeStamp != null){
-                    Log.d("TagRightOFGameControl","MainActivity Accessed:  ");
+                    //Log.d("TagRightOFGameControl","MainActivity Accessed:  ");
                     if(nowtimeStamp< MainActivity.guessItMilisecond){
                         if(MainActivity.myRigtOfGame == 0){
                             righOfGameEndTimeTextView.setVisibility(View.VISIBLE);
@@ -700,11 +744,13 @@ public class HomeFragment extends Fragment {
                                     setRewardAds();
                                 }
                                 lottieAds.setVisibility(View.VISIBLE);
+                                izlekazanAdsTextView.setVisibility(View.VISIBLE);
                                 rightOfGameDiamondImageView.setVisibility(View.GONE);
                                 diamondAdsTextView.setVisibility(View.GONE);
                             }
                             else {
                                 lottieAds.setVisibility(View.GONE);
+                                izlekazanAdsTextView.setVisibility(View.GONE);
                                 if(diamondToken>=5){
                                     rightOfGameDiamondImageView.setVisibility(View.VISIBLE);
                                     diamondAdsTextView.setVisibility(View.VISIBLE);
@@ -715,6 +761,7 @@ public class HomeFragment extends Fragment {
                             righOfGameEndTimeTextView.setVisibility(View.INVISIBLE);
                             rightOfGameDiamondImageView.setVisibility(View.GONE);
                             lottieAds.setVisibility(View.GONE);
+                            izlekazanAdsTextView.setVisibility(View.GONE);
                             diamondAdsTextView.setVisibility(View.GONE);
 
                         }
@@ -723,6 +770,7 @@ public class HomeFragment extends Fragment {
                         rightOfGameDiamondImageView.setVisibility(View.GONE);
                         diamondAdsTextView.setVisibility(View.GONE);
                         lottieAds.setVisibility(View.GONE);
+                        izlekazanAdsTextView.setVisibility(View.GONE);
                         if(MainActivity.myRigtOfGame < 10){
                             MainActivity.myRigtOfGameRef.setValue(10);
                         }

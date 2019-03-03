@@ -11,15 +11,16 @@
 
     <android.support.constraint.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent" android:visibility="visible"
+            android:layout_height="match_parent" android:visibility="gone"
             android:id="@+id/guess_it_activity_guess_it_ConstrainLayout">
 
         <com.airbnb.lottie.LottieAnimationView
                 app:lottie_loop="false"
                 app:lottie_autoPlay="false"
                 app:lottie_fileName="guessitbuttonbottomup.json"
-                android:layout_width="70dp"
-                android:layout_height="70dp" android:id="@+id/guessit_btn3_lottieAnimationView"
+                android:layout_width="@dimen/guess_it_lottie_button_width_height"
+                android:layout_height="@dimen/guess_it_lottie_button_width_height"
+                android:id="@+id/guessit_btn3_lottieAnimationView"
                 app:layout_constraintStart_toEndOf="@+id/guessit_btn2_lottieAnimationView"
                 android:layout_marginStart="8dp"
                 app:layout_constraintTop_toTopOf="@+id/guessit_btn2_lottieAnimationView"
@@ -84,8 +85,9 @@
                 app:lottie_loop="false"
                 app:lottie_autoPlay="false"
                 app:lottie_fileName="guessitbuttonbottomup.json"
-                android:layout_width="70dp"
-                android:layout_height="70dp" android:id="@+id/guessit_btn4_lottieAnimationView"
+                android:layout_width="@dimen/guess_it_lottie_button_width_height"
+                android:layout_height="@dimen/guess_it_lottie_button_width_height"
+                android:id="@+id/guessit_btn4_lottieAnimationView"
                 app:layout_constraintTop_toTopOf="@+id/guessit_btn3_lottieAnimationView"
                 app:layout_constraintStart_toEndOf="@+id/guessit_btn3_lottieAnimationView"
                 android:layout_marginStart="8dp"
@@ -96,8 +98,9 @@
                 app:lottie_loop="false"
                 app:lottie_autoPlay="false"
                 app:lottie_fileName="guessitbuttonbottomup.json"
-                android:layout_width="70dp"
-                android:layout_height="70dp" android:id="@+id/guessit_btn1_lottieAnimationView"
+                android:layout_width="@dimen/guess_it_lottie_button_width_height"
+                android:layout_height="@dimen/guess_it_lottie_button_width_height"
+                android:id="@+id/guessit_btn1_lottieAnimationView"
                 android:layout_marginStart="40dp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/guessit_user_profile_username_TextView"
@@ -117,8 +120,9 @@
                 app:lottie_loop="false"
                 app:lottie_autoPlay="false"
                 app:lottie_fileName="guessitbuttonbottomup.json"
-                android:layout_width="70dp"
-                android:layout_height="70dp" android:id="@+id/guessit_btn2_lottieAnimationView"
+                android:layout_width="@dimen/guess_it_lottie_button_width_height"
+                android:layout_height="@dimen/guess_it_lottie_button_width_height"
+                android:id="@+id/guessit_btn2_lottieAnimationView"
                 app:layout_constraintStart_toEndOf="@+id/guessit_btn1_lottieAnimationView"
                 android:layout_marginStart="8dp"
                 app:layout_constraintTop_toTopOf="@+id/guessit_btn1_lottieAnimationView"
@@ -260,7 +264,7 @@
                 app:lottie_loop="true"
                 app:lottie_autoPlay="false"
                 app:lottie_fileName="healthanim.json"
-                android:visibility="visible"
+                android:visibility="gone"
                 android:id="@+id/guess_it_health_lottieAnimView"
                 android:layout_marginTop="32dp"
                 app:layout_constraintTop_toBottomOf="@+id/guessit_btn3_TextView"
@@ -277,14 +281,14 @@
                   app:layout_constraintTop_toBottomOf="@+id/guess_it_health_lottieAnimView"
                   app:layout_constraintEnd_toEndOf="@+id/guess_it_health_lottieAnimView"
                   app:layout_constraintStart_toStartOf="@+id/guess_it_health_lottieAnimView"
-                  android:id="@+id/guess_it_health_TextView" android:visibility="visible"
+                  android:id="@+id/guess_it_health_TextView" android:visibility="gone"
                   app:layout_constraintBottom_toBottomOf="parent" android:layout_marginBottom="16dp"/>
     </android.support.constraint.ConstraintLayout>
     <android.support.constraint.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent" android:layout_alignParentStart="true"
             android:layout_alignParentTop="true"
-            android:id="@+id/guess_it_activity_loading_ConstrainLayout" android:visibility="gone">
+            android:id="@+id/guess_it_activity_loading_ConstrainLayout" android:visibility="visible">
         <com.airbnb.lottie.LottieAnimationView
                 android:layout_width="250dp"
                 app:lottie_fileName="guessitload.json"

@@ -12,8 +12,15 @@ import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.*;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.TextView;
 import com.airbnb.lottie.LottieAnimationView;
+import com.google.android.gms.ads.AdListener;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.InterstitialAd;
+import com.google.android.gms.ads.MobileAds;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.*;
@@ -51,6 +58,7 @@ public class AuthUsersInfoActivity extends Activity {
     private String photoUrl;
     private final Integer firstRightOfGameValue = 10;
     private Animation animation;
+    private InterstitialAd mInterstitialAd;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -75,7 +83,43 @@ public class AuthUsersInfoActivity extends Activity {
         continueButtonClick();
         animation = AnimationUtils.loadAnimation(this,R.anim.smalltobig);
         profileImageView.startAnimation(animation);
+        mInterstitialAd = new InterstitialAd(this);
+        MobileAds.initialize(AuthUsersInfoActivity.this, "ca-app-pub-7004761147200711~5104636223");
+        //mInterstitialAd.setAdUnitId("ca-app-pub-3940256099942544/1033173712");
+        mInterstitialAd.setAdUnitId("ca-app-pub-7004761147200711/6381566949");
+        mInterstitialAd.loadAd(new AdRequest.Builder().build());
+        setmInterstitialAd();
+    }
+    public void setmInterstitialAd(){
+        mInterstitialAd.setAdListener(new AdListener() {
+            @Override
+            public void onAdLoaded() {
+                // Code to be executed when an ad finishes loading.
+            }
 
+            @Override
+            public void onAdFailedToLoad(int errorCode) {
+                // Code to be executed when an ad request fails.
+            }
+
+            @Override
+            public void onAdOpened() {
+                // Code to be executed when the ad is displayed.
+            }
+
+            @Override
+            public void onAdLeftApplication() {
+                // Code to be executed when the user has left the app.
+            }
+
+            @Override
+            public void onAdClosed() {
+                // Code to be executed when the interstitial ad is closed.
+                Intent i = new Intent(getApplicationContext(),MainActivity.class);
+                startActivity(i);
+                finish();
+            }
+        });
     }
     public void continueButtonClick(){
         continueButton.setOnClickListener(new View.OnClickListener() {
@@ -150,9 +194,14 @@ public class AuthUsersInfoActivity extends Activity {
                                                                                                                                         @Override
                                                                                                                                         public void onSuccess(Void aVoid) {
                                                                                                                                             signupText.setText("Hesap Oluşturuldu.");
-                                                                                                                                            Intent i = new Intent(getApplicationContext(),MainActivity.class);
-                                                                                                                                            startActivity(i);
-                                                                                                                                            finish();
+                                                                                                                                            if (mInterstitialAd.isLoaded()) {
+                                                                                                                                                mInterstitialAd.show();
+                                                                                                                                            } else {
+                                                                                                                                                Intent i = new Intent(getApplicationContext(),MainActivity.class);
+                                                                                                                                                startActivity(i);
+                                                                                                                                                finish();
+                                                                                                                                            }
+
                                                                                                                                         }
                                                                                                                                     });
                                                                                                                                 }

@@ -6,6 +6,9 @@
     <dimen name="guess_it_health_width_height">75dp</dimen>
     <dimen name="guess_it_photo_width_height">200dp</dimen>
     <dimen name="guess_it_jokers_width_height">40dp</dimen>
+    <dimen name="guess_it_lottie_button_width_height">60dp</dimen>
+    <dimen name="fragment_spin_izlekazan_TextSize">10sp</dimen>
+
     <dimen name="fragment_spin_wheel_width_height">300dp</dimen>
     <dimen name="fragment_home_profile_photo_width_height">70dp</dimen>
     <dimen name="fragment_title_Text_Size">18sp</dimen>

@@ -36,7 +36,6 @@
                     app:layout_constraintTop_toTopOf="@+id/starImageView"
                     app:layout_constraintVertical_bias="0.571"/>
             <TextView
-                    android:text="mark"
                     android:textSize="@dimen/cardview_rank_username_and_number_text_size"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"

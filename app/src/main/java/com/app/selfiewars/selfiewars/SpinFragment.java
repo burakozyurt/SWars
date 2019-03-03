@@ -14,7 +14,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
 import com.airbnb.lottie.LottieAnimationView;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.MobileAds;
@@ -346,6 +345,21 @@ public class SpinFragment extends Fragment{
 
     }
     private void setClickAdsListener(){
+        adsConstraintLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(!isrunnigluckywheel){
+                    if(mRewardedVideoAd.isLoaded()){
+                        MainActivity.myRefUser.child("rightofspin").child(getResources().getString(R.string.spicAdsCount)).setValue(0).addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void aVoid) {
+                                mRewardedVideoAd.show();
+                            }
+                        });
+                    }
+                }
+            }
+        });
         spinAdsAnimView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
