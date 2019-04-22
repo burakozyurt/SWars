@@ -27,18 +27,6 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content">
 
-                    <TextView
-                            android:text="1"
-                            android:textStyle="bold"
-                            android:textColor="@color/textcolorblack"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:id="@+id/home_profile_rank_textView"
-                            app:layout_constraintTop_toTopOf="@+id/textView6"
-                            app:layout_constraintBottom_toBottomOf="@+id/textView6"
-                            app:layout_constraintVertical_bias="0.0"
-                            app:layout_constraintStart_toEndOf="@+id/textView6"
-                    />
                     <ImageView
                             android:src="@drawable/settings"
                             android:backgroundTintMode="add"
@@ -71,14 +59,19 @@
                             app:layout_constraintEnd_toEndOf="@+id/textView4"
                     />
                     <TextView
-                            android:text="@string/ranking_value"
+                            android:text="1"
+                            android:textSize="@dimen/home_fragment_rank_number_textsize"
+                            android:textStyle="bold"
                             android:textColor="@color/textcolorblack"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:id="@+id/textView6" android:layout_marginTop="8dp"
-                            app:layout_constraintTop_toBottomOf="@+id/home_profile_username_textView"
+                            android:id="@+id/home_profile_rank_textView"
+                            app:layout_constraintTop_toBottomOf="@+id/home_profile_circleImageView"
+                            app:layout_constraintBottom_toBottomOf="@+id/home_profile_circleImageView"
+                            android:background="@drawable/oval_shape"
+                            app:layout_constraintVertical_bias="0.736"
                             app:layout_constraintStart_toStartOf="@+id/home_profile_circleImageView"
-                    />
+                            app:layout_constraintEnd_toEndOf="@+id/home_profile_circleImageView" android:padding="3dp"/>
                     <TextView
                             android:text="@string/home"
                             android:layout_width="wrap_content"
@@ -97,7 +90,7 @@
                             android:layout_height="wrap_content"
                             android:textSize="11sp"
                             android:id="@+id/home_profile_username_textView" android:layout_marginTop="8dp"
-                            app:layout_constraintTop_toBottomOf="@+id/home_profile_circleImageView"
+                            app:layout_constraintTop_toBottomOf="@+id/home_profile_rank_textView"
                             app:layout_constraintEnd_toEndOf="@+id/home_profile_circleImageView"
                             app:layout_constraintStart_toStartOf="@+id/home_profile_circleImageView"/>
                     <TextView
@@ -118,8 +111,9 @@
                             android:id="@+id/linearLayout"
                             app:layout_constraintStart_toStartOf="parent" app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintHorizontal_bias="1.0"
-                            app:layout_constraintTop_toBottomOf="@+id/textView6" android:layout_marginTop="8dp"
-                            app:layout_constraintBottom_toBottomOf="parent" android:layout_marginBottom="4dp">
+                            app:layout_constraintBottom_toBottomOf="parent" android:layout_marginBottom="4dp"
+                            app:layout_constraintTop_toBottomOf="@+id/home_profile_username_textView"
+                            android:layout_marginTop="8dp">
                         <android.support.constraint.ConstraintLayout
                                 android:layout_width="match_parent"
                                 android:layout_height="32dp">
@@ -386,7 +380,6 @@
                     android:layout_marginStart="8dp" app:layout_constraintBottom_toBottomOf="parent"
                     android:id="@+id/linearLayout17">
                 <TextView
-                        android:text="End Time: 19h 23m"
                         android:layout_width="wrap_content"
                         android:textStyle="bold"
                         android:textColor="@color/textcolorblack"

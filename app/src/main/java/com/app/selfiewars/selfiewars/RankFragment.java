@@ -34,6 +34,9 @@ public class RankFragment extends Fragment {
     private TextView hourValueTextView;
     private TextView minValueTextView;
     private CountDownTimer countDownTimer;
+    private String uid;
+    private static int myrank = 0;
+
     public RankFragment() {
 
         rankingInfoActivityList = new ArrayList<>();
@@ -54,6 +57,7 @@ public class RankFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_rank, container, false);
+        uid = FirebaseAuth.getInstance().getUid();
         rankSetup(view);
         setRankEndTime(view);
         getTimestampForEndTime();
@@ -64,14 +68,27 @@ public class RankFragment extends Fragment {
         MainActivity.myScoreRef.orderByValue().limitToLast(10).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                boolean meexist= false;
                 final List<ScoreInfo> scoreInfos = new ArrayList<>();
                 for (DataSnapshot ds : dataSnapshot.getChildren()) {
                     ScoreInfo scoreInfo = new ScoreInfo();
                     scoreInfo.setScoreValue(ds.getValue(Integer.class));
                     scoreInfo.setUid(ds.getKey());
                     scoreInfos.add(scoreInfo);
+                    if (scoreInfo.getUid().equalsIgnoreCase(uid)) {
+                        meexist = true;
+                        myrank = MainActivity.UserRank;
+                    }
                     if (scoreInfos.size() == dataSnapshot.getChildrenCount()) {
                         Collections.reverse(scoreInfos);
+                        if (!meexist){
+                            ScoreInfo myscoreInfo = new ScoreInfo();
+                            myscoreInfo.setScoreValue(MainActivity.UserRank);
+                            myscoreInfo.setUid(uid);
+                            scoreInfos.add(myscoreInfo);
+                            myrank = MainActivity.UserRank;
+
+                        }
                         RecyclerView recyclerView = view.findViewById(R.id.recyclerViewRank);
                         RankFragmentAdapter rankRcycView = new RankFragmentAdapter(getContext(),
                                 scoreInfos);
@@ -87,7 +104,8 @@ public class RankFragment extends Fragment {
 
             }
         });
-        }
+
+    }
     private void setRankEndTime(View view) {
         dayValueTextView = view.findViewById(R.id.rank_valueOfDayTextView);
         hourValueTextView = view.findViewById(R.id.rank_valueOfHourTextView);
@@ -189,4 +207,12 @@ public class RankFragment extends Fragment {
         }
     }
 
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (MainActivity.UserRank !=null && MainActivity.UserRank != myrank){
+            rankSetup(getView());
+        }
+    }
 }

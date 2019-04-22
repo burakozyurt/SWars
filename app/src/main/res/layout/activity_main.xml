@@ -8,7 +8,7 @@
         tools:context=".MainActivity">
     <android.support.design.widget.BottomNavigationView
             android:layout_width="match_parent"
-            android:layout_height="56dp"
+            android:layout_height="@dimen/bottom_nav_bar_h_size"
             android:background="#ffffff"
             app:itemIconTint="@color/nav_item_colors"
             android:backgroundTint="@color/background"
@@ -18,7 +18,8 @@
             app:menu="@menu/nav_items"
             tools:layout_editor_absoluteY="512dp" tools:layout_editor_absoluteX="16dp"
             android:layout_alignParentStart="true" android:layout_alignParentBottom="true"
-            android:layout_marginBottom="0dp">
+            android:layout_marginBottom="0dp" app:itemIconSize="@dimen/bottom_nav_bar_iconsize"
+            app:labelVisibilityMode="unlabeled">
     </android.support.design.widget.BottomNavigationView>
     <FrameLayout
             android:layout_width="match_parent"

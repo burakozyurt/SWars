@@ -28,13 +28,14 @@
                     android:layout_marginTop="16dp"
                     app:layout_constraintTop_toBottomOf="@+id/imageView15" android:layout_marginBottom="1dp"
                     app:layout_constraintBottom_toTopOf="@+id/button3"
-                    android:gravity="center"/>
+                    android:gravity="center" android:padding="@dimen/spin_fragment_spineView_padding"/>
             <Button
                     android:text="Çevir"
                     android:textColor="@color/textcolor"
+                    android:textSize="@dimen/spin_fragment_button_text_size"
                     android:background="@drawable/spin_button_oval"
-                    android:layout_width="95dp"
-                    android:layout_height="40dp" android:id="@+id/button3"
+                    android:layout_width="@dimen/spin_fragment_button_w_size"
+                    android:layout_height="@dimen/spin_fragment_button_h_size" android:id="@+id/button3"
                     app:layout_constraintEnd_toEndOf="parent" android:layout_marginEnd="8dp"
                     app:layout_constraintStart_toStartOf="parent" android:layout_marginStart="8dp"
                     app:layout_constraintHorizontal_bias="0.496"

@@ -1,8 +1,11 @@
 package com.app.selfiewars.selfiewars;
 
 import android.animation.Animator;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Handler;
@@ -12,6 +15,7 @@ import android.support.constraint.ConstraintLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -62,6 +66,7 @@ public class GuessItActivity extends AppCompatActivity {
     private TextView btn3TextView;
     private TextView btn4TextView;
     private TextView loseScore;
+    private TextView loseAllScore;
     private TextView playAgainTextView;
     private TextView questionCounTextView;
     private TextView healthValueTextView;
@@ -157,6 +162,8 @@ public class GuessItActivity extends AppCompatActivity {
         questionCounTextView = findViewById(R.id.guess_it_question_count_TextView);
         homeButton = findViewById(R.id.guess_it_lose_home_Button);
         loseScore = findViewById(R.id.guess_it_lose_score_textView);
+        loseScore.startAnimation(AnimationUtils.loadAnimation(GuessItActivity.this,R.anim.updown_guess_it));
+        loseAllScore = findViewById(R.id.guess_it_lose_all_score_textView);
         loadingFeedBackTextView = findViewById(R.id.loading_feedback_TextView);
         loadinglayout = findViewById(R.id.guess_it_activity_loading_ConstrainLayout);
         guessitlayout = findViewById(R.id.guess_it_activity_guess_it_ConstrainLayout);
@@ -310,7 +317,7 @@ public class GuessItActivity extends AppCompatActivity {
             public void onSuccess() {
                 setButtonsText(options(listUserProperties.get(listUserPropertiesIndex).getAge()));
                 playAnimationButtons();
-                userNameTextView.setText(guessItUserData.getUserName());
+                //userNameTextView.setText(guessItUserData.getUserName());
                 userNameTextView.setVisibility(View.VISIBLE);
                 startCountDownTimer();
                 setJokerReset();
@@ -437,23 +444,27 @@ public class GuessItActivity extends AppCompatActivity {
                 @Override
                 public void onComplete(@Nullable final DatabaseError databaseError, boolean b, @Nullable DataSnapshot dataSnapshot) {
                     if (b){
+                        loseScore.setText("" + score + " Puan");
+                        loseAllScore.setText("Toplam Puan: "+MainActivity.UserScore);
                         if (MainActivity.myRigtOfGame == 9 || MainActivity.myRigtOfGame == 1){
                             if (mInterstitialAd.isLoaded()) {
                                 mInterstitialAd.show();
                                 interstitalAdsrunning = true;
 
                             }else {
-                                Toast.makeText(GuessItActivity.this, "Yüklenmedi", Toast.LENGTH_SHORT).show();
+                                //Toast.makeText(GuessItActivity.this, "Yüklenmedi", Toast.LENGTH_SHORT).show();
                             }
                         }
+                        loadinglayout.setVisibility(View.GONE);
                         guessitlayout.setVisibility(View.GONE);
                         loselayout.setVisibility(View.VISIBLE);
-                        loseScore.setText("" + score + " Puan");
                     }else {
                         if(score !=0){
                             MainActivity.myScoreRef.child(mAuth.getUid()).setValue(MainActivity.UserScore+score).addOnCompleteListener(new OnCompleteListener<Void>() {
                                 @Override
                                 public void onComplete(@NonNull Task<Void> task) {
+                                    loseScore.setText("" + score + " Puan");
+                                    loseAllScore.setText("Toplam Puan: "+MainActivity.UserScore);
                                     if (MainActivity.myRigtOfGame == 9 || MainActivity.myRigtOfGame == 1){
                                         if (mInterstitialAd.isLoaded()) {
                                             mInterstitialAd.show();
@@ -466,14 +477,16 @@ public class GuessItActivity extends AppCompatActivity {
                                         }
 
                                     }
+                                    loadinglayout.setVisibility(View.GONE);
                                     guessitlayout.setVisibility(View.GONE);
                                     loselayout.setVisibility(View.VISIBLE);
-                                    loseScore.setText("" + score + " Puan");
                                     Toast.makeText(GuessItActivity.this,databaseError.getMessage(),Toast.LENGTH_SHORT).show();
                                 }
                             });
                         }else {
                             Toast.makeText(GuessItActivity.this,databaseError.getMessage(),Toast.LENGTH_SHORT).show();
+                            loseScore.setText("" + score + " Puan");
+                            loseAllScore.setText("Toplam Puan: "+MainActivity.UserScore);
                             if (MainActivity.myRigtOfGame == 9 || MainActivity.myRigtOfGame == 1){
                                 if (mInterstitialAd.isLoaded()) {
                                     mInterstitialAd.show();
@@ -482,17 +495,19 @@ public class GuessItActivity extends AppCompatActivity {
                                     // Toast.makeText(GuessItActivity.this, "Açıldı", Toast.LENGTH_SHORT).show();
 
                                 }else {
-                                   // Toast.makeText(GuessItActivity.this, "Yüklenmedi", Toast.LENGTH_SHORT).show();
+                                    // Toast.makeText(GuessItActivity.this, "Yüklenmedi", Toast.LENGTH_SHORT).show();
                                 }
                             }
+                            loadinglayout.setVisibility(View.GONE);
                             guessitlayout.setVisibility(View.GONE);
                             loselayout.setVisibility(View.VISIBLE);
-                            loseScore.setText("" + score + " Puan");
                         }
                     }
                 }
             });
         }else {
+            loseScore.setText("" + score + " Puan");
+            loseAllScore.setText("Toplam Puan: "+MainActivity.UserScore);
             if (MainActivity.myRigtOfGame == 9 || MainActivity.myRigtOfGame == 1){
                 if (mInterstitialAd.isLoaded()) {
                     mInterstitialAd.show();
@@ -503,9 +518,9 @@ public class GuessItActivity extends AppCompatActivity {
                     //Toast.makeText(GuessItActivity.this, "Yüklenmedi", Toast.LENGTH_SHORT).show();
                 }
             }
+            loadinglayout.setVisibility(View.GONE);
             guessitlayout.setVisibility(View.GONE);
             loselayout.setVisibility(View.VISIBLE);
-            loseScore.setText("" + score + " Puan");
         }
     }
     private void setLoselayoutItemsClickListener(){
@@ -526,50 +541,55 @@ public class GuessItActivity extends AppCompatActivity {
 
                         @Override
                         public void onComplete(@Nullable DatabaseError databaseError, boolean b, @Nullable DataSnapshot dataSnapshot) {
-                            final Long nowtimeStamp = dataSnapshot.getValue(Long.class);
-                            if(nowtimeStamp < MainActivity.endTimeStamp) {
-                                MainActivity.myRigtOfGameRef.runTransaction(new Transaction.Handler() {
-                                    @NonNull
-                                    @Override
-                                    public Transaction.Result doTransaction(@NonNull MutableData mutableData) {
-                                        Integer i = mutableData.getValue(Integer.class);
-                                        if (i == 0) {
-                                            return null;
-                                        } else {
-                                            i--;
-                                            mutableData.setValue(i);
-                                            return Transaction.success(mutableData);
-                                        }
-                                    }
-
-                                    @Override
-                                    public void onComplete(@Nullable DatabaseError databaseError, boolean b, @Nullable DataSnapshot dataSnapshot) {
-                                        if (b) {
-                                            if (MainActivity.myRigtOfGame == 9) {
-                                                MainActivity.myRefUser.child(getResources().getString(R.string.timestamp)).child("guessItMilisecond").setValue(nowtimeStamp + 86400000).addOnSuccessListener(new OnSuccessListener<Void>() {
-                                                    @Override
-                                                    public void onSuccess(Void aVoid) {
-                                                        Intent i = new Intent(getApplicationContext(), GuessItActivity.class);
-                                                        startActivity(i);
-                                                        finish();
-                                                    }
-                                                });
+                            if (b) {
+                                final Long nowtimeStamp = dataSnapshot.getValue(Long.class);
+                                if (nowtimeStamp < MainActivity.endTimeStamp) {
+                                    MainActivity.myRigtOfGameRef.runTransaction(new Transaction.Handler() {
+                                        @NonNull
+                                        @Override
+                                        public Transaction.Result doTransaction(@NonNull MutableData mutableData) {
+                                            Integer i = mutableData.getValue(Integer.class);
+                                            if (i == 0) {
+                                                return null;
                                             } else {
-                                                Intent i = new Intent(getApplicationContext(), GuessItActivity.class);
-                                                startActivity(i);
-                                                finish();
+                                                i--;
+                                                mutableData.setValue(i);
+                                                return Transaction.success(mutableData);
                                             }
                                         }
-                                        else {
-                                            MainActivity.showPopUpInfo(null,"Günlük tahmin hakkınız bitmiştir!!",null,GuessItActivity.this);
-                                            isGameStart = false;
+
+                                        @Override
+                                        public void onComplete(@Nullable DatabaseError databaseError, boolean b, @Nullable DataSnapshot dataSnapshot) {
+                                            if (b) {
+                                                if (MainActivity.myRigtOfGame == 9) {
+                                                    MainActivity.myRefUser.child(getResources().getString(R.string.timestamp)).child("guessItMilisecond").setValue(nowtimeStamp + 86400000).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                        @Override
+                                                        public void onSuccess(Void aVoid) {
+                                                            Intent i = new Intent(GuessItActivity.this, GuessItActivity.class);
+                                                            startActivity(i);
+                                                            finish();
+                                                        }
+                                                    });
+                                                } else {
+                                                    Intent i = new Intent(GuessItActivity.this, GuessItActivity.class);
+                                                    startActivity(i);
+                                                    finish();
+                                                }
+                                            } else {
+                                                MainActivity.showPopUpInfo(null, "Günlük tahmin hakkınız bitmiştir!!", null, GuessItActivity.this);
+                                                isGameStart = false;
+                                            }
                                         }
-                                    }
-                                });
-                            }
-                            else {
-                                MainActivity.showPopUpInfo(null,"Hafta yenilenmemiştir!!",
-                                        "Sistem bu haftanın yapılandırmasını tamamladıktan sonra yeni hafta başlayacaktır. Başladığında bildirim gönderilecektir. \n \n ~Selfie Wars Tavsiyesi~ \n Yeni hafta için joker hazırlığı yapmak sıralamada avantaj sağlayacaktır."
+                                    });
+                                } else {
+                                    MainActivity.showPopUpInfo(null, "Hafta yenilenmemiştir!!",
+                                            "Sistem bu haftanın yapılandırmasını tamamladıktan sonra yeni hafta başlayacaktır. Başladığında bildirim gönderilecektir. \n \n ~Selfie Wars Tavsiyesi~ \n Yeni hafta için joker hazırlığı yapmak sıralamada avantaj sağlayacaktır."
+                                            , GuessItActivity.this);
+                                    isGameStart = false;
+                                }
+                            }else {
+                                MainActivity.showPopUpInfo(null, "Sunucda Hata Oluştu!",
+                                        "Tekrar Deneyin."
                                         , GuessItActivity.this);
                                 isGameStart = false;
                             }
@@ -582,6 +602,7 @@ public class GuessItActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 if(!isGameStart){
+                    HomeFragment.getRank();
                     GuessItActivity.super.onBackPressed();
                     finish();
                 }
@@ -1105,6 +1126,7 @@ public class GuessItActivity extends AppCompatActivity {
         Picasso.with(getApplicationContext()).load(listUserProperties.get(index).getPhotoUrl()).noFade().into(loadTempImageView, new Callback() {
             @Override
             public void onSuccess() {
+                loselayout.setVisibility(View.GONE);
                 loadinglayout.setVisibility(View.GONE);
                 guessitlayout.setVisibility(View.VISIBLE);
                 isGameStart = true;
@@ -1113,7 +1135,44 @@ public class GuessItActivity extends AppCompatActivity {
 
             @Override
             public void onError() {
-                isNextUserList = false;
+                Picasso.with(getApplicationContext()).load(listUserProperties.get(index).getPhotoUrl()).noFade().into(loadTempImageView, new Callback() {
+                    @Override
+                    public void onSuccess() {
+                        loselayout.setVisibility(View.GONE);
+                        loadinglayout.setVisibility(View.GONE);
+                        guessitlayout.setVisibility(View.VISIBLE);
+                        isGameStart = true;
+                        gameManagement();
+                    }
+
+                    @Override
+                    public void onError() {
+                        Picasso.with(getApplicationContext()).load(listUserProperties.get(index).getPhotoUrl()).noFade().into(loadTempImageView, new Callback() {
+                            @Override
+                            public void onSuccess() {
+                                loselayout.setVisibility(View.GONE);
+                                loadinglayout.setVisibility(View.GONE);
+                                guessitlayout.setVisibility(View.VISIBLE);
+                                isGameStart = true;
+                                gameManagement();
+                            }
+
+                            @Override
+                            public void onError() {
+                                if (isNetworkAvailable()){
+                                    Intent i = new Intent(GuessItActivity.this, GuessItActivity.class);
+                                    i.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+                                    startActivity(i);
+                                    finish();
+                                }else {
+                                    setScoreDataInFirebaseAndLoseLayoutOpen();
+                                    isNextUserList = false;
+                                    isGameStart = false;
+                                }
+                            }
+                        });
+                    }
+                });
             }
         });
     }
@@ -1320,7 +1379,20 @@ public class GuessItActivity extends AppCompatActivity {
     protected void onPause() {
         super.onPause();
         if(!adsrunning && !interstitalAdsrunning){
+            HomeFragment.getRank();
             finish();
         }
+    }
+    private boolean isNetworkAvailable() {
+        ConnectivityManager connectivityManager
+                = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        SelfieWars.context = GuessItActivity.this;
     }
 }

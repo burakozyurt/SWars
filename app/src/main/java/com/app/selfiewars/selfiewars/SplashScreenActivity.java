@@ -193,7 +193,7 @@ public class SplashScreenActivity extends Activity {
         SharedPreferences sharedPref = this.getPreferences(Context.MODE_PRIVATE);
         final Boolean savedChecked = sharedPref.getBoolean("isChecked",false);
 
-        Thread timerThread = new Thread(){
+        final Thread timerThread = new Thread(){
             public void run(){
                 try{
                     if (savedChecked)
@@ -207,18 +207,22 @@ public class SplashScreenActivity extends Activity {
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            if(savedChecked == true){
-                                if(isMainActivity){
-                                    Intent intent = new Intent(getApplicationContext(),MainActivity.class);
-                                    startActivity(intent);
+                            if (SelfieWars.connection){
+                                if(savedChecked == true){
+                                    if(isMainActivity){
+                                        Intent intent = new Intent(getApplicationContext(),MainActivity.class);
+                                        startActivity(intent);
+                                    }else {
+                                        Intent i = new Intent(getApplicationContext(), AuthenticationScreen.class);
+                                        startActivity(i);
+                                    }
                                 }else {
-                                    Intent i = new Intent(getApplicationContext(), AuthenticationScreen.class);
-                                    startActivity(i);
+                                    selfiewarsImageView.setVisibility(View.GONE);
+                                    selfiewarsLottie.setVisibility(View.GONE);
+                                    setupViewPager();
                                 }
                             }else {
-                                selfiewarsImageView.setVisibility(View.GONE);
-                                selfiewarsLottie.setVisibility(View.GONE);
-                                setupViewPager();
+                                setup();
                             }
                         }
                     });
@@ -234,5 +238,7 @@ public class SplashScreenActivity extends Activity {
     protected void onResume() {
         super.onResume();
         //setup();
+        SelfieWars.context = SplashScreenActivity.this;
+
     }
 }

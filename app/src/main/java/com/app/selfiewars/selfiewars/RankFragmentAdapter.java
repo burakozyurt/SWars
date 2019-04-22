@@ -33,13 +33,13 @@ public class RankFragmentAdapter extends RecyclerView.Adapter<RankFragmentAdapte
         return new ViewHolder(view);
     }
     @Override
-    public void onBindViewHolder(@NonNull final ViewHolder viewHolder, int i) {
+    public void onBindViewHolder(@NonNull final ViewHolder viewHolder, final int i) {
         MainActivity.myRefNodeUser.child(mData.get(i).getUid()).child("properties").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 UserProperties userProperties = dataSnapshot.getValue(UserProperties.class);
                 viewHolder.usernameTextView.setText(""+userProperties.getUserName());
-                if(userProperties.getUserName().equals(MainActivity.userProperties.getUserName())){
+                if(userProperties.getUserName().equals(MainActivity.userProperties.getUserName())&&i<10){
                     viewHolder.usernameTextView.setTextColor(context.getResources().getColor(R.color.background5050));
                 }
                 Picasso.with(context).load(userProperties.getPhotoUrl()).into(viewHolder.userPhotoImageView);
@@ -50,10 +50,20 @@ public class RankFragmentAdapter extends RecyclerView.Adapter<RankFragmentAdapte
 
             }
         });
-        if(i==0)
-        viewHolder.starImageView.setImageResource(R.drawable.star);
-        else viewHolder.starImageView.setVisibility(View.INVISIBLE);
-        viewHolder.rankNumber.setText(""+(i+1));
+        if(i==0){
+            viewHolder.starImageView.setImageResource(R.drawable.star);
+            viewHolder.rankNumber.setText(""+(i+1));
+        }
+        else if (i == 10){
+            viewHolder.starImageView.setVisibility(View.INVISIBLE);
+            viewHolder.rankNumber.setText(""+(mData.get(i).getScoreValue()));
+            viewHolder.relativeLayout.setBackgroundColor(context.getResources().getColor(R.color.guess_it_button2));
+            viewHolder.usernameTextView.setTextColor(context.getResources().getColor(R.color.textcolor));
+            viewHolder.rankNumber.setTextColor(context.getResources().getColor(R.color.textcolor));
+        }else {
+            viewHolder.starImageView.setVisibility(View.INVISIBLE);
+            viewHolder.rankNumber.setText(""+(i+1));
+        }
     }
 
     @Override

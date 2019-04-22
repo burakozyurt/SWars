@@ -78,4 +78,11 @@ public class UserAgreementandSSSActivity extends AppCompatActivity {
 
         sssRecyclerViewAdapter.notifyDataSetChanged();
     }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        SelfieWars.context = UserAgreementandSSSActivity.this;
+
+    }
 }

@@ -47,7 +47,7 @@ import static java.text.DateFormat.getDateTimeInstance;
 public class HomeFragment extends Fragment {
     private TextView displayNameTextView;
     private TextView ageTextView;
-    private TextView rankTextView;
+    private static TextView rankTextView;
     private TextView scoreTextView;
     private TextView healthTextView;
     private TextView fiftyFiftyTextView;
@@ -63,7 +63,7 @@ public class HomeFragment extends Fragment {
     private String photoUrl;
     private FirebaseDatabase mdatabase;
     private DatabaseReference myCorrectUsersRef;
-    private FirebaseAuth mAuth;
+    private static FirebaseAuth mAuth;
     private Picasso mPicasso;
     private Button guessitButton;
     private Wildcards wildcards;
@@ -206,7 +206,7 @@ public class HomeFragment extends Fragment {
                                     public void onComplete(@Nullable DatabaseError databaseError, boolean b, @Nullable DataSnapshot dataSnapshot) {
                                         if(b){
                                             if(rightOfGame == 9){
-                                                MainActivity.myRefUser.child(getResources().getString(R.string.timestamp)).child("guessItMilisecond").setValue(nowtimeStamp + 86400000).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                MainActivity.myRefUser.child(getResources().getString(R.string.timestamp)).child("guessItMilisecond").setValue(nowtimeStamp + 43200000).addOnSuccessListener(new OnSuccessListener<Void>() {
                                                     @Override
                                                     public void onSuccess(Void aVoid) { isClickGuessitButton = false;
                                                         MainActivity.myRefUser.child(getResources().getString(R.string.timestamp)).child("guessItAdsCount").setValue(3).addOnSuccessListener(new OnSuccessListener<Void>() {
@@ -227,6 +227,7 @@ public class HomeFragment extends Fragment {
                                         }else {
                                             MainActivity.showPopUpInfo(null,"Günlük tahmin hakkınız bitmiştir!!",null,getContext());
                                             Log.d("rightofgame:" ,"rightofgame:--"+rightOfGame+"---    guessadsCount : "+guessItAdsCount);
+                                            getTimeStampControl();
                                             if(rightOfGame == 0 && MainActivity.guessItAdsCount > 0){
                                                 rightOfGameDiamondImageView.setVisibility(View.GONE);
                                                 lottieAds.setVisibility(View.VISIBLE);
@@ -649,6 +650,10 @@ public class HomeFragment extends Fragment {
 
             }
         });
+        getRank();
+
+    }
+    public static void getRank(){
         MainActivity.myScoreRef.orderByValue().addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -658,7 +663,11 @@ public class HomeFragment extends Fragment {
                     uid = ds.getKey();
                     if(uid.equals(mAuth.getUid())){
                         i = Math.abs(dataSnapshot.getChildrenCount() - i);
+                        if (i<10){
+                            rankTextView.setText(" "+i+" ");
+                        }else
                         rankTextView.setText(""+i);
+                        MainActivity.UserRank =(int) i;
                         break;
                     }
                     i++;

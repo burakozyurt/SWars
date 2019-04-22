@@ -223,4 +223,11 @@ public class InAppBillingActivity extends AppCompatActivity{
             return false;
         }
     }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        SelfieWars.context = InAppBillingActivity.this;
+
+    }
 }

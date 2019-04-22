@@ -187,7 +187,8 @@
                 android:id="@+id/guessit_user_profile_username_TextView"
                 app:layout_constraintTop_toBottomOf="@+id/guessit_user_profile_imageView"
                 android:layout_marginTop="8dp" app:layout_constraintEnd_toEndOf="@+id/guessit_user_profile_imageView"
-                app:layout_constraintStart_toStartOf="@+id/guessit_user_profile_imageView"/>
+                app:layout_constraintStart_toStartOf="@+id/guessit_user_profile_imageView"
+                android:text="Kaç Yaşında? " android:visibility="gone"/>
         <TextView
                 android:text="21"
                 android:layout_width="0dp"
@@ -283,12 +284,22 @@
                   app:layout_constraintStart_toStartOf="@+id/guess_it_health_lottieAnimView"
                   android:id="@+id/guess_it_health_TextView" android:visibility="gone"
                   app:layout_constraintBottom_toBottomOf="parent" android:layout_marginBottom="16dp"/>
+        <TextView
+                android:text="Jokerler"
+                android:textColor="@color/textcolor"
+                android:textSize="@dimen/fragment_spin_izlekazan_TextSize"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/textView15" app:layout_constraintEnd_toEndOf="@+id/guessit_joker1_lottieAnimationView"
+                app:layout_constraintStart_toStartOf="@+id/guessit_joker1_lottieAnimationView"
+                android:layout_marginBottom="8dp"
+                app:layout_constraintBottom_toTopOf="@+id/guessit_joker1_lottieAnimationView"/>
     </android.support.constraint.ConstraintLayout>
     <android.support.constraint.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent" android:layout_alignParentStart="true"
             android:layout_alignParentTop="true"
-            android:id="@+id/guess_it_activity_loading_ConstrainLayout" android:visibility="visible">
+            android:id="@+id/guess_it_activity_loading_ConstrainLayout" android:visibility="gone">
         <com.airbnb.lottie.LottieAnimationView
                 android:layout_width="250dp"
                 app:lottie_fileName="guessitload.json"
@@ -321,25 +332,28 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent" android:layout_alignParentStart="true"
             android:layout_alignParentTop="true"
-            android:id="@+id/guess_it_activity_lose_ConstrainLayout" android:visibility="gone">
+            android:id="@+id/guess_it_activity_lose_ConstrainLayout" android:visibility="visible">
 
         <TextView
-                android:text="1500 Puan"
+                android:text="25 Puan"
                 android:textStyle="bold"
                 android:textAlignment="center"
                 android:textSize="25dp"
-                android:layout_width="0dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textColor="@color/textcolor"
-                android:id="@+id/guess_it_lose_score_textView" android:layout_marginTop="250dp"
+                android:id="@+id/guess_it_lose_score_textView"
+                android:layout_marginTop="@dimen/guess_it_Score_Constraint_Top"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-        />
+                android:background="@drawable/home_jokers_background_design_middle"
+                android:paddingLeft="20dp" android:paddingRight="20dp" android:paddingTop="6dp"
+                android:paddingBottom="6dp"/>
         <Button
                 android:text="Anasayfa"
                 android:textStyle="bold"
-                android:background="@drawable/guess_it_and_game_button_oval"
+                android:background="@drawable/edittextoval"
                 android:layout_width="120dp"
                 android:layout_height="45dp"
                 android:id="@+id/guess_it_lose_home_Button"
@@ -365,7 +379,7 @@
             <com.airbnb.lottie.LottieAnimationView
                     android:layout_width="110dp"
                     android:layout_height="0dp"
-                    android:background="@color/textcolor"
+                    android:background="@drawable/edittextoval"
                     app:lottie_fileName="movie_loading.json"
                     app:lottie_autoPlay="true"
                     app:lottie_loop="true"
@@ -383,7 +397,7 @@
                       app:layout_constraintTop_toTopOf="parent"
                       app:layout_constraintBottom_toBottomOf="parent"
                       app:layout_constraintEnd_toStartOf="@+id/guess_it_lose_ads_ImageView"
-                      android:layout_marginEnd="16dp"/>
+                      android:layout_marginEnd="8dp"/>
 
 
         </android.support.constraint.ConstraintLayout>
@@ -401,7 +415,7 @@
 
 
             <TextView
-                    android:text="Kalan Tahmin: 7/10"
+                    android:text="Kalan Tahmin:"
                     android:layout_width="wrap_content"
                     android:textSize="20sp"
                     android:textStyle="bold"
@@ -422,7 +436,7 @@
                     android:textAlignment="center"
                     android:textColor="@color/textcolorblack"
                     android:textStyle="bold"
-                    android:background="@color/textcolor"
+                    android:background="@drawable/edittextoval"
                     android:id="@+id/guess_it_lose_play_again_TextView"
                     app:layout_constraintTop_toTopOf="@+id/guess_it_lose_right_of_game_textView"
                     app:layout_constraintBottom_toBottomOf="@+id/guess_it_lose_right_of_game_textView"
@@ -430,6 +444,19 @@
                     android:gravity="center"
             />
         </android.support.constraint.ConstraintLayout>
+        <TextView
+                android:textSize="18sp"
+                android:textColor="@color/textcolor"
+                android:textStyle="bold"
+                android:text="Toplam Puan: "
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/guess_it_lose_all_score_textView"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" android:layout_marginTop="16dp"
+                android:layout_marginStart="8dp" android:background="@drawable/home_jokers_background_design_end"
+                android:paddingLeft="10dp" android:paddingRight="20dp" android:paddingTop="6dp"
+                android:paddingBottom="6dp"/>
 
 
         />

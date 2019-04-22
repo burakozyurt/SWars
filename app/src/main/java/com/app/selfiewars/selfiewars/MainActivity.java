@@ -24,8 +24,10 @@ import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
+import com.treebo.internetavailabilitychecker.InternetAvailabilityChecker;
+import com.treebo.internetavailabilitychecker.InternetConnectivityListener;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity{
 
     private ImageView ımageView;
     private TextView textView;
@@ -49,6 +51,7 @@ public class MainActivity extends AppCompatActivity {
     public  static Long rightOFDailyValue;
     public  static Integer myRigtOfGame;
     public  static Integer UserScore = 0;
+    public  static Integer UserRank = 0;
     public static Long guessItMilisecond;
     public static Integer guessItAdsCount;
     public  static Wildcards wildcards;
@@ -75,6 +78,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
+        mFirebaseAnalytics.setAnalyticsCollectionEnabled(false);
         fragmentManager = getSupportFragmentManager();
         mAuth = FirebaseAuth.getInstance();
         database = FirebaseDatabase.getInstance();
@@ -88,7 +92,6 @@ public class MainActivity extends AppCompatActivity {
         myRefUser.keepSynced(true);
         myRigtOfGameRef.keepSynced(true);
         myRefUser.keepSynced(true);
-
         if (mAuth.getCurrentUser() != null) {
             myRefUser.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
@@ -261,9 +264,10 @@ public class MainActivity extends AppCompatActivity {
         }else {
 
         }*/
-
-        fragmentManager.beginTransaction().hide(active).show(fragment).commit();
-        active = fragment;
+        if(active!=fragment){
+            fragmentManager.beginTransaction().hide(active).show(fragment).commit();
+            active = fragment;
+        }
 
        /* FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
         fragmentTransaction.replace(R.id.main_frame,fragment);
@@ -396,6 +400,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        SelfieWars.context = MainActivity.this;
         //Toast.makeText(this, "MainACtivity Başlatıldı", Toast.LENGTH_SHORT).show();
     }
 

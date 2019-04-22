@@ -220,5 +220,10 @@ public class UpdateToUserProfile extends AppCompatActivity {
 
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        SelfieWars.context = UpdateToUserProfile.this;
+    }
 }
 

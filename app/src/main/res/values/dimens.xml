@@ -7,6 +7,7 @@
     <dimen name="guess_it_photo_width_height">250dp</dimen>
     <dimen name="guess_it_jokers_width_height">50dp</dimen>
     <dimen name="guess_it_lottie_button_width_height">70dp</dimen>
+    <dimen name="guess_it_Score_Constraint_Top">250dp</dimen>
     <dimen name="fragment_spin_wheel_width_height">350dp</dimen>
     <dimen name="fragment_spin_izlekazan_TextSize">14sp</dimen>
     <dimen name="fragment_home_profile_photo_width_height">90dp</dimen>
@@ -16,6 +17,10 @@
     <dimen name="fragment_home_score_and_scoreVal_Text_Size">16sp</dimen>
     <dimen name="fragment_home_guess_it_button_witdh">225dp</dimen>
     <dimen name="fragment_home_guess_it_button_height">40dp</dimen>
+
+    <dimen name="slide_layout_image_witdh">200dp</dimen>
+
+    <dimen name="slide_authentication_lottie_height">100dp</dimen>
 
 
 
@@ -28,10 +33,23 @@
     <dimen name="activity_splashscreen_logo_width_height">200dp</dimen>
     <dimen name="activity_splashscreen_lottie_text_height">100dp</dimen>
 
-
-
-
-
+    <dimen name="home_announcement_title_margin_top">45dp</dimen>
+    <dimen name="home_announcement_title_textSize">18sp</dimen>
+    <dimen name="home_announcement_desc_textSize">14sp</dimen>
+    <dimen name="home_announcement_logo_Size">90dp</dimen>
+    <dimen name="home_announcement_logoInstagram_Size">80dp</dimen>
+    <dimen name="store_joker_imageview_padding">15dp</dimen>
+    <dimen name="store_joker_width_size">80dp</dimen>
+    <dimen name="store_joker_height_size">60dp</dimen>
+    <dimen name="store_joker_text_size">14sp</dimen>
+    <dimen name="spin_fragment_spineView_padding">0dp</dimen>
+    <dimen name="spin_fragment_button_w_size">95dp</dimen>
+    <dimen name="spin_fragment_button_h_size">40dp</dimen>
+    <dimen name="spin_fragment_button_text_size">14sp</dimen>
+    <dimen name="bottom_nav_bar_iconsize">24dp</dimen>
+    <dimen name="bottom_nav_bar_h_size">56dp</dimen>
+    <dimen name="home_fragment_rank_number_textsize">12sp</dimen>
+    <dimen name="store_jokers_price_textsize">14sp</dimen>
 
 
 </resources>

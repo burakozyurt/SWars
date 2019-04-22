@@ -51,9 +51,10 @@ public class AuthUsersInfoActivity extends Activity {
     private Uri selectedImage;
     private EditText usernameText;
     private EditText ageText;
-    private EditText genderText;
+    private EditText referenceNameText;
     private TextView chooseprofileText;
     private String userName;
+    private String refName;
     private Integer age;
     private String photoUrl;
     private final Integer firstRightOfGameValue = 10;
@@ -66,6 +67,7 @@ public class AuthUsersInfoActivity extends Activity {
         profileImageView = findViewById(R.id.signin_info_profile_imageview);
         usernameText =findViewById(R.id.signin_info_username_editText);
         ageText = findViewById(R.id.signin_info_age_editText);
+        referenceNameText = findViewById(R.id.signin_info_reference_editText);
         chooseprofileText = findViewById(R.id.signin_profile_desc_textView);
         loadlottie = findViewById(R.id.auth_info_screen_sign_lottie2);
         signupText = findViewById(R.id.auth_info_screen_sign_text3);
@@ -137,6 +139,7 @@ public class AuthUsersInfoActivity extends Activity {
                     loadlottie.setVisibility(View.VISIBLE);
                     userName = usernameText.getText().toString();
                     age = Integer.valueOf(ageText.getText().toString());
+                    refName = referenceNameText.getText().toString();
                     myRefUserName.child(userName).addListenerForSingleValueEvent(new ValueEventListener() {
                      @Override
                      public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -194,13 +197,56 @@ public class AuthUsersInfoActivity extends Activity {
                                                                                                                                         @Override
                                                                                                                                         public void onSuccess(Void aVoid) {
                                                                                                                                             signupText.setText("Hesap Oluşturuldu.");
-                                                                                                                                            if (mInterstitialAd.isLoaded()) {
-                                                                                                                                                mInterstitialAd.show();
-                                                                                                                                            } else {
-                                                                                                                                                Intent i = new Intent(getApplicationContext(),MainActivity.class);
-                                                                                                                                                startActivity(i);
-                                                                                                                                                finish();
+                                                                                                                                            if (refName!=null){
+                                                                                                                                                FirebaseDatabase.getInstance().getReference("UserName").child(refName).addListenerForSingleValueEvent(new ValueEventListener() {
+                                                                                                                                                    @Override
+                                                                                                                                                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                                                                                                                                        if (dataSnapshot.exists()){
+                                                                                                                                                            String uid = dataSnapshot.getValue(String.class);
+                                                                                                                                                            FirebaseDatabase.getInstance().getReference("UserReference").child(uid).child(mAuth.getUid()).setValue(true).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                                                                                                                                @Override
+                                                                                                                                                                public void onSuccess(Void aVoid) {
+                                                                                                                                                                    if (mInterstitialAd.isLoaded()) {
+                                                                                                                                                                        mInterstitialAd.show();
+                                                                                                                                                                    } else {
+                                                                                                                                                                        Intent i = new Intent(getApplicationContext(),MainActivity.class);
+                                                                                                                                                                        startActivity(i);
+                                                                                                                                                                        finish();
+                                                                                                                                                                    }
+                                                                                                                                                                }
+                                                                                                                                                            });
+                                                                                                                                                        }else {
+                                                                                                                                                            if (mInterstitialAd.isLoaded()) {
+                                                                                                                                                                mInterstitialAd.show();
+                                                                                                                                                            } else {
+                                                                                                                                                                Intent i = new Intent(getApplicationContext(),MainActivity.class);
+                                                                                                                                                                startActivity(i);
+                                                                                                                                                                finish();
+                                                                                                                                                            }
+                                                                                                                                                        }
+                                                                                                                                                    }
+
+                                                                                                                                                    @Override
+                                                                                                                                                    public void onCancelled(@NonNull DatabaseError databaseError) {
+                                                                                                                                                        if (mInterstitialAd.isLoaded()) {
+                                                                                                                                                            mInterstitialAd.show();
+                                                                                                                                                        } else {
+                                                                                                                                                            Intent i = new Intent(getApplicationContext(),MainActivity.class);
+                                                                                                                                                            startActivity(i);
+                                                                                                                                                            finish();
+                                                                                                                                                        }
+                                                                                                                                                    }
+                                                                                                                                                });
+                                                                                                                                            }else {
+                                                                                                                                                if (mInterstitialAd.isLoaded()) {
+                                                                                                                                                    mInterstitialAd.show();
+                                                                                                                                                } else {
+                                                                                                                                                    Intent i = new Intent(getApplicationContext(),MainActivity.class);
+                                                                                                                                                    startActivity(i);
+                                                                                                                                                    finish();
+                                                                                                                                                }
                                                                                                                                             }
+
 
                                                                                                                                         }
                                                                                                                                     });
@@ -363,6 +409,7 @@ public class AuthUsersInfoActivity extends Activity {
         descriptionView = mydialog.findViewById(R.id.popupInfo_descriptionTextView);
         btnOk = mydialog.findViewById(R.id.popupInfo_BtnOkey);
         ımageView.setVisibility(View.GONE);
+        btnOk.setText("Fotoğraf Seç");
         if (Title !=null)
             titleView.setText(Title);
         if(Description !=null) {
@@ -389,5 +436,11 @@ public class AuthUsersInfoActivity extends Activity {
     }
     public void onSelectImageClick(View view) {
         CropImage.startPickImageActivity(this);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        SelfieWars.context = AuthUsersInfoActivity.this;
     }
 }

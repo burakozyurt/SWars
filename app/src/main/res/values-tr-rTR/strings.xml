@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">SelfieWars</string>
+    <string name="user_name">Kullanıcı Adı</string>
+    <string name="date_of_birth">Doğum Tarihi</string>
+    <string name="gender">Cinsiyet</string>
+    <string name="continuee">Devam</string>
+    <string name="logging_in">Giriş yapılıyor</string>
+    <string name="ranking">Sıralama</string>
+    <string name="score">Puan</string>
+    <string name="guess_it">Tahmin Et</string>
+    <string name="home">Anasayfa</string>
+    <string name="rank">Sıralama</string>
+    <string name="spin">Çark</string>
+    <string name="store">Mağaza</string>
+    <string name="settings">Ayarlar</string>
+    <string name="pass">Şifre</string>
+    <string name="sound">Ses</string>
+    <string name="vibration">Titreşim</string>
+    <string name="announcement">Duyurular</string>
+    <string name="score_equals">Puan :</string>
+    <string name="ranking_value">Sıralama :#</string>
+    <string name="announcement_title0">Bu ayın ödülü</string>
+    <string name="announcement_description0">Ayın kazananını bekleyen ödül belli oldu. (Görmek için resime tıkla)</string>
+    <string name="announcement_title1">Günlük Ödüller</string>
+    <string name="announcement_description1">Günlük ödüller seni bekliyor.</string>
+    <string name="announcement_title2">Tıkla Yorum Yap 50 Elmas Kazan</string>
+    <string name="announcement_description2">Play store üzerinden puanla. Ekran görüntüsünü selfiewarinfo@gmail.com adresine yolla 50 elmas kazan.</string>
+    <string name="currency_type">₺</string>
+    <string name="default_web_lient_id">412883841103-oltcc80bcdoj4r0f3qknruh5elvvk1ed.apps.googleusercontent.com
+    </string>
+    <string name="Age">Yaş</string>
+    <!--ToDo Çeviri Aynı Kalanlar-->
+    <string name="account_State">accountstate</string>
+    <string name="isReady">isReady</string>
+    <string name="properties">properties</string>
+    <string name="token">token</string>
+    <string name="diamondValue">diamondValue</string>
+    <string name="wildcards">wildcards</string>
+    <string name="timestamp">timestamp</string>
+    <string name="nowtimestamp">nowtimestamp</string>
+    <string name="infodetail">infodetail</string>
+    <string name="ApprovedUser">ApprovedUsers</string>
+    <string name="CorrectUsers">CorrectUsers</string>
+    <string name="photoUrl">photoUrl</string>
+    <string name="spinValue">spinValue</string>
+    <string name="Scores">Scores</string>
+    <string name="spicAdsCount">spinAdsCount</string>
+
+    <string name="loadingMessage">Kullanıcı Bilgileri Yükleniyor...</string>
+    <string name="home_settings_title_follow">Takip Et</string>
+    <string name="home_settings_title_updatetouserinfo">Profili Güncelle</string>
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="home_settings_title_useragreement">Kullanıcı Sözleşmesi</string>
+    <string name="home_settings_title_sss">SSS</string>
+    <string name="home_settings_title_logout">Çıkış Yap</string>
+    <string name="hours">saat</string>
+    <string name="minute">dk.</string>
+    <string name="second">sn.</string>
+    <string name="Endtime">Kalan Zaman:</string>
+    <string name="Choose_Gender">Cinsiyet</string>
+    <string name="Gender_Male">Erkek</string>
+    <string name="Gender_Female">Kadın</string>
+    <string name="day_personal_information">Gün</string>
+    <string name="month_personal_information">Ay</string>
+    <string name="year_personal_information">Yıl</string>
+    <string name="sign_in_choose_image_alert_title">Not</string>
+    <string name="sign_in_choose_image_alert_desc">Bilgileri doğru girdiğinizden emin olun. Uygunsuz fotoğraflar reddedilir
+        ve hesabınızın kalıcı olarak banlanır.
+    </string>
+    <string name="cekilis_dugum_adı">Cekilis</string>
+</resources>

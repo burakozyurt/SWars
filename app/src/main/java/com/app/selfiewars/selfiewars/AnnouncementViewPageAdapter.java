@@ -11,7 +11,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 import com.airbnb.lottie.LottieAnimationView;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
@@ -26,7 +25,8 @@ import java.util.concurrent.TimeUnit;
 public class AnnouncementViewPageAdapter extends PagerAdapter {
     private Context context;
     private LayoutInflater layoutInflater;
-    private Integer image = R.drawable.instagram;
+    private Integer image = R.drawable.selfiewarslogofit;
+    private Integer image2 = R.drawable.slide1;
     private FirebaseDatabase firebaseDatabase;
     private DatabaseReference databaseReference;
     private String photoUrl;
@@ -40,7 +40,7 @@ public class AnnouncementViewPageAdapter extends PagerAdapter {
 
     @Override
     public int getCount() {
-        return 3;
+        return 4;
     }
 
     @Override
@@ -89,18 +89,26 @@ public class AnnouncementViewPageAdapter extends PagerAdapter {
         } else if (position == 1) {
             lottieAnimationView.setVisibility(View.VISIBLE);
             announceLogoImageView.setVisibility(View.INVISIBLE);
-            announceLogoImageView.setVisibility(View.INVISIBLE);
+            announceLogoImageViewInstagram.setVisibility(View.INVISIBLE);
             announcementTitle.setText(R.string.announcement_title1);
             announcementDesc.setText(R.string.announcement_description1);
             rightOfDailyAward(announcementTitle);
 
-        } else {
+        } else if (position == 2){
+            lottieAnimationView.setVisibility(View.INVISIBLE);
+            announceLogoImageView.setVisibility(View.INVISIBLE);
+            announceLogoImageViewInstagram.setVisibility(View.VISIBLE);
+            announceLogoImageViewInstagram.setImageResource(image2);
+            announcementTitle.setText("Çekilişe Katıl");
+            announcementDesc.setText("Çekiliş ile ayın ödülünü kazanma fırsatı yakala.(Çekiliş sayfasına gitmek için tıkla.)");
+        }else {
             lottieAnimationView.setVisibility(View.INVISIBLE);
             announceLogoImageView.setVisibility(View.INVISIBLE);
             announceLogoImageViewInstagram.setVisibility(View.VISIBLE);
             announceLogoImageViewInstagram.setImageResource(image);
             announcementTitle.setText(R.string.announcement_title2);
             announcementDesc.setText(R.string.announcement_description2);
+
         }
         view.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -110,17 +118,22 @@ public class AnnouncementViewPageAdapter extends PagerAdapter {
                     if (position == 0) {
                     MainActivity.showPopupProductInfo(photoUrl, "Steel Series Efsanevi Mouse", context);
                     isClick = false;
-                } else if (position == 1) {
+                    }
+                    else if (position == 1) {
                     //Toast.makeText(context, "1", Toast.LENGTH_SHORT).show();
                         rightOfDailyAwardIncreaseValue(announcementTitle);
-                } else {
-                    //Toast.makeText(context, "2", Toast.LENGTH_SHORT).show();
-                    Intent intent = new Intent(Intent.ACTION_VIEW);
-                    intent.setData(Uri.parse("https://www.instagram.com/selfiewarsapp/"));
-                    context.startActivity(intent);
-                    isClick = false;
                     }
-
+                    else if (position == 2){
+                    //Toast.makeText(context, "2", Toast.LENGTH_SHORT).show();
+                        Intent intent = new Intent(context,CekilisActivity.class);
+                        context.startActivity(intent);
+                        isClick = false;
+                    } else {
+                        Intent intent = new Intent(Intent.ACTION_VIEW);
+                        intent.setData(Uri.parse("https://play.google.com/store/apps/details?id=com.app.selfiewars.selfiewars&pageId=none"));
+                        context.startActivity(intent);
+                        isClick = false;
+                    }
                 }
             }
 

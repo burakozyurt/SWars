@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import com.airbnb.lottie.LottieAnimationView;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
@@ -63,69 +64,91 @@ public class StoreJokerRecyclerViewAdapter extends RecyclerView.Adapter<StoreJok
                 });
             }
         },0,6000);
+        myVievHolder.buyTextView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(myVievHolder.loadanim.getVisibility() == View.GONE){
+                    buyingOperation(myVievHolder, i);
+                }
+            }
+        });
         myVievHolder.constraintLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (myVievHolder.buyTextView.getVisibility() == View.VISIBLE) {
-                    Integer diamondValue = MainActivity.diamondValue;
-                    if (Integer.valueOf(mData.get(i).jokerPrice) <= diamondValue) {
-                        diamondValue-= Integer.valueOf(mData.get(i).jokerPrice);
-                        MainActivity.myRefUser.child("token").child("diamondValue").setValue(diamondValue).addOnSuccessListener(new OnSuccessListener<Void>() {
-                            @Override
-                                    public void onSuccess(Void aVoid) {
-                                        if(mData.get(i).jokerid == 0){
-                                            Integer newValue = MainActivity.wildcards.getFiftyFiftyValue() + Integer.valueOf(mData.get(i).jokerValueNumber);
-                                            MainActivity.myRefUser.child("wildcards").child("fiftyFiftyValue").setValue(newValue).addOnSuccessListener(new OnSuccessListener<Void>() {
-                                                        @Override
-                                                        public void onSuccess(Void aVoid) {
-                                                            MainActivity.showPopUpInfo(null,"Alındı",null,mcontext);
-                                                            myVievHolder.buyTextView.setVisibility(View.GONE);
-                                                            myVievHolder.jokerPrice.setVisibility(View.VISIBLE);
-                                                            myVievHolder.currencyimage.setVisibility(View.VISIBLE);
-
-                                                        }
-                                            });
-                                        }else {
-                                            Integer newValue = MainActivity.wildcards.getDoubleDipValue() + Integer.valueOf(mData.get(i).jokerValueNumber);
-                                            MainActivity.myRefUser.child("wildcards").child("doubleDipValue").setValue(newValue).addOnSuccessListener(new OnSuccessListener<Void>() {
-                                                        @Override
-                                                        public void onSuccess(Void aVoid) {
-                                                            MainActivity.showPopUpInfo(null,"Alındı",null,mcontext);
-                                                            myVievHolder.buyTextView.setVisibility(View.GONE);
-                                                            myVievHolder.jokerPrice.setVisibility(View.VISIBLE);
-                                                            myVievHolder.currencyimage.setVisibility(View.VISIBLE);
-                                                        }
-                                            });
-                                        }
-                                    }
-                                }).addOnFailureListener(new OnFailureListener() {
-                                    @Override
-                                    public void onFailure(@NonNull Exception e) {
-                                        MainActivity.showPopUpInfo(null,"Sorun Yaşandı",null,mcontext);
-                                        myVievHolder.buyTextView.setVisibility(View.GONE);
-                                        myVievHolder.jokerPrice.setVisibility(View.VISIBLE);
-                                        myVievHolder.currencyimage.setVisibility(View.VISIBLE);
-
-                                    }
-                                });
-                            }else {
-                                MainActivity.showPopUpInfo(null,"Yeterli elmas bulunmamaktadır.",null,mcontext);
-                                myVievHolder.buyTextView.setVisibility(View.GONE);
-                                myVievHolder.jokerPrice.setVisibility(View.VISIBLE);
-                                myVievHolder.currencyimage.setVisibility(View.VISIBLE);
-                            }
-                }else {
-                    myVievHolder.buyTextView.setVisibility(View.VISIBLE);
-                    myVievHolder.jokerPrice.setVisibility(View.GONE);
-                    myVievHolder.currencyimage.setVisibility(View.GONE);
-
+                if(myVievHolder.loadanim.getVisibility() == View.GONE){
+                    buyingOperation(myVievHolder, i);
                 }
-
             }
         });
 
     }
 
+    private void buyingOperation(final MyVievHolder myVievHolder, final int i){
+        if (myVievHolder.buyTextView.getVisibility() == View.VISIBLE) {
+            Integer diamondValue = MainActivity.diamondValue;
+            myVievHolder.loadanim.setVisibility(View.VISIBLE);
+            myVievHolder.buyTextView.setVisibility(View.GONE);
+            if (Integer.valueOf(mData.get(i).jokerPrice) <= diamondValue) {
+                diamondValue-= Integer.valueOf(mData.get(i).jokerPrice);
+                MainActivity.myRefUser.child("token").child("diamondValue").setValue(diamondValue).addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        if(mData.get(i).jokerid == 0){
+                            Integer newValue = MainActivity.wildcards.getFiftyFiftyValue() + Integer.valueOf(mData.get(i).jokerValueNumber);
+                            MainActivity.myRefUser.child("wildcards").child("fiftyFiftyValue").setValue(newValue).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                @Override
+                                public void onSuccess(Void aVoid) {
+                                    MainActivity.showPopUpInfo(null,"Alındı",null,mcontext);
+                                    myVievHolder.buyTextView.setVisibility(View.GONE);
+                                    myVievHolder.loadanim.setVisibility(View.GONE);
+                                    myVievHolder.jokerPrice.setVisibility(View.VISIBLE);
+                                    myVievHolder.currencyimage.setVisibility(View.VISIBLE);
+                                    StoreFragment.UpdateJokers();
+
+                                }
+                            });
+                        }else {
+                            Integer newValue = MainActivity.wildcards.getDoubleDipValue() + Integer.valueOf(mData.get(i).jokerValueNumber);
+                            MainActivity.myRefUser.child("wildcards").child("doubleDipValue").setValue(newValue).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                @Override
+                                public void onSuccess(Void aVoid) {
+                                    MainActivity.showPopUpInfo(null,"Alındı",null,mcontext);
+                                    myVievHolder.buyTextView.setVisibility(View.GONE);
+                                    myVievHolder.loadanim.setVisibility(View.GONE);
+                                    myVievHolder.jokerPrice.setVisibility(View.VISIBLE);
+                                    myVievHolder.currencyimage.setVisibility(View.VISIBLE);
+                                    StoreFragment.UpdateJokers();
+                                }
+                            });
+                        }
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        MainActivity.showPopUpInfo(null,"Sorun Yaşandı",null,mcontext);
+                        myVievHolder.buyTextView.setVisibility(View.GONE);
+                        myVievHolder.loadanim.setVisibility(View.GONE);
+                        myVievHolder.jokerPrice.setVisibility(View.VISIBLE);
+                        myVievHolder.currencyimage.setVisibility(View.VISIBLE);
+                        StoreFragment.UpdateJokers();
+
+                    }
+                });
+            }else {
+                MainActivity.showPopUpInfo(null,"Yeterli elmas bulunmamaktadır.",null,mcontext);
+                myVievHolder.buyTextView.setVisibility(View.GONE);
+                myVievHolder.loadanim.setVisibility(View.GONE);
+                myVievHolder.jokerPrice.setVisibility(View.VISIBLE);
+                myVievHolder.currencyimage.setVisibility(View.VISIBLE);
+                StoreFragment.UpdateJokers();
+            }
+        }else {
+            myVievHolder.buyTextView.setVisibility(View.VISIBLE);
+            myVievHolder.jokerPrice.setVisibility(View.GONE);
+            myVievHolder.currencyimage.setVisibility(View.GONE);
+        }
+
+    }
     @Override
     public int getItemCount() {
         return mData.size();
@@ -138,9 +161,11 @@ public class StoreJokerRecyclerViewAdapter extends RecyclerView.Adapter<StoreJok
         ImageView jokerImage;
         ImageView currencyimage;
         ConstraintLayout constraintLayout;
+        LottieAnimationView loadanim;
 
         public MyVievHolder(@NonNull View itemView) {
             super(itemView);
+            loadanim = itemView.findViewById(R.id.store_buyloadingLottieView);
             constraintLayout =itemView.findViewById(R.id.constraintLayout);
             jokerValueNumber = itemView.findViewById(R.id.store_joker_value_number);
             jokerPrice = itemView.findViewById(R.id.store_joker_price);

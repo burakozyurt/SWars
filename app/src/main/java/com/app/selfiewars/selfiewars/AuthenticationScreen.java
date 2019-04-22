@@ -36,6 +36,7 @@ public class AuthenticationScreen extends Activity {
     private Button googleSignImageView;
     private LottieAnimationView signloadanim;
     private TextView signtext;
+    private TextView signGoogleTextView;
     private Animation animation;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,14 +46,22 @@ public class AuthenticationScreen extends Activity {
         database = FirebaseDatabase.getInstance();
         myRefAccountState = database.getReference("Users");
         googleSignImageView = findViewById(R.id.googlesign_imageview);
+        signGoogleTextView = findViewById(R.id.auth_screen_sign_with_google_textView);
         googleSignInOptions();
         googleSignImageView.setVisibility(View.GONE);
+        signGoogleTextView.setVisibility(View.GONE);
         googleSignImageView.setOnClickListener(new View.OnClickListener() {
                @Override
                public void onClick(View view) {
                    signIn();
                }
            });
+        signGoogleTextView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                signIn();
+            }
+        });
         signtext = findViewById(R.id.auth_screen_sign_text);
         signloadanim = findViewById(R.id.auth_screen_sign_lottie);
         setSignProgresVisiblity(false);
@@ -63,6 +72,8 @@ public class AuthenticationScreen extends Activity {
             public void run() {
                 googleSignImageView.startAnimation(animation);
                 googleSignImageView.setVisibility(View.VISIBLE);
+                signGoogleTextView.startAnimation(animation);
+                signGoogleTextView.setVisibility(View.VISIBLE);
 
             }
         };
@@ -82,7 +93,7 @@ public class AuthenticationScreen extends Activity {
                 .requestIdToken(getString(R.string.default_web_lient_id))
                 .requestEmail()
                 .build();
-        mGoogleSignInClient = GoogleSignIn.getClient(this,gso);
+        mGoogleSignInClient = GoogleSignIn.getClient(AuthenticationScreen.this,gso);
         }
 
     private void signIn() {
@@ -177,7 +188,13 @@ public class AuthenticationScreen extends Activity {
     }
     @Override
     public void onBackPressed() {
-
+        finish();
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        SelfieWars.context = AuthenticationScreen.this;
+
+    }
 }

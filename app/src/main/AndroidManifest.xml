@@ -2,9 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
           xmlns:tools="http://schemas.android.com/tools"
           package="com.app.selfiewars.selfiewars"
-          android:versionCode="17"
-          android:versionName="17.0"
->
+          android:versionCode="24"
+          android:versionName="24.0">
 
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
@@ -13,6 +12,8 @@
     <uses-permission android:name="android.permission.READ_SYNC_SETTINGS"/>
     <uses-permission android:name="android.permission.WRITE_SYNC_SETTINGS"/>
     <uses-permission android:name="android.permission.AUTHENTICATE_ACCOUNTS"/>
+    <uses-permission android:name="com.android.vending.BILLING"/>
+
 
     <application
             android:name=".SelfieWars"
@@ -46,6 +47,7 @@
                 <action android:name="com.google.firebase.MESSAGING_EVENT"/>
             </intent-filter>
         </service>
+        <meta-data android:name="firebase_analytics_collection_enabled" android:value="false" />
 
         <meta-data
                 android:name="com.google.android.gms.ads.APPLICATION_ID"
@@ -99,8 +101,8 @@
         </activity>
         <activity android:name=".InAppBillingActivity">
         </activity>
+        <activity android:name=".CekilisActivity">
+        </activity>
     </application>
-    <uses-permission android:name="com.android.vending.BILLING"/>
-
 
 </manifest>

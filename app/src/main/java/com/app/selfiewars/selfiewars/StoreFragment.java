@@ -9,6 +9,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -25,6 +26,9 @@ public class StoreFragment extends Fragment {
     List<StoreDiamond> storeDiamondList;
     List<StoreJoker> storeJokerList;
     FirebaseRemoteConfig firebaseRemoteConfig;
+    private static TextView doubledipTextView;
+    private static TextView fiftyfiftyTextView;
+    private static TextView diamondTextView;
     private long cacheExpiration = 0;
     public StoreFragment() {
         // Required empty public constructor
@@ -55,6 +59,7 @@ public class StoreFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view= inflater.inflate(R.layout.fragment_store, container, false);
+        setupjokersanddiamonds(view);
         setDiamondValue();
         if(MainActivity.remoteDiamondLoad)
         diamondSetup(view);
@@ -64,6 +69,21 @@ public class StoreFragment extends Fragment {
         jokerSetup(view);
         return view;
     }
+
+    private void setupjokersanddiamonds(View view) {
+        diamondTextView = view.findViewById(R.id.store_diamond_textView);
+        fiftyfiftyTextView = view.findViewById(R.id.store_fiftyfifty_textView);
+        doubledipTextView = view.findViewById(R.id.store_double_dip_textView);
+        diamondTextView.setText(""+MainActivity.diamondValue);
+        doubledipTextView.setText(""+MainActivity.wildcards.getDoubleDipValue());
+        fiftyfiftyTextView.setText(""+MainActivity.wildcards.getFiftyFiftyValue());
+    }
+    public static void UpdateJokers(){
+        diamondTextView.setText(""+MainActivity.diamondValue);
+        doubledipTextView.setText(""+MainActivity.wildcards.getDoubleDipValue());
+        fiftyfiftyTextView.setText(""+MainActivity.wildcards.getFiftyFiftyValue());
+    }
+
     private void getRemoteConfig(){
         firebaseRemoteConfig = FirebaseRemoteConfig.getInstance();
         firebaseRemoteConfig.fetch(0).addOnCompleteListener(getActivity(), new OnCompleteListener<Void>() {
