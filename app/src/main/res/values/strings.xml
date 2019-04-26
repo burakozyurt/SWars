@@ -51,6 +51,8 @@
     <string name="photoUrl">photoUrl</string>
     <string name="spinValue">spinValue</string>
     <string name="Scores">Scores</string>
+    <string name="WalletScores">WalletScores</string>
+    <string name="Wallet">Wallet</string>
     <string name="spicAdsCount">spinAdsCount</string>
     <string name="loadingMessage">Kullanıcı Bilgileri Yükleniyor...</string>
 

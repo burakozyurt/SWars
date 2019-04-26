@@ -13,15 +13,21 @@
                    android:layout_height="70dp" android:visibility="gone"/>
         <TextView android:textSize="18sp"
                   android:textAlignment="center"
+                  android:fontFamily="@font/ralewaybold"
+
                   android:textStyle="bold" android:textColor="@color/textcolorblack" android:id="@+id/popupInfo_TitleTextView" android:padding="10.0dip" android:layout_width="fill_parent" android:layout_height="wrap_content" android:layout_marginTop="5.0dip"/>
         <TextView android:textColor="@color/textcolorblack" android:id="@+id/popupInfo_descriptionTextView" android:padding="10.0dip"
                   android:textSize="15sp" android:layout_width="fill_parent" android:layout_height="wrap_content"
                   android:layout_marginBottom="10.0dip"
+                  android:fontFamily="@font/ralewaybold"
+
                   android:layout_gravity="center"
                   android:textAlignment="center"
         />
         <Button android:textColor="@color/textcolor" android:layout_gravity="center"  android:id="@+id/popupInfo_BtnOkey"
                 android:background="@drawable/pop_up_button" android:layout_width="150dp"
+                android:fontFamily="@font/ralewaybold"
+
                 android:layout_height="wrap_content" android:layout_marginBottom="25dp" android:text="TAMAM"/>
     </LinearLayout>
 </RelativeLayout>

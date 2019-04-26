@@ -37,12 +37,15 @@
     >
         <TextView android:textSize="@dimen/home_announcement_title_textSize" android:textColor="@color/textcolor" android:id="@+id/tvAnnounceTitle"
                   android:layout_width="wrap_content" android:layout_height="wrap_content"
-                  android:layout_marginTop="@dimen/home_announcement_title_margin_top" android:text="Bu Ayın Hediyeleri"
+                  android:layout_marginTop="@dimen/home_announcement_title_margin_top"
+                  android:fontFamily="@font/ralewaybold"
+                  android:text="Bu Ayın Hediyeleri"
         />
         <TextView android:textColor="@color/textcolor" android:id="@+id/tvAnnounceDesc"
                   android:textSize="@dimen/home_announcement_desc_textSize"
+                  android:fontFamily="@font/ralewaybold"
                   android:layout_width="wrap_content" android:layout_height="wrap_content"
-                  android:text="Ayın kazananlarını bekleyen \nödüller belli oldu."
+                  android:text="Ayın kazananlarını bekleyen \n ödüller belli oldu."
 
                   android:layout_marginLeft="10dp" android:layout_marginRight="10dp" android:layout_marginTop="5dp"/>
     </LinearLayout>

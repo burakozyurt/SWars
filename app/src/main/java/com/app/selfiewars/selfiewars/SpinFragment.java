@@ -500,6 +500,7 @@ public class SpinFragment extends Fragment{
     }
 
     private void setSpinItem() {
+
         data = new ArrayList<>();
         LuckyItem luckyItem1 = new LuckyItem();
         luckyItem1.text = "x1";

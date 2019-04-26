@@ -46,6 +46,9 @@
     <string name="spinValue">spinValue</string>
     <string name="Scores">Scores</string>
     <string name="spicAdsCount">spinAdsCount</string>
+    <string name="WalletScores">WalletScores</string>
+    <string name="Wallet">Wallet</string>
+
 
     <string name="loadingMessage">Kullanıcı Bilgileri Yükleniyor...</string>
     <string name="home_settings_title_follow">Takip Et</string>

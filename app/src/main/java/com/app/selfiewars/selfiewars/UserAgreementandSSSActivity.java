@@ -75,6 +75,8 @@ public class UserAgreementandSSSActivity extends AppCompatActivity {
         sssItemList.add(new SSSItem("Çark sistemi nasıl işliyor?\n", "Bizlere ayırdığın vakitin önemli olduğunu düşünüyoruz." +
                 " Bu yüzden çark çevirerek yardımcıları kazan ve puanını yükselt. " +
                 "Unutma çarkı günde bir kere çevirebilirsin!\n"));
+        sssItemList.add(new SSSItem("Çekiliş sistemi nasıl çalışıyor?\n", "Çekiliş kampanyasında sizlere sürpriz ödüller sunmaktayız. Çekilişe elmas vererek, reklam izleyerek veya özel görevler varsa bunları yerine getirerek katılabilirsiniz. Çekilişe birden fazla kez katılabilirsiniz. Veritabanına gömülü olan fonksiyonun çekilişin süresinin bitiminde tetiklenerek çekiliş sonucunu belirlemektedir. \n "));
+
 
         sssRecyclerViewAdapter.notifyDataSetChanged();
     }

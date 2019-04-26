@@ -49,6 +49,7 @@ public class HomeFragment extends Fragment {
     private TextView ageTextView;
     private static TextView rankTextView;
     private TextView scoreTextView;
+    private TextView walletTextView;
     private TextView healthTextView;
     private TextView fiftyFiftyTextView;
     private TextView doubleDipTextView;
@@ -126,6 +127,7 @@ public class HomeFragment extends Fragment {
         ageTextView = rootview.findViewById(R.id.home_profile_age_textView);
         rankTextView = rootview.findViewById(R.id.home_profile_rank_textView);
         scoreTextView = rootview.findViewById(R.id.home_profile_score_textView);
+        walletTextView = rootview.findViewById(R.id.home_profile_swmoneyval_textView);
         healthTextView = rootview.findViewById(R.id.home_profile_health_textView);
         fiftyFiftyTextView = rootview.findViewById(R.id.home_profile_fiftyfifty_textView);
         doubleDipTextView = rootview.findViewById(R.id.home_profile_double_dip_textView);
@@ -159,6 +161,10 @@ public class HomeFragment extends Fragment {
                             viewPager.setCurrentItem(1);
                         }else if(viewPager.getCurrentItem() == 1){
                             viewPager.setCurrentItem(2);
+                        }else if(viewPager.getCurrentItem() == 2){
+                            viewPager.setCurrentItem(3);
+                        }else if (viewPager.getCurrentItem() == 3){
+                            viewPager.setCurrentItem(4);
                         }else {
                             viewPager.setCurrentItem(0);
                         }
@@ -616,6 +622,26 @@ public class HomeFragment extends Fragment {
                     MainActivity.myScoreRef.child(mAuth.getUid()).setValue(0);
                 }
 
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+        MainActivity.myWalletRef.child(mAuth.getUid()).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()){
+                    Integer walletscore = dataSnapshot.getValue(Integer.class);
+                    walletTextView.setText(""+walletscore );
+                    //Log.d("OptionsFirebase","UserScore"+MainActivity.UserScore);
+
+                }
+                else {
+                    //Log.d("DbScore","User");
+                    MainActivity.myWalletRef.child(mAuth.getUid()).setValue(0);
+                }
             }
 
             @Override

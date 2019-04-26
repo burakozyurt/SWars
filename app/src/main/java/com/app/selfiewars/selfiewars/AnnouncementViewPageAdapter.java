@@ -27,6 +27,7 @@ public class AnnouncementViewPageAdapter extends PagerAdapter {
     private LayoutInflater layoutInflater;
     private Integer image = R.drawable.selfiewarslogofit;
     private Integer image2 = R.drawable.slide1;
+    private Integer image3swmoney = R.drawable.swmoneywallet;
     private FirebaseDatabase firebaseDatabase;
     private DatabaseReference databaseReference;
     private String photoUrl;
@@ -40,7 +41,7 @@ public class AnnouncementViewPageAdapter extends PagerAdapter {
 
     @Override
     public int getCount() {
-        return 4;
+        return 5;
     }
 
     @Override
@@ -100,15 +101,21 @@ public class AnnouncementViewPageAdapter extends PagerAdapter {
             announceLogoImageViewInstagram.setVisibility(View.VISIBLE);
             announceLogoImageViewInstagram.setImageResource(image2);
             announcementTitle.setText("Çekilişe Katıl");
-            announcementDesc.setText("Çekiliş ile ayın ödülünü kazanma fırsatı yakala.(Çekiliş sayfasına gitmek için tıkla.)");
-        }else {
+            announcementDesc.setText("Çekiliş ile sürpriz ödülleri kazanma fırsatı yakala.(Çekiliş sayfasına gitmek için tıkla.)");
+        }else if (position == 3) {
             lottieAnimationView.setVisibility(View.INVISIBLE);
             announceLogoImageView.setVisibility(View.INVISIBLE);
             announceLogoImageViewInstagram.setVisibility(View.VISIBLE);
             announceLogoImageViewInstagram.setImageResource(image);
             announcementTitle.setText(R.string.announcement_title2);
             announcementDesc.setText(R.string.announcement_description2);
-
+        }else {
+            lottieAnimationView.setVisibility(View.INVISIBLE);
+            announceLogoImageView.setVisibility(View.INVISIBLE);
+            announceLogoImageViewInstagram.setVisibility(View.VISIBLE);
+            announceLogoImageViewInstagram.setImageResource(image3swmoney);
+            announcementTitle.setText("Davet Et Her Davette 3 SW Parası Kazan ");
+            announcementDesc.setText("Referans ile her kayıtta 3 SW Parası kazanırsınız..\nReferans Adı: ("+MainActivity.userProperties.getUserName()+")");
         }
         view.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -125,14 +132,20 @@ public class AnnouncementViewPageAdapter extends PagerAdapter {
                     }
                     else if (position == 2){
                     //Toast.makeText(context, "2", Toast.LENGTH_SHORT).show();
-                        Intent intent = new Intent(context,CekilisActivity.class);
+                        Intent intent = new Intent(context,LotteryActivity.class);
                         context.startActivity(intent);
                         isClick = false;
-                    } else {
+                    } else if (position == 3){
                         Intent intent = new Intent(Intent.ACTION_VIEW);
                         intent.setData(Uri.parse("https://play.google.com/store/apps/details?id=com.app.selfiewars.selfiewars&pageId=none"));
                         context.startActivity(intent);
                         isClick = false;
+                    }else {
+                        Intent sendIntent = new Intent();
+                        sendIntent.setAction(Intent.ACTION_SEND);
+                        sendIntent.putExtra(Intent.EXTRA_TEXT, "http://onelink.to/j3xpf3 "+"\n SelfieWars - Oyna Kazan - Ödüllü Tahmin Yarışmasını Google Play Store üzerinden indirip (" +MainActivity.userProperties.getUserName()+") kullanıcı adımla bana destek olabilirsin." );
+                        sendIntent.setType("text/plain");
+                        context.startActivity(Intent.createChooser(sendIntent, "Paylaş"));
                     }
                 }
             }
@@ -149,7 +162,6 @@ public class AnnouncementViewPageAdapter extends PagerAdapter {
         View view = (View) object;
         viewPager.removeView(view);
     }
-
     public void rightOfDailyAward(final TextView title) {
         final FirebaseDatabase mydatabase;
         final DatabaseReference myRefUser;

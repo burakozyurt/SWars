@@ -19,11 +19,15 @@
     <TextView
             android:text="Fotoğraf seç"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" android:id="@+id/signin_profile_desc_textView"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/kodchasanbold"
+            android:id="@+id/signin_profile_desc_textView"
             android:textAlignment="center"/>
     <EditText android:layout_width="200dp"
               android:layout_height="50dp"
               android:textSize="20dp"
+              android:fontFamily="@font/ralewaybold"
+
               android:singleLine="true"
               android:inputType="textPersonName"
               android:minLines="4"
@@ -36,6 +40,8 @@
             android:layout_width="200dp"
             android:layout_height="50dp"
             android:inputType="number"
+            android:fontFamily="@font/ralewaybold"
+
             android:ems="10"
             android:maxLength="2"
             android:id="@+id/signin_info_age_editText"
@@ -51,11 +57,13 @@
             android:id="@+id/signin_info_reference_editText"
             android:layout_gravity="center"
             android:layout_marginTop="10dp"
+            android:fontFamily="@font/ralewaybold"
             android:hint="Referans Adı (İsteğe Bağlı)" android:gravity="center"
             android:background="@drawable/home_jokers_background_design_middle" android:paddingRight="10dp"/>
     <Button android:layout_width="100dp"
             android:layout_height="50dp"
             android:text="@string/continuee"
+            android:fontFamily="@font/ralewayblack"
             android:background="@drawable/guess_it_and_game_button_oval"
             android:layout_gravity="center" android:layout_marginTop="16dp"
             android:id="@+id/signin_info_continue_button"/>

@@ -26,6 +26,7 @@
     <color name="slide2color">#F34336</color>
     <color name="slide3color">#03A8F3</color>
     <color name="statusbarcolor">#eeeeee</color>
+    <color name="transparentmedium">#2e000000</color>
     #4F1AC9
     
 </resources>

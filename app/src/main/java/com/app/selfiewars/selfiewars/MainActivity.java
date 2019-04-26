@@ -7,6 +7,7 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -17,6 +18,7 @@ import android.view.View;
 import android.widget.*;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.common.net.InternetDomainName;
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.*;
@@ -26,6 +28,8 @@ import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 import com.treebo.internetavailabilitychecker.InternetAvailabilityChecker;
 import com.treebo.internetavailabilitychecker.InternetConnectivityListener;
+
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity{
 
@@ -46,6 +50,8 @@ public class MainActivity extends AppCompatActivity{
     public static DatabaseReference myRefEndTime;
     public  static  DatabaseReference myRigtOfGameRef;
     public  static DatabaseReference myScoreRef;
+    public  static DatabaseReference myWalletScoreRef;
+    public  static DatabaseReference myWalletRef;
     //public  static Long nowTimeStamp;
     public  static Long endTimeStamp;
     public  static Long rightOFDailyValue;
@@ -71,6 +77,9 @@ public class MainActivity extends AppCompatActivity{
     public static String diamondPrice250;
     public static String diamondPrice500;
     public static boolean remoteDiamondLoad = false;
+    private DatabaseReference referenceNodeRef;
+    private DatabaseReference swRef;
+    private int davethakkı;
 
 
     @Override
@@ -86,8 +95,14 @@ public class MainActivity extends AppCompatActivity{
         myRefNodeUser = database.getReference("Users");
         myRefEndTime = database.getReference("EndTime/timestamp");
         myRigtOfGameRef = database.getReference("RightOfGame/" + mAuth.getUid());
+        referenceNodeRef = database.getReference("UserReference");
+        swRef = database.getReference("Wallet");
         myScoreRef = database.getReference(getResources().getString(R.string.Scores));
+        myWalletScoreRef = database.getReference(getResources().getString(R.string.WalletScores));
+        myWalletRef = database.getReference(getResources().getString(R.string.Wallet));
+        //swRef.keepSynced(true);
         myScoreRef.keepSynced(true);
+        myWalletScoreRef.keepSynced(true);
         myRefEndTime.keepSynced(true);
         myRefUser.keepSynced(true);
         myRigtOfGameRef.keepSynced(true);
@@ -181,6 +196,7 @@ public class MainActivity extends AppCompatActivity{
                         bundle.putString(FirebaseAnalytics.Param.ITEM_ID, mAuth.getUid());
                         bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, mAuth.getCurrentUser().getDisplayName());
                         mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle);
+                        //referencerefresh();
                     }else {
                         Intent i = new Intent(getApplicationContext(), AuthenticationScreen.class);
                         startActivity(i);
@@ -201,7 +217,67 @@ public class MainActivity extends AppCompatActivity{
         }
 
     }
+    public void referencerefresh(){
+        referenceNodeRef.child(mAuth.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()){
+                    davethakkı = 0;
+                    Integer listsize = 0;
+                    for (final DataSnapshot ds:dataSnapshot.getChildren()){
+                        listsize++;
+                        if(ds.getValue(Boolean.class).equals(true)&& !ds.getKey().equals(mAuth.getUid())){
+                            davethakkı += 3;
+                            //Log.d("Davet",""+davethakkı);
+                        }
+                        if (listsize == dataSnapshot.getChildrenCount() && davethakkı > 0){
+                            swRef.child(mAuth.getUid()).runTransaction(new Transaction.Handler() {
+                                @NonNull
+                                @Override
+                                public Transaction.Result doTransaction(@NonNull MutableData mutableData) {
+                                    Integer value = mutableData.getValue(Integer.class);
+                                    if(value == null){
+                                        value = davethakkı;
+                                    }else
+                                        value += davethakkı;
+                                    mutableData.setValue(value);
+                                    return Transaction.success(mutableData);
+                                }
+                                @Override
+                                public void onComplete(@Nullable DatabaseError databaseError, boolean b, @Nullable DataSnapshot dataSnapshot) {
+                                    if (b){
+                                        referenceNodeRef.child(mAuth.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
+                                            @Override
+                                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                                for (DataSnapshot ds : dataSnapshot.getChildren()){
+                                                    String key = ds.getKey();
+                                                    referenceNodeRef.child(mAuth.getUid()).child(key).setValue(false);
+                                                }
+                                                MainActivity.showPopUpInfo(null,"Tebrikler "+davethakkı/3+" kişinin referansıyla "+davethakkı+" SW Parası kazandınız.",null,MainActivity.this);
+                                            }
 
+                                            @Override
+                                            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                            }
+                                        });
+                                    }else {
+                                        MainActivity.showPopUpInfo(null,"Bir Sorun Oluştu.","Referans kayıtlarında bir sorun oluştu. Hata sistemimize kaydedilmiştir.",MainActivity.this);
+                                    }
+                                }
+                            });
+                        }
+                    }
+
+                }
+            }
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
+    }
     private void setFrameLayout() {
         homeFragment = new HomeFragment();
         rankFragment = new RankFragment();

@@ -13,10 +13,12 @@
 
     <dimen name="fragment_spin_wheel_width_height">300dp</dimen>
     <dimen name="fragment_home_profile_photo_width_height">70dp</dimen>
-    <dimen name="fragment_title_Text_Size">18sp</dimen>
-    <dimen name="fragment_home_score_and_scoreVal_Text_Size">14sp</dimen>
+    <dimen name="fragment_title_Text_Size">16sp</dimen>
+    <dimen name="fragment_home_score_and_scoreVal_Text_Size">12sp</dimen>
     <dimen name="fragment_home_guess_it_button_witdh">180dp</dimen>
     <dimen name="fragment_home_guess_it_button_height">32dp</dimen>
+    <dimen name="home_fragment_wallet_size">30sp</dimen>
+
 
 
     <dimen name="slide_layout_image_witdh">150dp</dimen>

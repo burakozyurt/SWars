@@ -41,7 +41,7 @@ public class AuthUsersInfoActivity extends Activity {
     private DatabaseReference myRefRightOfGame;
     private DatabaseReference   myRefUserName;
     private DatabaseReference myRefRequest;
-    private FirebaseStorage firebaseStorage;
+        private FirebaseStorage firebaseStorage;
     private StorageReference mStorageRef;
     private UserProperties userProperties;
     private ImageView profileImageView;
@@ -59,7 +59,6 @@ public class AuthUsersInfoActivity extends Activity {
     private String photoUrl;
     private final Integer firstRightOfGameValue = 10;
     private Animation animation;
-    private InterstitialAd mInterstitialAd;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -85,43 +84,7 @@ public class AuthUsersInfoActivity extends Activity {
         continueButtonClick();
         animation = AnimationUtils.loadAnimation(this,R.anim.smalltobig);
         profileImageView.startAnimation(animation);
-        mInterstitialAd = new InterstitialAd(this);
-        MobileAds.initialize(AuthUsersInfoActivity.this, "ca-app-pub-7004761147200711~5104636223");
-        //mInterstitialAd.setAdUnitId("ca-app-pub-3940256099942544/1033173712");
-        mInterstitialAd.setAdUnitId("ca-app-pub-7004761147200711/6381566949");
-        mInterstitialAd.loadAd(new AdRequest.Builder().build());
-        setmInterstitialAd();
-    }
-    public void setmInterstitialAd(){
-        mInterstitialAd.setAdListener(new AdListener() {
-            @Override
-            public void onAdLoaded() {
-                // Code to be executed when an ad finishes loading.
-            }
 
-            @Override
-            public void onAdFailedToLoad(int errorCode) {
-                // Code to be executed when an ad request fails.
-            }
-
-            @Override
-            public void onAdOpened() {
-                // Code to be executed when the ad is displayed.
-            }
-
-            @Override
-            public void onAdLeftApplication() {
-                // Code to be executed when the user has left the app.
-            }
-
-            @Override
-            public void onAdClosed() {
-                // Code to be executed when the interstitial ad is closed.
-                Intent i = new Intent(getApplicationContext(),MainActivity.class);
-                startActivity(i);
-                finish();
-            }
-        });
     }
     public void continueButtonClick(){
         continueButton.setOnClickListener(new View.OnClickListener() {
@@ -206,45 +169,31 @@ public class AuthUsersInfoActivity extends Activity {
                                                                                                                                                             FirebaseDatabase.getInstance().getReference("UserReference").child(uid).child(mAuth.getUid()).setValue(true).addOnSuccessListener(new OnSuccessListener<Void>() {
                                                                                                                                                                 @Override
                                                                                                                                                                 public void onSuccess(Void aVoid) {
-                                                                                                                                                                    if (mInterstitialAd.isLoaded()) {
-                                                                                                                                                                        mInterstitialAd.show();
-                                                                                                                                                                    } else {
                                                                                                                                                                         Intent i = new Intent(getApplicationContext(),MainActivity.class);
                                                                                                                                                                         startActivity(i);
                                                                                                                                                                         finish();
-                                                                                                                                                                    }
                                                                                                                                                                 }
                                                                                                                                                             });
                                                                                                                                                         }else {
-                                                                                                                                                            if (mInterstitialAd.isLoaded()) {
-                                                                                                                                                                mInterstitialAd.show();
-                                                                                                                                                            } else {
+
                                                                                                                                                                 Intent i = new Intent(getApplicationContext(),MainActivity.class);
                                                                                                                                                                 startActivity(i);
                                                                                                                                                                 finish();
-                                                                                                                                                            }
+
                                                                                                                                                         }
                                                                                                                                                     }
 
                                                                                                                                                     @Override
                                                                                                                                                     public void onCancelled(@NonNull DatabaseError databaseError) {
-                                                                                                                                                        if (mInterstitialAd.isLoaded()) {
-                                                                                                                                                            mInterstitialAd.show();
-                                                                                                                                                        } else {
                                                                                                                                                             Intent i = new Intent(getApplicationContext(),MainActivity.class);
                                                                                                                                                             startActivity(i);
                                                                                                                                                             finish();
-                                                                                                                                                        }
                                                                                                                                                     }
                                                                                                                                                 });
                                                                                                                                             }else {
-                                                                                                                                                if (mInterstitialAd.isLoaded()) {
-                                                                                                                                                    mInterstitialAd.show();
-                                                                                                                                                } else {
                                                                                                                                                     Intent i = new Intent(getApplicationContext(),MainActivity.class);
                                                                                                                                                     startActivity(i);
                                                                                                                                                     finish();
-                                                                                                                                                }
                                                                                                                                             }
 
 

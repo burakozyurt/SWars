@@ -13,10 +13,11 @@
     <dimen name="fragment_home_profile_photo_width_height">90dp</dimen>
     <dimen name="fragment_home_izlekazan_TextSize">10sp</dimen>
 
-    <dimen name="fragment_title_Text_Size">24sp</dimen>
-    <dimen name="fragment_home_score_and_scoreVal_Text_Size">16sp</dimen>
+    <dimen name="fragment_title_Text_Size">20sp</dimen>
+    <dimen name="fragment_home_score_and_scoreVal_Text_Size">14sp</dimen>
     <dimen name="fragment_home_guess_it_button_witdh">225dp</dimen>
     <dimen name="fragment_home_guess_it_button_height">40dp</dimen>
+    <dimen name="home_fragment_wallet_size">35sp</dimen>
 
     <dimen name="slide_layout_image_witdh">200dp</dimen>
 

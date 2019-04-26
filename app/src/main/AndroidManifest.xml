@@ -14,7 +14,6 @@
     <uses-permission android:name="android.permission.AUTHENTICATE_ACCOUNTS"/>
     <uses-permission android:name="com.android.vending.BILLING"/>
 
-
     <application
             android:name=".SelfieWars"
             android:allowBackup="true"
@@ -47,8 +46,10 @@
                 <action android:name="com.google.firebase.MESSAGING_EVENT"/>
             </intent-filter>
         </service>
-        <meta-data android:name="firebase_analytics_collection_enabled" android:value="false" />
 
+        <meta-data
+                android:name="firebase_analytics_collection_enabled"
+                android:value="false"/>
         <meta-data
                 android:name="com.google.android.gms.ads.APPLICATION_ID"
                 android:value="ca-app-pub-7004761147200711~5104636223"/>
@@ -102,6 +103,10 @@
         <activity android:name=".InAppBillingActivity">
         </activity>
         <activity android:name=".CekilisActivity">
+        </activity>
+        <activity android:name=".LotteryActivity">
+        </activity>
+        <activity android:name=".LotteryInfoActivity">
         </activity>
     </application>
 

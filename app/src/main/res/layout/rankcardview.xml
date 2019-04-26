@@ -40,6 +40,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:id="@+id/usernameTextView"
+                    android:fontFamily="@font/ralewaybold"
+
                     android:textColor="@color/textcolorblack"
                     app:layout_constraintStart_toEndOf="@+id/userPhotoImageView" android:layout_marginStart="12dp"
                     app:layout_constraintTop_toTopOf="@+id/userPhotoImageView" android:layout_marginTop="8dp"
@@ -51,6 +53,7 @@
                     android:textColor="@color/textcolorblack"
                     android:textStyle="bold"
                     android:layout_height="wrap_content"
+                    android:fontFamily="@font/kodchasanbold"
                     android:id="@+id/rank_starNumber" app:layout_constraintEnd_toEndOf="@+id/starImageView"
                     app:layout_constraintBottom_toBottomOf="@+id/starImageView" android:layout_marginBottom="8dp"
                     app:layout_constraintTop_toTopOf="@+id/starImageView" android:layout_marginTop="8dp"

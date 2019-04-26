@@ -221,7 +221,7 @@ public class CekilisActivity extends AppCompatActivity {
                         "\n\n1 - Çekilişe katılmak için 18 yaş ve üstü olmalısın." +
                         "\n\n2 - Çekilişe katıldıktan sonra iptal edemezsin. " +
                         "\n\n3 - Çekilişe katıldığında düşen elmasların için iade talebinde bulunamazsın. " +
-                        "\n\n4 - Çekilişe katılan kişi ödül ile aynı olmalıdır. Çekilişi kazanan kişinin yerine bir başkası ödül alamaz.",CekilisActivity.this );
+                        "\n\n4 - Ödülü alacak olan ile çekilişe katılan kişi ile aynı olmalıdır. Çekilişi kazanan kişinin yerine bir başkası ödül alamaz.",CekilisActivity.this );
             }
         });
 

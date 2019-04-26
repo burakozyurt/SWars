@@ -444,43 +444,90 @@ public class GuessItActivity extends AppCompatActivity {
                 @Override
                 public void onComplete(@Nullable final DatabaseError databaseError, boolean b, @Nullable DataSnapshot dataSnapshot) {
                     if (b){
-                        loseScore.setText("" + score + " Puan");
-                        loseAllScore.setText("Toplam Puan: "+MainActivity.UserScore);
-                        if (MainActivity.myRigtOfGame == 9 || MainActivity.myRigtOfGame == 1){
-                            if (mInterstitialAd.isLoaded()) {
-                                mInterstitialAd.show();
-                                interstitalAdsrunning = true;
-
-                            }else {
-                                //Toast.makeText(GuessItActivity.this, "Yüklenmedi", Toast.LENGTH_SHORT).show();
+                        MainActivity.myWalletScoreRef.child(mAuth.getUid()).runTransaction(new Transaction.Handler() {
+                            @NonNull
+                            @Override
+                            public Transaction.Result doTransaction(@NonNull MutableData mutableData) {
+                                Integer dbscore = mutableData.getValue(Integer.class);
+                                if (dbscore == null){
+                                    dbscore = score;
+                                }else {
+                                    dbscore +=score;
+                                }
+                                mutableData.setValue(dbscore);
+                                return Transaction.success(mutableData);
                             }
-                        }
-                        loadinglayout.setVisibility(View.GONE);
-                        guessitlayout.setVisibility(View.GONE);
-                        loselayout.setVisibility(View.VISIBLE);
-                    }else {
-                        if(score !=0){
-                            MainActivity.myScoreRef.child(mAuth.getUid()).setValue(MainActivity.UserScore+score).addOnCompleteListener(new OnCompleteListener<Void>() {
-                                @Override
-                                public void onComplete(@NonNull Task<Void> task) {
+
+                            @Override
+                            public void onComplete(@Nullable DatabaseError databaseError, boolean b, @Nullable DataSnapshot dataSnapshot) {
+                                if (b){
                                     loseScore.setText("" + score + " Puan");
                                     loseAllScore.setText("Toplam Puan: "+MainActivity.UserScore);
                                     if (MainActivity.myRigtOfGame == 9 || MainActivity.myRigtOfGame == 1){
                                         if (mInterstitialAd.isLoaded()) {
                                             mInterstitialAd.show();
                                             interstitalAdsrunning = true;
-                                            // Toast.makeText(GuessItActivity.this, "Açıldı", Toast.LENGTH_SHORT).show();
 
-                                        }else
-                                        {
+                                        }else {
                                             //Toast.makeText(GuessItActivity.this, "Yüklenmedi", Toast.LENGTH_SHORT).show();
                                         }
-
                                     }
                                     loadinglayout.setVisibility(View.GONE);
                                     guessitlayout.setVisibility(View.GONE);
                                     loselayout.setVisibility(View.VISIBLE);
-                                    Toast.makeText(GuessItActivity.this,databaseError.getMessage(),Toast.LENGTH_SHORT).show();
+                                }else {
+                                    loseScore.setText("" + score + " Puan");
+                                    loseAllScore.setText("Toplam Puan: "+MainActivity.UserScore);
+                                    loadinglayout.setVisibility(View.GONE);
+                                    guessitlayout.setVisibility(View.GONE);
+                                    loselayout.setVisibility(View.VISIBLE);
+                                }
+                            }
+                        });
+
+                    }else {
+                        if(score !=0){
+                            MainActivity.myScoreRef.child(mAuth.getUid()).setValue(MainActivity.UserScore+score).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                @Override
+                                public void onComplete(@NonNull Task<Void> task) {
+                                    MainActivity.myWalletScoreRef.child(mAuth.getUid()).runTransaction(new Transaction.Handler() {
+                                        @NonNull
+                                        @Override
+                                        public Transaction.Result doTransaction(@NonNull MutableData mutableData) {
+                                            Integer dbscore = mutableData.getValue(Integer.class);
+                                            if (dbscore == null){
+                                                dbscore = score;
+                                            }else {
+                                                dbscore +=score;
+                                            }
+                                            mutableData.setValue(dbscore);
+                                            return Transaction.success(mutableData);
+                                        }
+
+                                        @Override
+                                        public void onComplete(@Nullable DatabaseError databaseError, boolean b, @Nullable DataSnapshot dataSnapshot) {
+                                            loseScore.setText("" + score + " Puan");
+                                            loseAllScore.setText("Toplam Puan: "+MainActivity.UserScore);
+                                            if (MainActivity.myRigtOfGame == 9 || MainActivity.myRigtOfGame == 1){
+                                                if (mInterstitialAd.isLoaded()) {
+                                                    mInterstitialAd.show();
+                                                    interstitalAdsrunning = true;
+                                                    // Toast.makeText(GuessItActivity.this, "Açıldı", Toast.LENGTH_SHORT).show();
+
+                                                }else
+                                                {
+                                                    //Toast.makeText(GuessItActivity.this, "Yüklenmedi", Toast.LENGTH_SHORT).show();
+                                                }
+
+                                            }
+                                            loadinglayout.setVisibility(View.GONE);
+                                            guessitlayout.setVisibility(View.GONE);
+                                            loselayout.setVisibility(View.VISIBLE);
+                                            Toast.makeText(GuessItActivity.this,databaseError.getMessage(),Toast.LENGTH_SHORT).show();
+
+
+                                        }
+                                    });
                                 }
                             });
                         }else {

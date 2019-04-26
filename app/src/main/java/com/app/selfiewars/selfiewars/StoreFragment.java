@@ -60,12 +60,12 @@ public class StoreFragment extends Fragment {
         // Inflate the layout for this fragment
         View view= inflater.inflate(R.layout.fragment_store, container, false);
         setupjokersanddiamonds(view);
-        setDiamondValue();
-        if(MainActivity.remoteDiamondLoad)
+        //setDiamondValue();
+       /* if(MainActivity.remoteDiamondLoad)
         diamondSetup(view);
         else {
             getRemoteConfig();
-        }
+        }*/
         jokerSetup(view);
         return view;
     }
@@ -95,7 +95,7 @@ public class StoreFragment extends Fragment {
                 }else{
                     //Toast.makeText(getContext(),"Fetch is Failed",Toast.LENGTH_SHORT).show();
                 }
-                setDiamondValueAndShow();
+                //setDiamondValueAndShow();
             }
         });
     }
@@ -114,7 +114,7 @@ public class StoreFragment extends Fragment {
         storeDiamondList.add(new StoreDiamond("100",diamondPrice100,R.drawable.diamond100));
         storeDiamondList.add(new StoreDiamond("250",diamondPrice250,R.drawable.diamond250));
         storeDiamondList.add(new StoreDiamond("500",diamondPrice500,R.drawable.diamond500));
-        diamondSetup(getView());
+        //diamondSetup(getView());
     }
 
     private void setDiamondValue() {
@@ -134,10 +134,10 @@ public class StoreFragment extends Fragment {
     }
 
     public void diamondSetup(View view){
-        RecyclerView storeDiamondRcyView = view.findViewById(R.id.store_recyclerview_diamond);
+        /*RecyclerView storeDiamondRcyView = view.findViewById(R.id.store_recyclerview_diamond);
         StoreDiamondRecyclerViewAdapter storeRcycView =  new StoreDiamondRecyclerViewAdapter(getContext(),storeDiamondList);
         storeDiamondRcyView.setLayoutManager(new GridLayoutManager(getContext(),3));
-        storeDiamondRcyView.setAdapter(storeRcycView);
+        storeDiamondRcyView.setAdapter(storeRcycView);*/
     }
     public void jokerSetup(View view){
         RecyclerView storeJokerRcyView = view.findViewById(R.id.store_recyclerview_joker_cards);
